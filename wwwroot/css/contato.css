@@ -1,0 +1,82 @@
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    margin-top: 8px;
+}
+
+header {
+    position: initial;
+}
+
+div.contact-box {
+    width: fit-content;
+    height: fit-content;
+    border: 2px solid red;
+    background-color: rgb(245, 245, 245);
+    mix-blend-mode: multiply;
+    padding: 8px;
+    box-sizing: border-box;
+    display: inline-block;
+}
+
+h1:first-child {
+    margin-top: 0px;
+    margin-bottom: 8px;
+}
+
+p {
+    margin: 4px 0px;
+}
+
+form.message-form {
+    margin-left: 16px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 450px;
+    box-sizing: border-box;
+}
+
+div.input-text-form-box {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 4px 12px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+input[type="text"], input[type="email"] {
+    appearance: none;
+    width: 100%;
+    max-width: 250px;
+    border: 2px solid lightgray;
+    border-radius: 3px;
+    padding: 4px;
+    box-sizing: border-box;
+}
+
+input[type="text"]:focus, input[type="email"]:focus {
+    border: 1px solid red;
+}
+
+textarea {
+    resize: none;
+    margin: 4px 0px;
+    border: 2px solid lightgray;
+    border-radius: 3px;
+    width: auto;
+    max-width: 400px;
+    min-height: 120px;
+    box-sizing: border-box;
+}
+
+div.button-panel {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    column-gap: 8px;
+}
