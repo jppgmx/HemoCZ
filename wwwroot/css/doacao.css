@@ -1,0 +1,39 @@
+main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+a.agendar {
+    height: fit-content;
+    padding: 8px 4px;
+    text-align: center;
+    box-sizing: border-box;
+    border: 3px solid red;
+    border-radius: 8px;
+    cursor: pointer;
+    
+    transition-property: color background-color;
+    transition-duration: 0.3s;
+}
+
+a.agendar, a.agendar:visited, a.agendar:hover, a.agendar:link {
+    text-decoration: none;
+    color: black;
+}
+
+a.agendar:hover {
+    color: white;
+    background-color: red;
+}
+
+a.agendar:active {
+    background-color: rgb(200, 0, 0);
+}
+
+@media (max-width: 800px) {
+    main {
+        display: inline-block;
+    }
+}

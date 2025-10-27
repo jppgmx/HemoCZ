@@ -18,6 +18,7 @@ div.contact-box {
     background-color: rgb(245, 245, 245);
     mix-blend-mode: multiply;
     padding: 8px;
+    padding-right: 16px;
     box-sizing: border-box;
     display: inline-block;
 }
@@ -36,7 +37,7 @@ form.message-form {
     display: flex;
     flex-direction: column;
     width: 100%;
-    max-width: 450px;
+    max-width: calc(100% - 16px);
     box-sizing: border-box;
 }
 
@@ -51,7 +52,6 @@ div.input-text-form-box {
 input[type="text"], input[type="email"] {
     appearance: none;
     width: 100%;
-    max-width: 250px;
     border: 2px solid lightgray;
     border-radius: 3px;
     padding: 4px;
@@ -67,9 +67,8 @@ textarea {
     margin: 4px 0px;
     border: 2px solid lightgray;
     border-radius: 3px;
-    width: auto;
-    max-width: 400px;
-    min-height: 120px;
+    width: 100%;
+    min-height: 200px;
     box-sizing: border-box;
 }
 

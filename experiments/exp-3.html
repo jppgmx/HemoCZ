@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+        body {
+            margin: 0;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            box-sizing: border-box;
+            row-gap: 16px;
+            font-family: "Ubuntu";
+        }
+
+        .card {
+            padding: 8px;
+            max-width: 500px;
+            width: 100%;
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+
+        span.card-title {
+            font-size: 20px;
+            color: red;
+            font-weight: bold;
+        }
+
+        .card-header {
+            flex: 0 0 24px;
+            margin-bottom: 4px;
+        }
+
+        .card-body {
+            border: 1px solid lightgray;
+            border-radius: 5px;
+            padding: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Doar sangue salva vidas</span>
+        </div>
+        <div class="card-body">
+            Doar sangue pode salvar vidas de pessoas que necessitam do seu tipo sanguíneo
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Como doar sangue?</span>
+        </div>
+        <div class="card-body">
+            Agende pelo nosso site ou compareça ao hemonúcleo de Cajazeiras.
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <span class="card-title">Quem pode doar?</span>
+        </div>
+        <div class="card-body">
+            <ul style="list-style-type: square;">
+                <li>Ter entre 16 e 69 anos (menores de idade com autorização);</li>
+                <li>Pesar mais de 50 kg;</li>
+                <li>Estar descansado e alimentado;</li>
+                <li>Estar em boas condições de saúde;</li>
+                <li>Apresentar documento oficial com foto.</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
