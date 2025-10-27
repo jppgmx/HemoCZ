@@ -19,11 +19,10 @@ body {
 body {
     display: flex;
     flex-direction: column;
-    box-sizing: border-box;
 }
 
 header {
-    padding: 4px;
+    padding: 4px 32px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -53,7 +52,9 @@ div.logo-box-group {
 header hr {
     flex: 0;
     margin: 0px 4px;
-    border: 1px solid black;
+    margin-left: 8px;
+    border: none;
+    border-left: 1px solid lightgray;
     height: 100%;
     width: 1px;
 }
@@ -77,12 +78,12 @@ nav.hmenu {
     color: white;
     border: none;
     display: none;
-    background: url("hamico.png") center/contain no-repeat;;
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 55'><rect x='0' y='0' width='72' height='15' fill='%23000'/><rect x='0' y='20' width='72' height='15' fill='%23000'/><rect x='0' y='40' width='72' height='15' fill='%23000'/></svg>") center/contain no-repeat;;
     background-size: contain;
 }
 
 .menu-toggler:checked {
-    background: url("clico.png") center/contain no-repeat;
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 55 55'><line x1='10' y1='10' x2='45' y2='45' stroke='%23000' stroke-width='8' stroke-linecap='round'/><line x1='45' y1='10' x2='10' y2='45' stroke='%23000' stroke-width='8' stroke-linecap='round'/></svg>") center/contain no-repeat;
     width: 50px;
     height: 50px;
 }
@@ -116,7 +117,7 @@ footer {
     box-sizing: border-box;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    padding: 4px 16px;
+    padding: 8px 16px;
     flex: 0;
 }
 
@@ -165,6 +166,33 @@ button:active {
     background-color: gray;
 }
 
+.card {
+    padding: 8px;
+    max-width: 500px;
+    width: auto;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+span.card-title {
+    font-size: 20px;
+    color: red;
+    font-weight: bold;
+}
+
+.card-header {
+    flex: 0 0 24px;
+    margin-bottom: 4px;
+}
+
+.card-body {
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    padding: 6px;
+}
+
 @media (max-width: 800px) {
     header {
         flex-direction: column;
@@ -176,6 +204,7 @@ button:active {
         align-items: start;
         row-gap: 4px;
         border: 1px solid lightgray;
+        border-top: none;
         padding: 0px 0px;
         display: none;
     }
