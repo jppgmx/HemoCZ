@@ -5,16 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/login.css">
-    <link rel="shortcut icon" href="favicon.png">
+    <link rel="shortcut icon" href="images/favicon.png">
     <title>SAHON - Entrar</title>
 </head>
 <body>
-    <form action="#" method="post">
+    <form action="" method="post" name="login">
         <span class="form-title">Entrar</span>
-        <input type="text" placeholder="Usuário">
-        <input type="text" placeholder="Senha">
-        <button>Login</button>
+        <input type="text" placeholder="Usuário" name="usuario">
+        <input type="password" placeholder="Senha" name="senha">
+        <button type="submit">Login</button>
         <a href="#">Esqueceu a senha?</a>
     </form>
+
+    <script src="js/main.js"></script>
+    <script type="module" src="js/pages/login.js"></script>
 </body>
 </html>

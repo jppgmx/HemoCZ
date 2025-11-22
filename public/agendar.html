@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/agendar.css">
+    <link rel="shortcut icon" href="images/favicon.png">
+    <title>Agendar Coleta - Hemonúcleo CZ</title>
+</head>
+<body>
+    <header>
+        <div class="logo-box">
+            <div class="logo-box-group">
+                <a href="/"><img width="75" src="images/logo.png"></a>
+                <hr>
+            </div>
+            <input type="checkbox" class="menu-toggler">
+        </div>
+        <nav class="hmenu">
+            <a class="menu-link" href="/doacao">Doação de Sangue</a>
+            <a class="menu-link" href="/agendar">Agendar</a>
+            <a class="menu-link" href="/assistencia">Assistência</a>
+            <a class="menu-link" href="/contato">Contato</a>
+            <a class="menu-link" href="/gestao">Gestão</a>
+        </nav>
+    </header>
+    <main>
+        <h1>Agende aqui sua coleta!</h1>
+        <form action method="post" name="agendamento">
+            <label for="nomePessoa">Nome Completo:</label>
+            <input
+                type="text"
+                id="nomePessoa"
+                name="nomePessoa"
+                required
+                autocomplete="name"
+                minlength="3"
+                maxlength="80"
+                pattern="^[A-Za-zÀ-ÖØ-öø-ÿ\s]{3,80}$"
+                title="Digite apenas letras e espaços (3 a 80 caracteres)."
+            >
+
+            <label for="email">E-mail:</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                autocomplete="email"
+            >
+
+            <label for="telefone">Telefone:</label>
+            <input
+                type="tel"
+                id="telefone"
+                name="telefone"
+                required
+                autocomplete="tel"
+                inputmode="tel"
+                pattern="^\(\d{2}\)\s9\d{4}-\d{4}$"
+                title="Formato esperado: (XX) 9XXXX-XXXX"
+                maxlength="16"
+            >
+
+            <label for="tipoSanguineo">Grupo Sanguíneo:</label>
+            <select id="tipoSanguineo" name="tipoSanguineo" required>
+                <option value="">Selecione</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+            </select>
+
+            <label for="data">Data Preferida:</label>
+            <input
+                type="date"
+                id="data"
+                name="data"
+                required
+            >
+
+            <label for="hora">Hora Preferida:</label>
+            <input
+                type="time"
+                id="hora"
+                name="hora"
+                min="08:00"
+                max="17:00"
+                step="300"
+                required
+            >
+
+            <button type="submit">Agendar Coleta</button>
+        </form>
+    </main>
+    <footer>
+        <div class="footer-info-block">
+            <p>Hemonúcleo de Cajazeiras</p>
+            <p>Rua José Rodovalho de Alençar</p>
+            <p>Bairro Cristo Rei, Cajazeiras - PB</p>
+            <p>58900-000</p>
+        </div>
+        <div class="footer-info-block">
+            <p>Ouvidoria/SAC</p>
+            <p class="email">sac@hemonucleo.cz.br</p>
+            <p>Serviço de Informação ao Cidadão/SIC</p>
+            <p class="email">sic@hemonucleo.cz.br</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script type="module" src="js/pages/agendar.js"></script>
+</body>
+</html>

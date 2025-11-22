@@ -7,12 +7,15 @@ body {
 form {
     border: 2px solid red;
     border-radius: 20px;
-    width: 400px;
-    height: 400px;
+    min-width: 400px;
+    min-height: 400px;
+    width: fit-content;
+    height: fit-content;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
     padding: 16px;
+    margin: 0px;
 }
 
 form > * {

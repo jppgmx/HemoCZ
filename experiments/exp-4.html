@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+
+        body {
+            font-family: "Ubuntu";
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border: 1px solid red;
+            border-radius: 5px;
+            border-spacing: 0;
+        }
+
+        th {
+            background-color: #d0d0d0;
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid red;
+        }
+
+        th:first-child {
+            border-top-left-radius: 5px;
+        }
+
+        th:last-child {
+            border-top-right-radius: 5px;
+        }
+
+        tr:last-child td:first-child {
+            border-bottom-left-radius: 5px;
+        }
+
+        tr:last-child td:last-child {
+            border-bottom-right-radius: 5px;
+        }
+
+        th:not(:last-child) {
+            border-right: 1px solid red;
+        }
+        
+        tr:nth-child(even) td {
+            background-color: #e9e9e9;
+        }
+
+        td {
+            padding: 8px;
+            text-align: left;
+            transition: background-color 0.3s;
+        }
+
+        td:not(:last-child) {
+            border-right: 1px solid red;
+        }
+
+        tr:not(:last-child) > td {
+            border-bottom: 1px solid red;
+        }
+
+        tr:hover > td {
+            background-color: #ffaaaa;
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>Coluna 1</th>
+                <th>Coluna 2</th>
+                <th>Coluna 3</th>
+                <th>Coluna 4</th>
+                <th>Coluna 5</th>
+                <th>Coluna 6</th>
+                <th>Coluna 7</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>A1</td>
+                <td>B1</td>
+                <td>C1</td>
+                <td>D1</td>
+                <td>E1</td>
+                <td>F1</td>
+                <td>G1</td>
+            </tr>
+            <tr>
+                <td>A2</td>
+                <td>B2</td>
+                <td>C2</td>
+                <td>D2</td>
+                <td>E2</td>
+                <td>F2</td>
+                <td>G2</td>
+            </tr>
+            <tr>
+                <td>A3</td>
+                <td>B3</td>
+                <td>C3</td>
+                <td>D3</td>
+                <td>E3</td>
+                <td>F3</td>
+                <td>G3</td>
+            </tr>
+            <tr>
+                <td>A4</td>
+                <td>B4</td>
+                <td>C4</td>
+                <td>D4</td>
+                <td>E4</td>
+                <td>F4</td>
+                <td>G4</td>
+            </tr>
+            <tr>
+                <td>A5</td>
+                <td>B5</td>
+                <td>C5</td>
+                <td>D5</td>
+                <td>E5</td>
+                <td>F5</td>
+                <td>G5</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

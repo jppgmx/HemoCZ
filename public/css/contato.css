@@ -1,0 +1,33 @@
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    margin-top: 8px;
+}
+
+header {
+    position: initial;
+}
+
+div.contact-box {
+    width: fit-content;
+    height: fit-content;
+    border: 2px solid red;
+    background-color: rgb(245, 245, 245);
+    mix-blend-mode: multiply;
+    padding: 8px;
+    padding-right: 16px;
+    box-sizing: border-box;
+    display: inline-block;
+}
+
+h1:first-child {
+    margin-top: 0px;
+    margin-bottom: 8px;
+}
+
+p {
+    margin: 4px 0px;
+}
