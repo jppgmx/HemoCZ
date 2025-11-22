@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/gestao.css">
+    <link rel="shortcut icon" href="images/favicon.png">
+    <title>Gestão - Hemonúcleo CZ</title>
+</head>
+<body>
+    <header>
+        <div class="logo-box">
+            <div class="logo-box-group">
+                <a href="/"><img width="75" src="images/logo.png"></a>
+                <hr>
+            </div>
+            <input type="checkbox" class="menu-toggler">
+        </div>
+        <nav class="hmenu">
+            <a class="menu-link" href="/doacao">Doação de Sangue</a>
+            <a class="menu-link" href="/agendar">Agendar</a>
+            <a class="menu-link" href="/assistencia">Assistência</a>
+            <a class="menu-link" href="/contato">Contato</a>
+            <a class="menu-link" href="/gestao">Gestão</a>
+        </nav>
+    </header>
+    <main>
+        <h1 id="greetings">Olá, user!</h1>
+        <h2>Agendamentos em processo</h2>
+        <table id="appointments-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Tipo Sanguíneo</th>
+                    <th>Telefone</th>
+                    <th>e-mail</th>
+                    <th>Data Agendada</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Linhas de agendamentos serão inseridas aqui via JavaScript -->
+            </tbody>
+        </table>
+    </main>
+    <footer>
+        <div class="footer-info-block">
+            <p>Hemonúcleo de Cajazeiras</p>
+            <p>Rua José Rodovalho de Alençar</p>
+            <p>Bairro Cristo Rei, Cajazeiras - PB</p>
+            <p>58900-000</p>
+        </div>
+        <div class="footer-info-block">
+            <p>Ouvidoria/SAC</p>
+            <p class="email">sac@hemonucleo.cz.br</p>
+            <p>Serviço de Informação ao Cidadão/SIC</p>
+            <p class="email">sic@hemonucleo.cz.br</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/pages/gestao.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.min.js" integrity="sha512-n/G+dROKbKL3GVngGWmWfwK0yPctjZQM752diVYnXZtD/48agpUKLIn0xDQL9ydZ91x6BiOmTIFwWjjFi2kEFg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</body>
+</html>

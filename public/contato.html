@@ -6,24 +6,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/contato.css">
-    <link rel="shortcut icon" href="favicon.png">
+    <link rel="shortcut icon" href="images/favicon.png">
     <title>Contato</title>
 </head>
 <body>
     <header>
         <div class="logo-box">
             <div class="logo-box-group">
-                <a href="/"><img width="75" src="logo.png"></a>
+                <a href="/"><img width="75" src="images/logo.png"></a>
                 <hr>
             </div>
             <input type="checkbox" class="menu-toggler">
         </div>
         <nav class="hmenu">
-            <a class="menu-link" href="doacao.html">Doação de Sangue</a>
-            <a class="menu-link" href="agendar.html">Agendar</a>
-            <a class="menu-link" href="gestao.html">Gestão</a>
-            <a class="menu-link" href="assistencia.html">Assistência</a>
-            <a class="menu-link" href="contato.html">Contato</a>
+            <a class="menu-link" href="/doacao">Doação de Sangue</a>
+            <a class="menu-link" href="/agendar">Agendar</a>
+            <a class="menu-link" href="/assistencia">Assistência</a>
+            <a class="menu-link" href="/contato">Contato</a>
+            <a class="menu-link" href="/gestao">Gestão</a>
         </nav>
     </header>
     <main>
@@ -38,17 +38,17 @@
             <hr>
             <div>
                 <h1>Entre em contato conosco!</h1>
-                <form class="message-form" action="#" method="post">
+                <form action="" method="post" name="contato">
                     <div class="input-text-form-box">
                         <label for="nome">Nome: </label>
-                        <input type="text" name="nome" id="itxtnome"/>
+                        <input type="text" id="nome" pattern="^[A-Za-zÀ-ÖØ-öø-ÿ\s]{3,80}$" required />
                         <label for="email">Email: </label>
-                        <input type="email" name="email" id="itxtemail" />
+                        <input type="email" id="email" required />
                         <label for="assunto">Assunto: </label>
-                        <input type="text" name="assunto" id="itxtassunto">
+                        <input type="text" id="assunto" required />
                     </div>
                     <label for="mensagem">Mensagem: </label>
-                    <textarea name="msg" id="in_tarea"></textarea>
+                    <textarea name="msg" id="mensagem" required></textarea>
                     <div class="button-panel">
                         <button type="reset">Resetar</button>
                         <button type="submit">Enviar</button>
@@ -72,5 +72,8 @@
             <p class="email">sic@hemonucleo.cz.br</p>
         </div>
     </footer>
+
+    <script src="js/main.js"></script>
+    <script type="module" src="js/pages/contato.js"></script>
 </body>
 </html>

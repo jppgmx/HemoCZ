@@ -1,0 +1,1 @@
+Nossa área de testes e experimentação de recursos HTML, CSS e JavaScript. Sinta-se à vontade para explorar e descobrir coisas novas!

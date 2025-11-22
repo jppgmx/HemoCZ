@@ -1,0 +1,34 @@
+{
+  "name": "hemocz",
+  "version": "1.0.0",
+  "description": "Projeto de LSW voltado ao Hemocentro de Cajazeiras - PB.",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jppgmx/HemoCZ.git"
+  },
+  "keywords": [
+    "hemonucleo",
+    "cz",
+    "js",
+    "html",
+    "css"
+  ],
+  "author": "Jppgmx",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jppgmx/HemoCZ/issues"
+  },
+  "homepage": "https://github.com/jppgmx/HemoCZ#readme",
+  "dependencies": {
+    "argon2": "^0.44.0",
+    "chart.js": "^4.5.1",
+    "cookie-parser": "^1.4.7",
+    "express": "^5.1.0",
+    "node-localstorage": "^3.0.5",
+    "nodemailer": "^7.0.10"
+  }
+}
