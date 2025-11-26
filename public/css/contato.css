@@ -1,33 +1,296 @@
-main {
+/**
+ * ====================================================================
+ * PÁGINA DE CONTATO - LAYOUT 2 COLUNAS
+ * ====================================================================
+ * Sidebar esquerda: informações de contato em cards
+ * Coluna direita: formulário de contato
+ * Responsivo: muda para 1 coluna em tablet
+ */
+
+/* Contact Page Styles */
+
+/**
+ * GRID PRINCIPAL
+ * grid-template-columns: 1fr 1.2fr deixa formulário ligeiramente maior
+ * gap: 48px oferece espaço generoso entre seções
+ * align-items: start alinha conteúdo ao topo (importante se alturas diferentes)
+ */
+div.contact-container {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 48px;
+    align-items: start;
+}
+
+/**
+ * SIDEBAR DE CONTATO
+ * Flex column distribui cards verticalmente
+ * gap: 24px oferece espaço entre cards
+ */
+
+/* Contact Info Sidebar */
+
+aside.contact-info {
     display: flex;
     flex-direction: column;
+    gap: 24px;
+}
+
+aside.contact-info > h2 {
+    margin: 0;
+    color: var(--color-text);
+    font-size: 1.75rem;
+    font-weight: 500;
+}
+
+/**
+ * CARDS DE CONTATO
+ * Cada card contém: ícone, título, detalhes (email, telefone, etc.)
+ * gap: 16px separa ícone de detalhes
+ * border-left: 4px identifica visualmente
+ */
+div.contact-card {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: var(--transition);
+    border-left: 4px solid var(--color-primary);
+}
+
+div.contact-card:hover {
+    box-shadow: 0 8px 20px rgba(139, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+/**
+ * ÍCONE DE CONTATO
+ * width/height: 60px cria quadrado para círculo
+ * background-color: var(--color-secondary) oferece fundo em contraste suave
+ * border-radius: 50% transforma quadrado em círculo
+ * flex-shrink: 0 garante que não encolha mesmo com texto grande
+ */
+div.contact-icon {
+    font-size: 2rem;
+    display: flex;
     align-items: center;
     justify-content: center;
-    padding: 32px;
+    width: 60px;
+    height: 60px;
+    background-color: var(--color-secondary);
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+div.contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+div.contact-details h3 {
+    margin: 0;
+    color: var(--color-primary);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+div.contact-details p {
+    margin: 0;
+    color: var(--color-text);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+p.email {
+    color: var(--color-primary-hover);
+    font-weight: 500;
+}
+
+/**
+ * FORMULÁRIO DE CONTATO
+ * section.form-section agrupa título, descrição e form
+ * gap: 24px oferece espaço entre elementos
+ */
+
+/* Form Section */
+
+section.form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+section.form-section > h2 {
+    margin: 0;
+    color: var(--color-text);
+    font-size: 1.75rem;
+    font-weight: 500;
+}
+
+p.form-description {
+    margin: 0;
+    color: var(--color-text);
+    font-size: 1rem;
+    opacity: 0.8;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/**
+ * GRUPO DE FORM
+ * Padroniza label + input/textarea com espaço de 8px entre eles
+ * gap: 8px facilita alinhamento visual de label e campo
+ */
+div.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+div.form-group label {
+    color: var(--color-text);
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+/**
+ * INPUTS E TEXTAREA
+ * padding: 12px 14px oferece conforto de digitação
+ * border-radius: 6px suaviza cantos
+ * :focus box-shadow: 0 0 0 3px rgba(..., 0.1) cria halo suave
+ * transition: var(--transition) anima suavemente
+ */
+div.form-group input,
+div.form-group textarea {
+    padding: 12px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-family: "Ubuntu", sans-serif;
+    transition: var(--transition);
+    background-color: white;
+}
+
+div.form-group input:focus,
+div.form-group textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
+}
+
+/**
+ * TEXTAREA
+ * min-height: 150px oferece espaço generoso para mensagens
+ * resize: vertical permite ajuste apenas na altura (width fixa)
+ */
+div.form-group textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+/**
+ * PAINEL DE BOTÕES
+ * flex: 1 cada botão cresce igualmente
+ * gap: 12px oferece espaço entre botões
+ * Responsivo: flex-direction: column em mobile
+ */
+div.button-panel {
+    display: flex;
+    gap: 12px;
     margin-top: 8px;
 }
 
-header {
-    position: initial;
+div.button-panel button {
+    flex: 1;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: "Ubuntu", sans-serif;
 }
 
-div.contact-box {
-    width: fit-content;
-    height: fit-content;
-    border: 2px solid red;
-    background-color: rgb(245, 245, 245);
-    mix-blend-mode: multiply;
-    padding: 8px;
-    padding-right: 16px;
-    box-sizing: border-box;
-    display: inline-block;
+/**
+ * BOTÕES SUBMIT E RESET
+ * Estilos diferenciados: submit (vermelho), reset (cinza neutro)
+ * border: 1px solid diferencia reset de submit
+ */
+div.button-panel button[type="submit"] {
+    background-color: var(--color-primary);
+    color: white;
 }
 
-h1:first-child {
-    margin-top: 0px;
-    margin-bottom: 8px;
+div.button-panel button[type="submit"]:hover {
+    background-color: var(--color-primary-hover);
+    box-shadow: 0 4px 12px rgba(139, 0, 0, 0.2);
+    transform: translateY(-2px);
 }
 
-p {
-    margin: 4px 0px;
+div.button-panel button[type="reset"] {
+    background-color: var(--color-light);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+}
+
+div.button-panel button[type="reset"]:hover {
+    background-color: var(--color-border);
+    border-color: var(--color-text);
+}
+
+/**
+ * RESPONSIVO - TABLET (max-width: 1024px)
+ * Layout muda de 2 colunas para 1 coluna
+ * Sidebar e form empilham verticalmente
+ */
+
+/* Responsive */
+
+@media (max-width: 1024px) {
+    div.contact-container {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+}
+
+/**
+ * RESPONSIVO - MOBILE (max-width: 768px)
+ * Títulos menores; botões em coluna única
+ * Cards de contato compactados
+ */
+
+@media (max-width: 768px) {
+    div.contact-container {
+        gap: 24px;
+    }
+
+    aside.contact-info > h2,
+    section.form-section > h2 {
+        font-size: 1.5rem;
+    }
+
+    div.contact-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    div.contact-icon {
+        margin: 0 auto;
+    }
+
+    div.button-panel {
+        flex-direction: column;
+    }
+
+    div.button-panel button {
+        width: 100%;
+    }
 }

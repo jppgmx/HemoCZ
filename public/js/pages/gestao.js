@@ -1,3 +1,5 @@
+const { debounce } = require("chart.js/helpers");
+
 let greetingsElement = document.getElementById('greetings');
 
 let uiResponse = fetch('/api/session/user-info', {

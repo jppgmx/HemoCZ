@@ -25,6 +25,7 @@
   "homepage": "https://github.com/jppgmx/HemoCZ#readme",
   "dependencies": {
     "argon2": "^0.44.0",
+    "axios": "^1.13.2",
     "chart.js": "^4.5.1",
     "cookie-parser": "^1.4.7",
     "express": "^5.1.0",
