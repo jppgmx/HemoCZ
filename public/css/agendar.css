@@ -1,11 +1,151 @@
+/**
+ * ====================================================================
+ * PÁGINA DE AGENDAMENTO - FORMULÁRIO RESPONSIVO
+ * ====================================================================
+ * Formulário com grid de 2 colunas; botão centralizado
+ * Validação visual com cores de borda ao focar
+ * Ícone de select customizado via SVG data-uri
+ */
+
 h1 {
-    padding-left: 16px;
+    font-size: 2rem;
+    color: var(--color-text);
+    margin-bottom: 32px;
+    font-weight: 600;
+    text-align: left;
 }
 
+/**
+ * GRID DO FORMULÁRIO
+ * 2 colunas em desktop; campos como nome+sobrenome, email+tel, data+hora
+ * gap: 20px oferece espaçamento consistente
+ * Responsivo: muda para 1 coluna em 1024px via media query
+ */
 form {
-    row-gap: 4px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    row-gap: 20px;
+    max-width: 900px;
 }
 
-main {
-    padding-right: 24px;
+form div {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+form label {
+    color: var(--color-text);
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+/**
+ * INPUTS E SELECTS
+ * appearance: none remove estilos nativos para customização
+ * :focus box-shadow cria halo azul (--color-primary 10% opacity)
+ * Transição suave em todos os estados
+ */
+form input[type="text"],
+form input[type="email"],
+form input[type="tel"],
+form input[type="date"],
+form input[type="time"],
+form select {
+    padding: 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    font-family: "Ubuntu";
+    font-size: 1rem;
+    background-color: white;
+    color: var(--color-text);
+    transition: var(--transition);
+}
+
+form input[type="text"]:focus,
+form input[type="email"]:focus,
+form input[type="tel"]:focus,
+form input[type="date"]:focus,
+form input[type="time"]:focus,
+form select:focus {
+    border: 2px solid var(--color-primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
+    background-color: white;
+}
+
+/**
+ * SELECT CUSTOMIZADO
+ * appearance: none remove dropdown nativo
+ * background-image: ícone SVG inline que muda cor ao :focus
+ * background-position e background-size posicionam ícone na direita
+ * padding-right: 40px deixa espaço para o ícone
+ */
+form select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232C3E50' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 20px;
+    padding-right: 40px;
+}
+
+form select:focus {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238B0000' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+}
+
+/* Data e Hora na mesma linha */
+form div:nth-child(5),
+form div:nth-child(6) {
+    grid-column: auto;
+}
+
+/* Botao centralizado na ultima linha */
+/**
+ * BOTÃO - LAYOUT GRID
+ * grid-column: 1 / -1 faz botão ocupar ambas colunas
+ * justify-self: center centra na horizontal
+ * max-width: 300px limita largura máxima
+ */
+form button {
+    grid-column: 1 / -1;
+    max-width: 300px;
+    justify-self: center;
+    margin-top: 12px;
+}
+
+@media (max-width: 1024px) {
+    form {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    h1 {
+        font-size: 1.7rem;
+        margin-bottom: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    form {
+        gap: 12px;
+        max-width: 100%;
+    }
+    
+    h1 {
+        font-size: 1.4rem;
+        margin-bottom: 20px;
+    }
+    
+    form input[type="text"],
+    form input[type="email"],
+    form input[type="tel"],
+    form input[type="date"],
+    form input[type="time"],
+    form select {
+        padding: 10px;
+        font-size: 0.95rem;
+    }
 }

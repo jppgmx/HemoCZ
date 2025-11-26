@@ -9,13 +9,64 @@
     <title>SAHON - Entrar</title>
 </head>
 <body>
-    <form action="" method="post" name="login">
-        <span class="form-title">Entrar</span>
-        <input type="text" placeholder="Usuário" name="usuario">
-        <input type="password" placeholder="Senha" name="senha">
-        <button type="submit">Login</button>
-        <a href="#">Esqueceu a senha?</a>
-    </form>
+    <header>
+        <div class="logo-box">
+            <div class="logo-box-group">
+                <a href="/"><img width="75" src="images/logo.png"></a>
+            </div>
+        </div>
+        <input type="checkbox" class="menu-toggler">
+        <nav class="hmenu">
+            <a class="menu-link" href="/doacao">Doação de Sangue</a>
+            <a class="menu-link" href="/agendar">Agendar</a>
+            <a class="menu-link" href="/assistencia">Assistência</a>
+            <a class="menu-link" href="/contato">Contato</a>
+            <a class="menu-link" href="/gestao">Gestão</a>
+        </nav>
+    </header>
+
+    <main>
+        <form action="" method="post" name="login">
+            <span class="form-title">Entrar</span>
+            <input type="text" placeholder="Usuário" name="usuario">
+            <input type="password" placeholder="Senha" name="senha">
+            <button type="submit">Login</button>
+            <a href="#">Esqueceu a senha?</a>
+        </form>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Hemonúcleo de Cajazeiras</h3>
+                <p>Rua José Rodovalho de Alençar</p>
+                <p>Bairro Cristo Rei, Cajazeiras - PB</p>
+                <p>58900-000</p>
+            </div>
+
+            <div class="footer-section">
+                <h3>Contato</h3>
+                <p><strong>Ouvidoria/SAC</strong></p>
+                <p><a href="mailto:sac@hemonucleo.cz.br" class="email">sac@hemonucleo.cz.br</a></p>
+                <p style="margin-top: 12px;"><strong>SIC</strong></p>
+                <p><a href="mailto:sic@hemonucleo.cz.br" class="email">sic@hemonucleo.cz.br</a></p>
+            </div>
+
+            <div class="footer-section">
+                <h3>Rápidos</h3>
+                <ul class="footer-links">
+                    <li><a href="/doacao">Doação de Sangue</a></li>
+                    <li><a href="/agendar">Agendar</a></li>
+                    <li><a href="/assistencia">Assistência</a></li>
+                    <li><a href="/gestao">Gestão</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 Hemonúcleo de Cajazeiras. Todos os direitos reservados.</p>
+        </div>
+    </footer>
 
     <script src="js/main.js"></script>
     <script type="module" src="js/pages/login.js"></script>

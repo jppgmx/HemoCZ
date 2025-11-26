@@ -1,0 +1,522 @@
+/**
+ * ====================================================================
+ * ASSISTÊNCIA - PÁGINA DINÂMICA COM SLIDESHOW E CAMPANHAS
+ * ====================================================================
+ * Estilos para slideshow, campanhas ativas, eventos e modal interativo
+ * Integrado com JavaScript para renderização dinâmica (assistencia.js)
+ */
+
+/**
+ * SLIDESHOW CONTAINER
+ * Posicionamento relativo permite que elementos filhos (slides, botões) fiquem absolutos
+ * box-shadow suaviza a separação visual
+ * margin-bottom: 60px garante espaço até seção de campanhas
+ */
+
+/* Slideshow Container */
+.slideshow-container {
+    position: relative;
+    max-width: 100%;
+    background-color: var(--color-light);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 60px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.slideshow {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    overflow: hidden;
+}
+
+/**
+ * SLIDES - RENDERIZAÇÃO VIA JS
+ * display: none oculta slides; .active mostra o slide ativo
+ * fadeIn animation transiciona suavemente entre slides
+ * Gradiente de cor vermelha como fallback (se imagem falhar)
+ */
+.slide {
+    display: none;
+    width: 100%;
+    height: 100%;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.slide.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--color-primary) 0%, #c41e3a 100%);
+    color: white;
+}
+
+.slide-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.slide-content {
+    text-align: center;
+    padding: 40px;
+    z-index: 10;
+}
+
+.slide-content h3 {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+
+.slide-content p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/**
+ * BOTÕES DE NAVEGAÇÃO DO SLIDESHOW
+ * Posicionamento absoluto (top: 50%, margin-top: -25px) centraliza verticalmente
+ * z-index: 20 fica acima dos slides (z-index padrão 0)
+ * left/right: 20px coloca botões nas laterais com espaço
+ * Hover com opacity 0.8 para feedback visual
+ */
+
+/* Slide Navigation Buttons */
+.slide-btn {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: 50px;
+    height: 50px;
+    margin-top: -25px;
+    padding: 0;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
+    font-weight: bold;
+    font-size: 24px;
+    border: none;
+    border-radius: 4px;
+    transition: var(--transition);
+    z-index: 20;
+}
+
+.slide-btn:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.prev {
+    left: 20px;
+}
+
+.next {
+    right: 20px;
+}
+
+/**
+ * DOTS (INDICADORES DE SLIDE)
+ * Renderizados dinamicamente em JS; .active mostra slide ativo
+ * transform: scale(1.2) agrega feedback visual ao indicador ativo
+ * Facilita navegação por clique em qualquer indicador
+ */
+
+/* Slide Dots */
+.slide-dots {
+    text-align: center;
+    padding: 16px 0;
+    background-color: white;
+}
+
+.dot {
+    cursor: pointer;
+    height: 12px;
+    width: 12px;
+    margin: 0 6px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    transition: var(--transition);
+}
+
+.dot.active {
+    background-color: var(--color-primary);
+    transform: scale(1.2);
+}
+
+.dot:hover {
+    background-color: #999;
+}
+
+/**
+ * SEÇÕES - HEADERS E SUBTÍTULOS
+ * Títulos centralizados com subtítulos explicativos
+ * Margin-bottom: 40px garante espaço antes do conteúdo
+ * Padrão repetido em slideshow, campanhas e eventos
+ */
+
+/* Section Headers */
+.section-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.section-header h2 {
+    font-size: 2rem;
+    color: var(--color-text);
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.section-subtitle {
+    font-size: 1rem;
+    color: #999;
+    margin: 0;
+}
+
+/**
+ * GRID DE CAMPANHAS
+ * CSS Grid com auto-fit permite responsividade automática
+ * minmax(300px, 1fr) garante cards legíveis mesmo em telas pequenas
+ * gap: 24px fornece espaçamento consistente entre cards
+ */
+
+/* Campaigns Section */
+.campaigns-section {
+    margin-bottom: 60px;
+}
+
+.campaigns-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+/**
+ * CARDS DE CAMPANHAS
+ * border-left: 4px solid --color-primary identifica cards de forma visual
+ * :hover com transform translateY(-4px) cria efeito "levitação"
+ * box-shadow aumenta ao hover para profundidade
+ */
+.campaign-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    transition: var(--transition);
+    border-left: 4px solid var(--color-primary);
+    cursor: pointer;
+}
+
+.campaign-card:hover {
+    box-shadow: 0 8px 24px rgba(139, 0, 0, 0.12);
+    transform: translateY(-4px);
+}
+
+.campaign-icon {
+    font-size: 2.5rem;
+    padding: 20px;
+    text-align: center;
+    background-color: var(--color-secondary);
+}
+
+.campaign-body {
+    padding: 20px;
+}
+
+.campaign-body h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.2rem;
+    color: var(--color-text);
+    font-weight: 600;
+}
+
+.campaign-body p {
+    margin: 0 0 16px 0;
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.campaign-btn {
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: "Ubuntu";
+}
+
+.campaign-btn:hover {
+    background-color: var(--color-primary-hover);
+    box-shadow: 0 2px 8px rgba(139, 0, 0, 0.2);
+    transform: translateY(-1px);
+}
+
+/**
+ * GRID DE EVENTOS
+ * Mesmo padrão que campanhas, mas com minmax(280px) para eventos mais compactos
+ * Cards incluem header com data/hora (gradient) e body com detalhes
+ */
+
+/* Events Section */
+.events-section {
+    margin-bottom: 60px;
+}
+
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+/**
+ * CARDS DE EVENTOS
+ * border-top: 4px diferencia visualmente de cards de campanhas (border-left)
+ * .event-header com gradiente comunica urgência/destaque
+ * .event-location usa cor primary para destacar local
+ */
+.event-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    transition: var(--transition);
+    border-top: 4px solid var(--color-primary);
+    cursor: pointer;
+}
+
+.event-card:hover {
+    box-shadow: 0 8px 24px rgba(139, 0, 0, 0.12);
+    transform: translateY(-4px);
+}
+
+.event-header {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.event-date {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.event-time {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+.event-body {
+    padding: 20px;
+}
+
+.event-body h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.1rem;
+    color: var(--color-text);
+    font-weight: 600;
+}
+
+.event-location {
+    font-size: 0.9rem;
+    color: var(--color-primary);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.event-body p {
+    margin: 0 0 16px 0;
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.event-btn {
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: "Ubuntu";
+}
+
+.event-btn:hover {
+    background-color: var(--color-primary-hover);
+    box-shadow: 0 2px 8px rgba(139, 0, 0, 0.2);
+    transform: translateY(-1px);
+}
+
+/**
+ * MODAL - DIÁLOGO FIXO OVERLAY
+ * position: fixed garante que fica sobre conteúdo independente de scroll
+ * z-index: 1000 fica acima de header (z-index: 100) e outros elementos
+ * background-color: rgba(0,0,0,0.5) escurece conteúdo atrás (overlay escuro)
+ * display: none por padrão; .active via JS exibe como flex
+ */
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/**
+ * CONTEÚDO MODAL
+ * max-width: 600px; width: 90% ajusta em telas pequenas (90% de espaço)
+ * max-height: 80vh; overflow-y: auto permite scroll interno em modais grandes
+ * Box-shadow renderiza profundidade sobre overlay
+ * position: relative permite que .modal-close (absolute) fique relativo a este elemento
+ */
+.modal-content {
+    background-color: white;
+    padding: 40px;
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: var(--color-text);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.modal-close:hover {
+    color: var(--color-primary);
+    transform: scale(1.2);
+}
+
+#modal-title {
+    margin-top: 0;
+    color: var(--color-text);
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+#modal-body {
+    color: #666;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .slideshow {
+        height: 300px;
+    }
+
+    .slide-content h3 {
+        font-size: 2rem;
+    }
+
+    .campaigns-grid,
+    .events-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .slideshow {
+        height: 250px;
+    }
+
+    .slide-btn {
+        width: 40px;
+        height: 40px;
+        margin-top: -20px;
+        font-size: 18px;
+    }
+
+    .prev {
+        left: 10px;
+    }
+
+    .next {
+        right: 10px;
+    }
+
+    .slide-content {
+        padding: 20px;
+    }
+
+    .slide-content h3 {
+        font-size: 1.5rem;
+    }
+
+    .slide-content p {
+        font-size: 0.9rem;
+    }
+
+    .section-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .campaigns-grid,
+    .events-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .campaign-card,
+    .event-card {
+        margin-bottom: 8px;
+    }
+
+    .modal-content {
+        padding: 24px;
+        width: 95%;
+    }
+
+    #modal-title {
+        font-size: 1.4rem;
+    }
+}

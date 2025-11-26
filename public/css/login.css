@@ -1,72 +1,179 @@
-body {
+/**
+ * ====================================================================
+ * PÁGINA DE LOGIN - CARD CENTRALIZADO
+ * ====================================================================
+ * Formulário em card branco com border vermelho
+ * Centralizado verticalmente e horizontalmente
+ * Responsivo: width: 100% em telas pequenas, max-width: 450px em desktop
+ */
+
+main {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex: 1;
+    width: 100%;
+    padding: 32px;
+    box-sizing: border-box;
 }
 
+/**
+ * FORMULÁRIO COMO CARD
+ * border: 2px solid --color-primary destaca o form visualmente
+ * max-width: 450px mantém legibilidade em telas largas
+ * box-shadow oferece profundidade
+ * :hover aumenta shadow para feedback
+ */
 form {
-    border: 2px solid red;
-    border-radius: 20px;
-    min-width: 400px;
-    min-height: 400px;
-    width: fit-content;
-    height: fit-content;
+    background: white;
+    border: 2px solid var(--color-primary);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 450px;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    padding: 16px;
-    margin: 0px;
+    padding: 48px 32px;
+    box-shadow: 0 8px 32px rgba(139, 0, 0, 0.12);
+    transition: var(--transition);
+}
+
+form:hover {
+    box-shadow: 0 12px 48px rgba(139, 0, 0, 0.15);
 }
 
 form > * {
     width: 100%;
-    margin: 16px 0px;
+    margin: 12px 0;
 }
 
+form > *:first-child {
+    margin-top: 0;
+}
+
+/**
+ * TITLE SPAN
+ * Títulos dentro do formulário usam <span> com classe .form-title
+ * Centralizado e em destaque (font-size: 2rem, font-weight: 700)
+ */
 span.form-title {
     text-align: center;
-    font: normal bold 34px Arial
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text);
+    font-family: "Ubuntu";
+    margin-bottom: 32px;
 }
 
+/**
+ * INPUTS DE LOGIN
+ * height: 48px deixa confortável para digitação
+ * :focus com box-shadow: 0 0 0 3px rgba(..., 0.1) cria halo suave
+ * :hover com border-color transmite interatividade
+ */
 form > input {
     appearance: none;
     height: 48px;
-    font-size: 18px;
+    font-size: 1rem;
     box-sizing: border-box;
-    border: 2px solid lightgray;
-    border-radius: 5px;
+    border: 2px solid var(--color-border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-family: "Ubuntu";
+    color: var(--color-text);
+    background-color: white;
+    transition: var(--transition);
+}
 
-    padding-left: 16px;
+form > input::placeholder {
+    font-size: 1rem;
+    color: #999;
 }
 
 form > input:focus {
-    border: 1px solid red;
+    border: 2px solid var(--color-primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
+    background-color: white;
 }
 
-input::placeholder {
-    font-size: 18px;
+form > input:hover {
+    border-color: var(--color-primary-hover);
 }
 
+/**
+ * BOTÃO DE LOGIN
+ * height: 48px alinha com inputs para proporção visual consistente
+ * margin-top: 24px cria espaço após inputs
+ * :hover com transform translateY(-2px) simula elevação
+ */
 form > button {
     height: 48px;
-    font-size: 18px;
-    background-color: red;
+    font-size: 1rem;
+    background-color: var(--color-primary);
     border: none;
-    border-radius: 7px;
+    border-radius: 8px;
     color: white;
+    font-family: "Ubuntu";
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-top: 24px;
 }
 
 form > button:hover {
-    background-color: rgb(200, 0, 0);
-    cursor: pointer;
+    background-color: var(--color-primary-hover);
+    box-shadow: 0 4px 12px rgba(139, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+form > button:active {
+    transform: translateY(0);
 }
 
 form > a {
     text-decoration: none;
-    font: normal bold 18px "Arial";
-    color: red;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    font-family: "Ubuntu";
+    text-align: center;
+    transition: var(--transition);
+    margin-top: 16px;
 }
 
 form > a:hover {
-    color: rgb(200, 0, 0);
+    color: var(--color-primary-hover);
+    text-decoration: underline;
+}
+
+@media (max-width: 1024px) {
+    main {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    main {
+        padding: 12px;
+    }
+
+    form {
+        padding: 32px 20px;
+    }
+
+    span.form-title {
+        font-size: 1.5rem;
+        margin-bottom: 24px;
+    }
+
+    form > input {
+        height: 44px;
+        font-size: 0.95rem;
+    }
+
+    form > button {
+        height: 44px;
+        font-size: 0.95rem;
+    }
 }

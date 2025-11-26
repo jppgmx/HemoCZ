@@ -13,10 +13,9 @@
         <div class="logo-box">
             <div class="logo-box-group">
                 <a href="/"><img width="75" src="images/logo.png"></a>
-                <hr>
             </div>
-            <input type="checkbox" class="menu-toggler">
         </div>
+        <input type="checkbox" class="menu-toggler">
         <nav class="hmenu">
             <a class="menu-link" href="/doacao">Doação de Sangue</a>
             <a class="menu-link" href="/agendar">Agendar</a>
@@ -26,37 +25,97 @@
         </nav>
     </header>
     <main>
-        <h1 id="greetings">Olá, user!</h1>
-        <h2>Agendamentos em processo</h2>
-        <table id="appointments-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>Tipo Sanguíneo</th>
-                    <th>Telefone</th>
-                    <th>e-mail</th>
-                    <th>Data Agendada</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Linhas de agendamentos serão inseridas aqui via JavaScript -->
-            </tbody>
-        </table>
+        <div class="dashboard-header">
+            <h1 id="greetings">Olá, user!</h1>
+            <p class="subtitle">Painel de Gestão de Agendamentos</p>
+        </div>
+
+        <!-- Metrics Cards -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon">📋</div>
+                <div class="metric-content">
+                    <h3>Agendamentos</h3>
+                    <p class="metric-value" id="total-appointments">0</p>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon">✓</div>
+                <div class="metric-content">
+                    <h3>Este Mês</h3>
+                    <p class="metric-value" id="month-appointments">0</p>
+                </div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon">⏰</div>
+                <div class="metric-content">
+                    <h3>Pendentes</h3>
+                    <p class="metric-value" id="pending-appointments">0</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <div class="chart-container">
+                <h2>Coletas por Mês</h2>
+                <canvas id="monthly-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Appointments Table -->
+        <div class="table-section">
+            <h2>Agendamentos em Processo</h2>
+            <div class="table-wrapper">
+                <table id="appointments-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Tipo Sanguíneo</th>
+                            <th>Telefone</th>
+                            <th>E-mail</th>
+                            <th>Data Agendada</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Linhas de agendamentos serão inseridas aqui via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </main>
     <footer>
-        <div class="footer-info-block">
-            <p>Hemonúcleo de Cajazeiras</p>
-            <p>Rua José Rodovalho de Alençar</p>
-            <p>Bairro Cristo Rei, Cajazeiras - PB</p>
-            <p>58900-000</p>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Hemonúcleo de Cajazeiras</h3>
+                <p>Rua José Rodovalho de Alençar</p>
+                <p>Bairro Cristo Rei, Cajazeiras - PB</p>
+                <p>58900-000</p>
+            </div>
+
+            <div class="footer-section">
+                <h3>Contato</h3>
+                <p><strong>Ouvidoria/SAC</strong></p>
+                <p><a href="mailto:sac@hemonucleo.cz.br" class="email">sac@hemonucleo.cz.br</a></p>
+                <p style="margin-top: 12px;"><strong>SIC</strong></p>
+                <p><a href="mailto:sic@hemonucleo.cz.br" class="email">sic@hemonucleo.cz.br</a></p>
+            </div>
+
+            <div class="footer-section">
+                <h3>Rápidos</h3>
+                <ul class="footer-links">
+                    <li><a href="/doacao">Doação de Sangue</a></li>
+                    <li><a href="/agendar">Agendar</a></li>
+                    <li><a href="/assistencia">Assistência</a></li>
+                    <li><a href="/gestao">Gestão</a></li>
+                </ul>
+            </div>
         </div>
-        <div class="footer-info-block">
-            <p>Ouvidoria/SAC</p>
-            <p class="email">sac@hemonucleo.cz.br</p>
-            <p>Serviço de Informação ao Cidadão/SIC</p>
-            <p class="email">sic@hemonucleo.cz.br</p>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 Hemonúcleo de Cajazeiras. Todos os direitos reservados.</p>
         </div>
     </footer>
 
