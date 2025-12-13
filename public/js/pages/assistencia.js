@@ -3,17 +3,17 @@ const slides = [
   {
     title: 'Doe sangue, salve vidas',
     text: 'Campanhas regulares em diversas unidades — veja como participar.',
-    img: 'images/assist-slide-1.jpg'
+    img: 'images/img1.jpg'
   },
   {
     title: 'Junte sua equipe',
     text: 'Empresas, escolas e clubes podem organizar coletas para doação.' ,
-    img: 'images/assist-slide-2.jpg'
+    img: 'images/img3.jpg'
   },
   {
     title: 'Voluntariado',
     text: 'Participe como voluntário e aprenda a ajudar nos eventos locais.',
-    img: 'images/assist-slide-3.jpg'
+    img: 'images/img2.jpg'
   }
 ];
 
@@ -240,7 +240,6 @@ function initAssistenciaPage() {
   if (prev) prev.addEventListener('click', () => { stopAutoSlide(); prevSlide(); startAutoSlide(); });
 }
 
-// initialize when DOM ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initAssistenciaPage);
 } else {
