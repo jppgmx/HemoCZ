@@ -16,7 +16,7 @@ const selectHora = agendamentoForm.hora;
 
 
 //(Inspirado em um codigo que vi no github)
-function pegardatadehoje() {
+function getTimeOfDay() {
     const today = new Date();
     // Ajuste para o fuso horário local para evitar problemas de data
     const offset = today.getTimezoneOffset() * 60000;
@@ -25,7 +25,7 @@ function pegardatadehoje() {
 }
 
 // Define a data mínima como hoje
-inputData.min = pegardatadehoje(); 
+inputData.min = getTimeOfDay(); 
 
 
 const MAX_VAGAS_POR_HORA = 4;
@@ -37,7 +37,7 @@ const HORARIOS_DISPONIVEIS = ['07', '08', '09', '10', '11', '12'];
  * @param {string} horaString -
  * @returns {number} 
  */
-function Disponibilidadeee(dataString, horaString) {
+function available(dataString, horaString) {
     const agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
     let count = 0;
 
@@ -64,7 +64,7 @@ function renderTimeSlots() {
     selectHora.innerHTML = '';
     
     // Aqui é onde validamos a data (Inspirado em um codigo que vi no github)
-    const todayString = pegardatadehoje();
+    const todayString = getTimeOfDay();
 
     if (!selectedDate || selectedDate < todayString) { // Verifica se a data é anterior a hoje
         let defaultOption = document.createElement('option');
@@ -92,7 +92,7 @@ function renderTimeSlots() {
 
     // aqui preenche as opcoes de horario
     for (let h of HORARIOS_DISPONIVEIS) {
-        const agendados = Disponibilidadeee(selectedDate, h);
+        const agendados = available(selectedDate, h);
         const vagasDisponiveis = MAX_VAGAS_POR_HORA - agendados;
         const horaFormatada = `${h}:00h`;
 
@@ -109,15 +109,8 @@ function renderTimeSlots() {
         selectHora.appendChild(option);
     }
 }
-
-
 inputData.addEventListener('change', renderTimeSlots);
-
-
 renderTimeSlots();
-
-
-
 agendamentoForm.addEventListener('submit', (e) => {
     e.preventDefault()
 
@@ -150,7 +143,7 @@ agendamentoForm.addEventListener('submit', (e) => {
     }
     
     // Verifica disponibilidade antes de confirmar o agendamento
-    const agendadosNoHorario = Disponibilidadeee(inputData.value, horaSelecionada);
+    const agendadosNoHorario = available(inputData.value, horaSelecionada);
     if (agendadosNoHorario >= MAX_VAGAS_POR_HORA) {
         formAlert("Desculpe, este horário acabou de ser preenchido. Por favor, selecione outro.", 'error');
         renderTimeSlots(); 
