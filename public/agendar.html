@@ -83,17 +83,14 @@
                 required
             >
 
-            <label for="hora">Hora Preferida:</label>
-            <input
-                type="time"
+            <label for="hora">Horários Disponíveis:</label>
+            <select
                 id="hora"
                 name="hora"
-                min="08:00"
-                max="17:00"
-                step="300"
                 required
             >
-
+                <option value="">Carregando horários...</option>
+            </select>
             <button type="submit">Agendar Coleta</button>
         </form>
     </main>
