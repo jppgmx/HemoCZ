@@ -3,17 +3,17 @@ const slides = [
   {
     title: 'Doe sangue, salve vidas',
     text: 'Campanhas regulares em diversas unidades — veja como participar.',
-    img: 'images/ImagemGeradaPorIA1.jpg'
+    img: 'images/assist-slide-1.jpg'
   },
   {
     title: 'Junte sua equipe',
     text: 'Empresas, escolas e clubes podem organizar coletas para doação.' ,
-    img: 'images/GeradaPorIA3.jpg'
+    img: 'images/assist-slide-2.jpg'
   },
   {
     title: 'Voluntariado',
     text: 'Participe como voluntário e aprenda a ajudar nos eventos locais.',
-    img: 'images/GeradaPorIA2.jpg'
+    img: 'images/assist-slide-3.jpg'
   }
 ];
 
