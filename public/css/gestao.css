@@ -253,48 +253,292 @@ table button:active {
 }
 
 /**
+ * DISTRIBUIÇÃO DE TIPOS SANGUÍNEOS
+ * Grid de cards mostrando percentual de cada tipo cadastrado
+ */
+
+.blood-type-section {
+    margin-bottom: 40px;
+}
+
+.blood-type-section h2 {
+    font-size: 1.3rem;
+    color: var(--color-text);
+    margin-bottom: 20px;
+}
+
+.blood-type-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+}
+
+.blood-type-card {
+    background: white;
+    border: 2px solid #eee;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.blood-type-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 12px rgba(139, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.blood-type-header {
+    margin-bottom: 12px;
+}
+
+.blood-type-badge {
+    display: inline-block;
+    background-color: var(--color-primary);
+    color: white;
+    font-weight: 700;
+    font-size: 1.5rem;
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+.blood-type-stats {
+    margin-bottom: 12px;
+}
+
+.blood-type-count {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.blood-type-percentage {
+    margin: 4px 0 0 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.blood-type-bar {
+    height: 6px;
+    background-color: #eee;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.blood-type-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-primary), #ff6b6b);
+    transition: width 0.3s ease;
+}
+
+/**
+ * RESPONSIVO - TABLET (max-width: 1024px)
+ */
+
+@media (max-width: 1024px) {
+    .blood-type-grid {
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    }
+}
+
+/**
+ * RESPONSIVO - MOBILE (max-width: 768px)
+ */
+
+@media (max-width: 768px) {
+    .blood-type-grid {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 12px;
+    }
+
+    .blood-type-card {
+        padding: 12px;
+    }
+
+    .blood-type-badge {
+        font-size: 1.2rem;
+        padding: 6px 10px;
+    }
+
+    .blood-type-percentage {
+        font-size: 1.2rem;
+    }
+
+    .blood-type-count {
+        font-size: 0.8rem;
+    }
+}
+
+/**
+ * MODAL PARA VISUALIZAR MENSAGEM COMPLETA
+
+ */
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.modal[style*="display: flex"] {
+    display: flex !important;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    max-width: 600px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: var(--color-text);
+    font-size: 1.5rem;
+    flex: 1;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #999;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    color: #c41e3a;
+}
+
+.modal-body {
+    padding: 20px;
+    flex: 1;
+}
+
+.modal-info-row {
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+    color: var(--color-text);
+}
+
+.modal-info-row strong {
+    color: var(--color-primary);
+}
+
+.modal-message-content {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-left: 4px solid var(--color-primary);
+    border-radius: 4px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.modal-message-content p {
+    margin: 0;
+}
+
+.modal-actions {
+    padding: 20px;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.modal-actions .btn {
+    padding: 10px 20px;
+}
+
+/**
+ * RESPONSIVO - TABLET (max-width: 1024px)
+ * Ajustes para telas menores
+ */
+
+@media (max-width: 1024px) {
+    .modal-content {
+        max-width: 90vw;
+    }
+}
+
+/**
  * RESPONSIVO - MOBILE (max-width: 768px)
  * Títulos menores; tabelas compactadas
  * Imagens/conteúdo adaptado para móvel
  */
 
 @media (max-width: 768px) {
-    .dashboard-header h1 {
-        font-size: 1.5rem;
+    .modal-content {
+        max-width: 95vw;
+        max-height: 90vh;
     }
 
-    .chart-container,
-    .table-wrapper {
+    .modal-header {
         padding: 16px;
     }
 
-    th, td {
-        padding: 10px 12px;
-        font-size: 0.85rem;
+    .modal-header h2 {
+        font-size: 1.2rem;
     }
 
-    th {
-        font-size: 0.75rem;
-    }
-
-    .metric-card {
+    .modal-body {
         padding: 16px;
     }
 
-    .metric-icon {
-        font-size: 2rem;
+    .modal-message-content {
+        font-size: 0.9rem;
     }
 
-    .metric-value {
-        font-size: 1.5rem;
+    .modal-actions {
+        padding: 16px;
+        flex-direction: column;
     }
 
-    #monthly-chart {
-        height: 200px;
-    }
-
-    table button {
-        padding: 6px 12px;
-        font-size: 0.75rem;
+    .modal-actions .btn {
+        width: 100%;
     }
 }
