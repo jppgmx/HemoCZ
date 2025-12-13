@@ -37,7 +37,7 @@ const HORARIOS_DISPONIVEIS = ['07', '08', '09', '10', '11', '12'];
  * @param {string} horaString -
  * @returns {number} 
  */
-function getAvailability(dataString, horaString) {
+function Disponibilidadeee(dataString, horaString) {
     const agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
     let count = 0;
 
@@ -92,7 +92,7 @@ function renderTimeSlots() {
 
     // aqui preenche as opcoes de horario
     for (let h of HORARIOS_DISPONIVEIS) {
-        const agendados = getAvailability(selectedDate, h);
+        const agendados = Disponibilidadeee(selectedDate, h);
         const vagasDisponiveis = MAX_VAGAS_POR_HORA - agendados;
         const horaFormatada = `${h}:00h`;
 
@@ -150,7 +150,7 @@ agendamentoForm.addEventListener('submit', (e) => {
     }
     
     // Verifica disponibilidade antes de confirmar o agendamento
-    const agendadosNoHorario = getAvailability(inputData.value, horaSelecionada);
+    const agendadosNoHorario = Disponibilidadeee(inputData.value, horaSelecionada);
     if (agendadosNoHorario >= MAX_VAGAS_POR_HORA) {
         formAlert("Desculpe, este horário acabou de ser preenchido. Por favor, selecione outro.", 'error');
         renderTimeSlots(); 
