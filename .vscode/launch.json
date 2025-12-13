@@ -9,12 +9,6 @@
             "configurations": [
                 "Launch Express Server", "Launch Edge"
             ]
-        },
-        {
-            "name": "Express + Chrome",
-            "configurations": [
-                "Launch Express Server", "Launch Chrome"
-            ]
         }
     ],
     "configurations": [
@@ -33,13 +27,6 @@
             "type": "msedge",
             "url": "http://localhost:3000",
             "webRoot": "${workspaceFolder}\\public"
-        },
-        {
-            "name": "Launch Chrome",
-            "request": "launch",
-            "type": "chrome",
-            "url": "http://localhost:3000",
-            "webRoot": "${workspaceFolder}\\public"
-        }                      
+        }
     ]
 }
