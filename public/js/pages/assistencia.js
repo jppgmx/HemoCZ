@@ -3,7 +3,7 @@ const slides = [
   {
     title: 'Doe sangue, salve vidas',
     text: 'Campanhas regulares em diversas unidades — veja como participar.',
-    img: 'images/img3.jpg'
+    img: 'images/img1.jpg'
   },
   {
     title: 'Junte sua equipe',
