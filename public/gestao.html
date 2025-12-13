@@ -55,6 +55,14 @@
             </div>
         </div>
 
+        <!--Tipo de sangue a ser distribuio -->
+        <div class="blood-type-section">
+            <h2>Distribuição de Tipos Sanguíneos</h2>
+            <div class="blood-type-grid" id="blood-type-grid">
+                <!-- Cards de tipos sanguíneos serão inseridos aqui via JavaScript -->
+            </div>
+        </div>
+
         <!-- Charts Section -->
         <div class="charts-section">
             <div class="chart-container">
@@ -76,6 +84,7 @@
                             <th>Telefone</th>
                             <th>E-mail</th>
                             <th>Data Agendada</th>
+                            <th>Status</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -85,7 +94,58 @@
                 </table>
             </div>
         </div>
+
+        <!-- Messages Section -->
+        <div class="table-section">
+            <h2>Mensagens Recebidas</h2>
+            <div class="table-wrapper">
+                <table id="messages-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;"><input type="checkbox" id="select-all-messages" /></th>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Assunto</th>
+                            <th>Mensagem</th>
+                            <th>Data</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Linhas de mensagens serão inseridas aqui via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="messages-actions" style="margin-top: 12px; display: flex; gap: 12px;">
+                <button id="send-messages-btn" class="btn-action" style="background-color: #28a745;">Enviar Resposta</button>
+                <button id="delete-messages-btn" class="btn-action" style="background-color: #c41e3a;">Deletar Selecionadas</button>
+            </div>
+        </div>
     </main>
+
+    <!-- Modal para Visualizar Mensagem Completa -->
+    <div id="message-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-assunto">Assunto</h2>
+                <button class="modal-close" onclick="fecharModalMensagem()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-info-row">
+                    <strong>De:</strong> <span id="modal-nome"></span> (<span id="modal-email"></span>)
+                </div>
+                <div class="modal-info-row">
+                    <strong>Data:</strong> <span id="modal-data"></span>
+                </div>
+                <div class="modal-message-content">
+                    <p id="modal-mensagem"></p>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn" onclick="fecharModalMensagem()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <div class="footer-content">
             <div class="footer-section">
@@ -121,6 +181,4 @@
 
     <script src="js/main.js"></script>
     <script src="js/pages/gestao.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.min.js" integrity="sha512-n/G+dROKbKL3GVngGWmWfwK0yPctjZQM752diVYnXZtD/48agpUKLIn0xDQL9ydZ91x6BiOmTIFwWjjFi2kEFg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-</body>
 </html>
