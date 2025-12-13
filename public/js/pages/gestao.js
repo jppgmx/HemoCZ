@@ -1,242 +1,367 @@
+let greetingsElement = document.getElementById('greetings');
+
+let uiResponse = fetch('/api/session/user-info', {
+    method: 'GET',
+    credentials: 'include'
+}).then(async response => {
+    if (!response.ok) {
+        throw new Error('Failed to fetch user info');
+    }
+
+    let data = await response.json();
+    localStorage.setItem('user', data.username);
+    greetingsElement.innerText = `Olá, ${data.name}!`
+}).catch(error => {
+    console.error('Error fetching user info:', error);
+    greetingsElement.innerText = `Olá, usuário!`
+});
+
 /**
- * @typedef {Object} Agendamento
- * @property {string} nome O nome da pessoa
- * @property {string} tipoSanguineo O tipo sanguíneo da pessoa
- * @property {string} telefone Telefone da pessoa
- * @property {string} email E-mail da pessoa
- * @property {Date} dataHora Data/hora da coleta
- * @property {string} [id] ID única do agendamento
- * @property {string} [status] O status do agendamento 
+ * Deleta um agendamento específico do localStorage pelo seu ID único.
+ * @param {string} id - O ID do agendamento a ser deletado.
  */
-
-/** @type {HTMLFormElement} */
-const agendamentoForm = document.forms.agendamento
-const inputData = agendamentoForm.data;
-const selectHora = agendamentoForm.hora;
-
-
-//(Inspirado em um codigo que vi no github)
-function getTimeOfDay() {
-    const today = new Date();
-    // Ajuste para o fuso horário local para evitar problemas de data
-    const offset = today.getTimezoneOffset() * 60000;
-    const localISOTime = (new Date(today.getTime() - offset)).toISOString().substring(0, 10);
-    return localISOTime;
+function deletarAgendamento(id) {
+    let agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
+    agendamentos = agendamentos.filter(a => a.id !== id);
+    
+    localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
+    renderizarTabelaAgendamentos(); 
 }
 
-// Define a data mínima como hoje
-inputData.min = getTimeOfDay(); 
-
-
-const MAX_VAGAS_POR_HORA = 4;
-const HORARIOS_DISPONIVEIS = ['07', '08', '09', '10', '11', '12'];
-
 /**
- * 
- * @param {string} dataString - 
- * @param {string} horaString -
- * @returns {number} 
+ * Atualiza o status de um agendamento para o valor selecionado.
+ * @param {string} id - O ID do agendamento a ser atualizado.
+ * @param {string} novoStatus - O novo status ('Aguardando Coleta' ou 'Coletado').
  */
-function available(dataString, horaString) {
-    const agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
-    let count = 0;
+function atualizarStatus(id, novoStatus) {
+    let agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
+    const index = agendamentos.findIndex(a => a.id === id);
 
-    for (const ag of agendamentos) {
-        try {
-            const agDate = new Date(ag.dataHora);
-            
-            // Verifica se a data e a hora
-            if (agDate.toISOString().substring(0, 10) === dataString &&
-                agDate.getHours().toString().padStart(2, '0') === horaString) {
-                count++;
+    
+    if (index > -1 && ['Aguardando', 'Coletado'].includes(novoStatus)) {
+        agendamentos[index].status = novoStatus;
+        localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
+        renderizarTabelaAgendamentos(); 
+    }
+}
+
+
+function renderizarTabelaAgendamentos() {
+    const tableBody = document.querySelector('#appointments-table tbody');
+    tableBody.innerHTML = '';
+    let agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
+
+    for (let agendamento of agendamentos) {
+       
+        const status = agendamento.status || "Aguardando";
+        
+        let row = document.createElement('tr');
+        const keys = ['id', 'nome', 'tipoSanguineo', 'telefone', 'email', 'dataHora'];
+
+        for(let key of keys) {
+            let cell = document.createElement('td');
+            if (key === 'dataHora') {
+                const date = new Date(agendamento[key]);
+                cell.innerText = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+            } else {
+                cell.innerText = key === 'id' ? agendamento[key].substring(0, 8) + '...' : agendamento[key];
             }
-        } catch (e) {
-            // Ignora os agendamentos inválidos
-            console.error("Agendamento inválido:", ag);
-        }
-    }
-    return count;
-}
-
-//função que seta os horarios disponíveis no select
-function renderTimeSlots() {
-    const selectedDate = inputData.value;
-    selectHora.innerHTML = '';
-    
-    // Aqui é onde validamos a data (Inspirado em um codigo que vi no github)
-    const todayString = getTimeOfDay();
-
-    if (!selectedDate || selectedDate < todayString) { // Verifica se a data é anterior a hoje
-        let defaultOption = document.createElement('option');
-        defaultOption.value = '';
-
-        if (!selectedDate) {
-            defaultOption.textContent = 'Selecione a Data primeiro';
-        } else {
-            // Aqui impede selecionar datas passadas
-            defaultOption.textContent = 'Data Inválida: Não é possível agendar para datas passadas';
-            defaultOption.disabled = true;
+            row.appendChild(cell);
         }
 
-        selectHora.appendChild(defaultOption);
-        return;
-    }
 
-    
+        let statusCell = document.createElement('td');
+        statusCell.innerText = status;
+        statusCell.className = status === "Coletado" ? 'status-coletado' : 'status-aguardando';
+        row.appendChild(statusCell);
 
-    
-    let headerOption = document.createElement('option');
-    headerOption.value = '';
-    headerOption.textContent = 'Selecione o Horário';
-    selectHora.appendChild(headerOption);
+      
+        let actionsCell = document.createElement('td');
+        actionsCell.style.display = 'flex';
+        actionsCell.style.gap = '8px';
 
-    // aqui preenche as opcoes de horario
-    for (let h of HORARIOS_DISPONIVEIS) {
-        const agendados = available(selectedDate, h);
-        const vagasDisponiveis = MAX_VAGAS_POR_HORA - agendados;
-        const horaFormatada = `${h}:00h`;
-
-        let option = document.createElement('option');
-        option.value = h; 
-        option.textContent = `${horaFormatada} (${vagasDisponiveis} vaga${vagasDisponiveis !== 1 ? 's' : ''})`;
+      
+        let statusSelect = document.createElement('select');
+        statusSelect.className = 'status-select';
         
-        // se nao tiver vagas, desabilita a opcao
-        if (vagasDisponiveis <= 0) {
-            option.disabled = true;
-            option.textContent += ' - Sem Vagas';
-        }
+// aqui são as opções
+        const options = [
+             { value: '', text: 'Status', disabled: true, selected: true }, 
+             { value: 'Aguardando', text: 'Aguardando' }, 
+             { value: 'Coletado', text: 'Coletado' }
+        ];
+
+        options.forEach(optionData => {
+            let option = document.createElement('option');
+            option.value = optionData.value;
+            option.text = optionData.text;
+            
+            // Define o status selecionado com base no status atual do agendamento
+            if (optionData.value === status) {
+                 option.selected = true;
+            }
+            
+            if(optionData.disabled) {
+                option.disabled = true;
+            }
+            statusSelect.appendChild(option);
+        });
+
+       
+        statusSelect.onchange = (e) => {
+            const newStatus = e.target.value;
+            
+            if (!newStatus) return; 
+
+            const confirmationMessage = `Confirma a alteração do status do agendamento de ${agendamento.nome} para "${newStatus}"?`;
+
+            if (confirm(confirmationMessage)) {
+                // Se o usuário confirmar, atualiza o status
+                atualizarStatus(agendamento.id, newStatus);
+            } else {
+                // caso cancelar a opção volta ao status anterior
+                e.target.value = status; 
+            }
+        };
+        actionsCell.appendChild(statusSelect);
+
         
-        selectHora.appendChild(option);
-    }
-}
-inputData.addEventListener('change', renderTimeSlots);
-renderTimeSlots();
-agendamentoForm.addEventListener('submit', (e) => {
-    e.preventDefault()
+        let deleteButton = document.createElement('button');
+        deleteButton.innerText = 'Deletar';
+        deleteButton.className = 'delete-btn';
+        deleteButton.style.backgroundColor = '#c41e3a';
+        deleteButton.style.color = 'white';
+        deleteButton.style.padding = '5px 10px'; 
+        deleteButton.style.borderRadius = '4px'; 
+        deleteButton.onclick = () => {
+            if (confirm(`Tem certeza que deseja deletar o agendamento de ${agendamento.nome}?`)) {
+                deletarAgendamento(agendamento.id);
+            }
+        };
+        actionsCell.appendChild(deleteButton);
 
-  
-    const horaSelecionada = selectHora.value.padStart(2, '0');
-    let dt = new Date(`${inputData.value}T${horaSelecionada}:00:00`); 
+
+        row.appendChild(actionsCell);
+        
+        tableBody.appendChild(row);
+    }
+    atualizarMetricas(agendamentos); 
+}
+/**
+ * Atualiza os cards de métricas no topo do painel.
+ * @param {Array<Object>} agendamentos - Lista de agendamentos.
+ */
+function atualizarMetricas(agendamentos) {
+    const totalAppointments = agendamentos.length;
     
+    const now = new Date();
     
-    if (!horaSelecionada) {
-        formAlert("Por favor, selecione um horário válido.", 'error');
+ 
+    const currentMonthAppointments = agendamentos.filter(ag => {
+        const date = new Date(ag.dataHora);
+        const isCurrentMonth = date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+        const isCollected = ag.status === "Coletado"; 
+
+        return isCurrentMonth && isCollected;
+    }).length;
+
+    // Conta agendamentos pendentes 
+    const pendingAppointments = agendamentos.filter(ag => ag.status === "Aguardando" || ag.status === undefined).length;
+
+    document.getElementById('total-appointments').innerText = totalAppointments;
+    document.getElementById('month-appointments').innerText = currentMonthAppointments;
+    document.getElementById('pending-appointments').innerText = pendingAppointments;
+
+    // Atualizar distribuição de tipos sanguíneos
+    atualizarDistribuicaoTiposSanguineos(agendamentos);
+}
+
+/**
+ * Calcula e renderiza a distribuição de tipos sanguíneos
+ * @param {Array<Object>} agendamentos - Lista de agendamentos.
+ */
+function atualizarDistribuicaoTiposSanguineos(agendamentos) {
+    const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+    const total = agendamentos.length;
+
+    if (total === 0) {
+        document.getElementById('blood-type-grid').innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #999;">Nenhum agendamento registrado</p>';
         return;
     }
 
-    /** @type {Agendamento} */
-    let ag = {
-        id: crypto.randomUUID(), 
-        nome: agendamentoForm.nomePessoa.value,
-        tipoSanguineo: agendamentoForm.tipoSanguineo.value,
-        telefone: agendamentoForm.telefone.value,
-        email: agendamentoForm.email.value,
-        dataHora: dt,
-        status: "Aguardando" 
-    }
+    const grid = document.getElementById('blood-type-grid');
+    grid.innerHTML = '';
 
-    try {
-        validar(ag)
-    } catch (error) {
-        formAlert(error.message, 'error')
-        return
-    }
     
-    // Verifica disponibilidade antes de confirmar o agendamento
-    const agendadosNoHorario = available(inputData.value, horaSelecionada);
-    if (agendadosNoHorario >= MAX_VAGAS_POR_HORA) {
-        formAlert("Desculpe, este horário acabou de ser preenchido. Por favor, selecione outro.", 'error');
-        renderTimeSlots(); 
+    const distribution = bloodTypes.map(type => {
+        const count = agendamentos.filter(ag => ag.tipoSanguineo === type).length;
+        const percentage = ((count / total) * 100).toFixed(1);
+        return { type, count, percentage };
+    }).filter(item => item.count > 0);
+
+    // Se nenhum tipo tiver agendamentos, mostrar mensagem
+    if (distribution.length === 0) {
+        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #999;">Nenhum agendamento registrado</p>';
         return;
     }
 
-
-    if(localStorage.getItem('agendamentos') === null) {
-        localStorage.setItem('agendamentos', JSON.stringify([ag]))
-    } else {
-        let agendamentos = JSON.parse(localStorage.getItem('agendamentos'))
-        agendamentos.push(ag)
-        localStorage.setItem('agendamentos', JSON.stringify(agendamentos))
-    }
-
-    agendamentoForm.reset()
-    formAlert('Agendamento realizado com sucesso!')
-    renderTimeSlots(); // Atualiza a lista após o agendamento
-    
-})
-
-//função de alerta customizado
-function formAlert(message, type='success') {
-    let alertContainer = document.createElement('div')
-    alertContainer.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background-color: ${type === 'error' ? '#fee' : '#efe'};
-        border: 2px solid ${type === 'error' ? '#c41e3a' : '#27ae60'};
-        border-radius: 8px;
-        padding: 16px 20px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-family: 'Ubuntu';
-        z-index: 1000;
-        animation: slideInRight 0.3s ease-out;
-        max-width: 90%;
-    `
-
-    let icon = document.createElement('span')
-    icon.innerHTML = type === 'error' ? 
-        '⚠️' : 
-        '✓'
-    icon.style.fontSize = '1.5rem'
-    icon.style.flexShrink = '0'
-
-    let text = document.createElement('p')
-    text.textContent = message
-    text.style.cssText = `
-        margin: 0;
-        color: ${type === 'error' ? '#c41e3a' : '#27ae60'};
-        font-weight: 600;
-        font-size: 1rem;
-    `
-
-    let closeBtn = document.createElement('button')
-    closeBtn.innerHTML = '×'
-    closeBtn.style.cssText = `
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        color: ${type === 'error' ? '#c41e3a' : '#27ae60'};
-        cursor: pointer;
-        padding: 0 4px;
-        flex-shrink: 0;
-    `
-    closeBtn.onclick = () => alertContainer.remove()
-
-    alertContainer.appendChild(icon)
-    alertContainer.appendChild(text)
-    alertContainer.appendChild(closeBtn)
-    document.body.appendChild(alertContainer)
-
-    setTimeout(() => {
-        alertContainer.style.animation = 'slideOutRight 0.3s ease-in'
-        setTimeout(() => alertContainer.remove(), 300)
-    }, 5000)
+    // Renderizar cards de tipos sanguíneos
+    distribution.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'blood-type-card';
+        card.innerHTML = `
+            <div class="blood-type-header">
+                <span class="blood-type-badge">${item.type}</span>
+            </div>
+            <div class="blood-type-stats">
+                <p class="blood-type-count">${item.count} doador${item.count !== 1 ? 'es' : ''}</p>
+                <p class="blood-type-percentage">${item.percentage}%</p>
+            </div>
+            <div class="blood-type-bar">
+                <div class="blood-type-fill" style="width: ${item.percentage}%"></div>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
 }
 
-function validar(agendamento) {
-    const agendamentosExistentes = JSON.parse(localStorage.getItem('agendamentos')) || []
-    
-    const novoEmail = agendamento.email.toLowerCase()
 
-    const agendamentoDuplicado = agendamentosExistentes.find(ag => {
-        const agEmail = ag.email ? ag.email.toLowerCase() : '';
-        return agEmail === novoEmail && ag.status === 'Aguardando'
-    })
+/**
+ * Renderiza a tabela de mensagens recebidas
+ */
+function renderizarTabelaMensagens() {
+    const tableBody = document.querySelector('#messages-table tbody');
+    tableBody.innerHTML = '';
+    let mensagens = JSON.parse(localStorage.getItem('mensagens')) || [];
 
-    if (agendamentoDuplicado) {
-        throw new Error(`O e-mail ${agendamento.email} já possui um agendamento pendente. Por favor, aguarde a data da coleta ou entre em contato com a gestão.`)
+    for (let mensagem of mensagens) {
+        let row = document.createElement('tr');
+        
+        // Checkbox para seleção
+        let checkboxCell = document.createElement('td');
+        let checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'message-checkbox';
+        checkbox.dataset.messageId = mensagem.id;
+        checkboxCell.appendChild(checkbox);
+        row.appendChild(checkboxCell);
+        
+        // Nome
+        let nomeCell = document.createElement('td');
+        nomeCell.innerText = mensagem.nome;
+        row.appendChild(nomeCell);
+        
+        // Email
+        let emailCell = document.createElement('td');
+        emailCell.innerText = mensagem.email;
+        row.appendChild(emailCell);
+        
+        // Assunto
+        let assuntoCell = document.createElement('td');
+        assuntoCell.innerText = mensagem.assunto;
+        row.appendChild(assuntoCell);
+        
+        // Mensagem (truncada com botão para abrir)
+        let msgCell = document.createElement('td');
+        msgCell.style.cursor = 'pointer';
+        msgCell.style.color = '#8B0000';
+        msgCell.style.textDecoration = 'underline';
+        msgCell.innerText = mensagem.mensagem.substring(0, 50) + (mensagem.mensagem.length > 50 ? '...' : '');
+        msgCell.onclick = () => abrirModalMensagem(mensagem);
+        row.appendChild(msgCell);
+        
+        // Data
+        let dataCell = document.createElement('td');
+        const date = new Date(mensagem.data);
+        dataCell.innerText = date.toLocaleDateString();
+        row.appendChild(dataCell);
+        
+        tableBody.appendChild(row);
     }
 }
+
+/**
+ * Deleta as mensagens selecionadas
+ */
+function deletarMensagensEscolhidas() {
+    const checkboxes = document.querySelectorAll('.message-checkbox:checked');
+    if (checkboxes.length === 0) {
+        alert('Nenhuma mensagem selecionada.');
+        return;
+    }
+    
+    if (!confirm(`Tem certeza que deseja deletar ${checkboxes.length} mensagem(ns)?`)) {
+        return;
+    }
+    
+    let mensagens = JSON.parse(localStorage.getItem('mensagens')) || [];
+    const idsToDelete = Array.from(checkboxes).map(cb => cb.dataset.messageId);
+    
+    mensagens = mensagens.filter(m => !idsToDelete.includes(m.id));
+    localStorage.setItem('mensagens', JSON.stringify(mensagens));
+    
+    renderizarTabelaMensagens();
+}
+
+/**
+ * Aqui verificamos se a mensagem esta selecionada
+ */
+function enviarRespostasMensagens() {
+    const checkboxes = document.querySelectorAll('.message-checkbox:checked');
+    if (checkboxes.length === 0) {
+        alert('Nenhuma mensagem selecionada.');
+        return;
+    }
+    
+    alert(`João que vai implementar isso)`);
+}
+
+
+function alternarSelecionarTodosMensagens(isChecked) {
+    const checkboxes = document.querySelectorAll('.message-checkbox');
+    checkboxes.forEach(cb => cb.checked = isChecked);
+}
+
+/**
+ * Abre o modal com a mensagem completa
+ */
+function abrirModalMensagem(mensagem) {
+    document.getElementById('modal-nome').innerText = mensagem.nome;
+    document.getElementById('modal-email').innerText = mensagem.email;
+    document.getElementById('modal-assunto').innerText = mensagem.assunto;
+    document.getElementById('modal-mensagem').innerText = mensagem.mensagem;
+    document.getElementById('modal-data').innerText = new Date(mensagem.data).toLocaleDateString('pt-BR');
+    document.getElementById('message-modal').style.display = 'flex';
+}
+
+
+function fecharModalMensagem() {
+    document.getElementById('message-modal').style.display = 'none';
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('message-modal');
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                fecharModalMensagem();
+            }
+        });
+    }
+});
+
+let ti = setInterval(async () => {
+    renderizarTabelaAgendamentos();
+    renderizarTabelaMensagens();
+}, 5000);
+
+renderizarTabelaAgendamentos();
+renderizarTabelaMensagens();
+
+
+document.getElementById('delete-messages-btn').addEventListener('click', deletarMensagensEscolhidas);
+document.getElementById('send-messages-btn').addEventListener('click', enviarRespostasMensagens);
+document.getElementById('select-all-messages').addEventListener('change', (e) => {
+    alternarSelecionarTodosMensagens(e.target.checked);
+});
