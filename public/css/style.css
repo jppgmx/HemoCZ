@@ -542,3 +542,69 @@ div.button-panel {
         font-size: 1rem;
     }
 }
+
+/* Algumas coisas que adicionei para a pagina index */
+.banner-principal {
+    background: linear-gradient(90deg, rgba(139,0,0,0.06), rgba(44,62,80,0.02));
+    padding: 36px 20px;
+    border-radius: 8px;
+    margin-bottom: 28px;
+}
+.banner-inner { max-width: 900px; margin: 0 auto; text-align: center; }
+.banner-principal h1 { color: var(--color-text); font-size: 2rem; margin-bottom: 8px; }
+.banner-principal .lead { color: rgba(44,62,80,0.9); margin-bottom: 16px; }
+.banner-ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn { display: inline-block; padding: 10px 18px; border-radius: 6px; text-decoration: none; color: white; background: var(--color-primary); transition: var(--transition); }
+.btn.outline { background: transparent; color: var(--color-primary); border: 1px solid var(--color-primary); }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 12px; }
+.final-cta { 
+        text-align: center; 
+        margin: 24px auto; 
+        max-width: 760px;
+        background: #ffffff;
+        padding: 20px 24px;
+        border-radius: 10px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+.final-cta p { margin: 0 0 12px; color: var(--color-text); }
+.final-cta .btn { padding: 12px 22px; font-size: 1rem; }
+
+@media (max-width: 768px) {
+    .final-cta { padding: 14px 12px; margin: 16px 8px; }
+    .final-cta .btn { width: auto; }
+}
+
+@media (max-width: 768px) {
+    .banner-principal h1 { font-size: 1.4rem; }
+}
+
+.education { background: transparent; padding: 0; margin-bottom: 20px; }
+.education h2 { margin: 0 0 12px; color: var(--color-text); }
+.education .edu-intro { margin-bottom: 12px; color: rgba(44,62,80,0.9); }
+.edu-toc { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.edu-toc a { color: var(--color-primary); text-decoration: none; padding: 6px 8px; border-radius: 6px; background: rgba(139,0,0,0.04); }
+.edu-article { padding: 12px 0; }
+.edu-article h3 { margin: 0 0 8px; color: var(--color-primary); font-size: 1.05rem; }
+.edu-article#mitos h3 { font-size: 1.5rem; font-weight: 700; }
+.edu-article p { margin: 0; color: var(--color-text); line-height: 1.6; }
+.edu-sep { border: none; height: 1px; background: var(--color-border); margin: 12px 0; }
+
+.faq { margin: 0; }
+.faq dt { 
+    font-weight: 700; 
+    color: var(--color-primary); 
+    margin-top: 20px;
+    margin-bottom: 8px;
+}
+.faq dt:first-of-type { margin-top: 12px; }
+.faq dd { 
+    margin: 0 0 20px 0; 
+    color: var(--color-text); 
+    line-height: 1.7;
+}
+.faq dt::marker, .faq dt::before { content: none; }
+.faq dd::marker { content: none; }
+
+@media (max-width: 768px) {
+    .edu-list details { padding: 8px 10px; }
+}
