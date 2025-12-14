@@ -359,7 +359,7 @@ let ti = setInterval(async () => {
 renderizarTabelaAgendamentos();
 renderizarTabelaMensagens();
 
-
+ // Adiciona event listeners aos botões
 document.getElementById('delete-messages-btn').addEventListener('click', deletarMensagensEscolhidas);
 document.getElementById('send-messages-btn').addEventListener('click', enviarRespostasMensagens);
 document.getElementById('select-all-messages').addEventListener('change', (e) => {
