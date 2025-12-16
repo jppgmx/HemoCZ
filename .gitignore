@@ -438,5 +438,4 @@ Temporary Items
 !.github
 
 package-lock.json
-
-tmp
+data

@@ -1,6 +1,6 @@
 let greetingsElement = document.getElementById('greetings');
 
-let uiResponse = fetch('/api/session/user-info', {
+let uiResponse = fetch('/api/session/userinfo', {
     method: 'GET',
     credentials: 'include'
 }).then(async response => {
@@ -313,9 +313,139 @@ function enviarRespostasMensagens() {
         return;
     }
     
-    alert(`João que vai implementar isso)`);
+    const idsToRespond = Array.from(checkboxes).map(cb => cb.dataset.messageId);
+    let mensagens = JSON.parse(localStorage.getItem('mensagens')) || [];
+    const toAnswer = mensagens.filter(m => idsToRespond.includes(m.id))
+    
+    let i = 0;
+    let onSend = (hasSend) => {
+        if (hasSend) {
+            let mensagens = JSON.parse(localStorage.getItem('mensagens')) || [];
+            mensagens = mensagens.filter(m => m.id !== toAnswer[i].id);
+            localStorage.setItem('mensagens', JSON.stringify(mensagens));
+            
+            renderizarTabelaMensagens();
+        }
+
+        if(i < toAnswer.length - 1) {
+            i++;
+            abrirModalResposta(toAnswer[i], i + 1, idsToRespond.length, onSend);
+        }
+    };
+    abrirModalResposta(toAnswer[i], i + 1, idsToRespond.length, onSend);
 }
 
+/**
+ * Abre o modal para responder a uma mensagem específica
+ * @param {Object} mensagem - A mensagem a ser respondida.
+ * @param {number} ordem - A ordem da mensagem na lista (para contador).
+ * @param {function} onSend - Callback chamado após o envio da resposta.
+ */
+function abrirModalResposta(mensagem, ordem, total, onSend) {
+    // Cria o modal dinamicamente se não existir
+    let modal = document.getElementById('reply-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'reply-modal';
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="reply-modal-title">Respondendo Mensagem</h2>
+                    <button class="modal-close" onclick="fecharModalResposta()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-info-row">
+                        <strong>De:</strong> <span id="reply-from-name"></span>
+                    </div>
+                    <div class="modal-info-row">
+                        <strong>Email:</strong> <span id="reply-from-email"></span>
+                    </div>
+                    <div class="modal-info-row">
+                        <strong>Assunto:</strong> <span id="reply-subject-display"></span>
+                    </div>
+                    <div class="modal-message-content">
+                        <p id="reply-original-message"></p>
+                    </div>
+                    <form id="reply-form">
+                        <div class="form-group" style="margin-top: 20px;">
+                            <label for="reply-body" style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--color-text);">Sua Resposta:</label>
+                            <textarea id="reply-body" rows="5" required style="width: 100%; padding: 12px; border: 1px solid var(--color-border); border-radius: 6px; font-family: 'Ubuntu', sans-serif; font-size: 0.95rem; resize: vertical;"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn" onclick="fecharModalResposta()" style="background-color: #999;">Cancelar</button>
+                    <button type="submit" form="reply-form" class="btn" style="background-color: var(--color-primary);">Enviar Resposta</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        
+        // Event listener para fechar ao clicar fora
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                fecharModalResposta();
+            }
+        });
+    }
+
+    modal.onSend = onSend;
+    modal.dataset.hasSend = 'false';
+    document.getElementById('reply-modal-title').innerText = `Enviando ${ordem} de ${total}`;
+
+    // Preenche informações do remetente
+    document.getElementById('reply-from-name').innerText = mensagem.nome;
+    document.getElementById('reply-from-email').innerText = mensagem.email;
+    document.getElementById('reply-subject-display').innerText = mensagem.assunto;
+    document.getElementById('reply-original-message').innerText = mensagem.mensagem;
+
+    // Limpa o corpo da resposta anterior
+    const replyBodyInput = document.getElementById('reply-body');
+    replyBodyInput.value = '';
+
+    modal.style.display = 'flex';
+    modal.querySelector('button[type="submit"]').disabled = false;
+
+    // Handler para o envio do formulário
+    document.getElementById('reply-form').onsubmit = async (e) => {
+        e.preventDefault();
+        modal.querySelector('button[type="submit"]').disabled = true;
+        const corpo = replyBodyInput.value;
+        
+        // Simulação de envio
+        console.log(`Resposta enviada para ${mensagem.email}: ${corpo}`);
+        let resp = await fetch('/api/management/send-reply', {
+            method: 'POST',
+            credentials: 'include',
+            body: JSON.stringify({
+                originalMessage: mensagem,
+                replyBody: corpo
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!resp.ok) {
+            alert(`Falha ao enviar resposta para ${mensagem.email}.`);
+        } else {
+            modal.dataset.hasSend = 'true';
+        }
+
+        fecharModalResposta();
+    };
+}
+
+function fecharModalResposta() {
+    const modal = document.getElementById('reply-modal');
+    if (modal) {
+        const onSend = modal.onSend;
+        const hasSend = modal.dataset.hasSend === 'true';
+        modal.style.display = 'none';
+        onSend(hasSend);
+    }
+}
 
 function alternarSelecionarTodosMensagens(isChecked) {
     const checkboxes = document.querySelectorAll('.message-checkbox');

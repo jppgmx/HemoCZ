@@ -1,10 +1,15 @@
 const sessionRouter = require('../routes/session.js')
-const contatoRouter = require('../routes/contato.js')
+const mgRouter = require('../routes/management.js')
 
-/** @param {import('express').Express} app */
+const auth = require('../middlewares/auth.js')
+
+/**
+ * Registra as rotas na aplicação Express.
+ * @param {import('express').Express} app A aplicação Express onde as rotas serão registradas.
+ */
 function registerRouting(app) {
     app.use('/api/session', sessionRouter)
-    app.use('/api/contato', contatoRouter)
+    app.use('/api/management', auth, mgRouter)
 }
 
 module.exports = registerRouting;
