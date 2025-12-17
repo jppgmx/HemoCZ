@@ -1,6 +1,6 @@
 ## Projeto Acadêmico
 
-Este projeto foi desenvolvido como **trabalho da disciplina LSW (Linguagem Script Para Web) – Parte 1**, com o objetivo de aplicar conceitos fundamentais de desenvolvimento web.
+Este projeto foi desenvolvido como **trabalho da disciplina LSW (Linguagem Script Para Web)– Parte 1** e voltado para **ao Hemocentro de Cajazeiras - PB.)**, com o objetivo de aplicar conceitos fundamentais de desenvolvimento web.
 
 ###  Requisitos Solicitados pelo Professor
 
@@ -50,3 +50,4 @@ Plataforma web para **gestão, agendamento e acompanhamento de doações de sang
 ## Pasta Experimentos
 
 * **Alguns experimentos feitos durante a construção do Website**
+
