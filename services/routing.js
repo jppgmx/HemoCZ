@@ -1,3 +1,8 @@
+/**
+ * @module services/routing
+ * Registro centralizado de rotas da aplicação Express.
+ */
+
 const sessionRouter = require('../routes/session.js')
 const mgRouter = require('../routes/management.js')
 

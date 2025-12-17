@@ -1,12 +1,22 @@
+/**
+ * @typedef {Object} LoginCredentials
+ * @property {string} username Nome de usuário
+ * @property {string} password Senha do usuário
+ */
+
 /** @type {HTMLFormElement} */
 const loginForm = document.forms.login;
 
+/**
+ * Manipula o envio do formulário de login
+ */
 loginForm.addEventListener('submit', async (event) => {
     event.preventDefault();
 
+    /** @type {LoginCredentials} */
     const loginCredentials = {
-        username: loginForm.usuario.value,
-        password: loginForm.senha.value,
+        username: loginForm.username.value,
+        password: loginForm.password.value,
     };
 
     try {
@@ -22,14 +32,18 @@ loginForm.addEventListener('submit', async (event) => {
         } else {
             const errorData = await response.json();
             console.error('Login failed:', errorData);
-            reportError(errorData.message || 'Unknown login error');
+            reportError(errorData.message || 'Erro desconhecido no login');
         }
     } catch (error) {
         console.error('Error during login:', error);
-        reportError(error.message || 'Unknown login error');
+        reportError(error.message || 'Erro desconhecido no login');
     }
 });
 
+/**
+ * Exibe uma mensagem de erro em um alerta visual
+ * @param {string} message Mensagem de erro a ser exibida
+ */
 function reportError(message) {
     let alertContainer = document.createElement('div')
     alertContainer.style.cssText = `

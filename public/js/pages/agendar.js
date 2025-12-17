@@ -1,21 +1,24 @@
 /**
- * @typedef {Object} Agendamento
- * @property {string} nome O nome da pessoa
- * @property {string} tipoSanguineo O tipo sanguíneo da pessoa
- * @property {string} telefone Telefone da pessoa
+ * @typedef {Object} Appointment
+ * @property {string} name Nome completo da pessoa
+ * @property {string} bloodType Tipo sanguíneo da pessoa
+ * @property {string} phone Telefone da pessoa
  * @property {string} email E-mail da pessoa
- * @property {Date} dataHora Data/hora da coleta
- * @property {string} [id] ID única do agendamento
- * @property {string} [status] O status do agendamento 
+ * @property {Date} dateTime Data e hora da coleta
+ * @property {string} [id] ID único do agendamento
+ * @property {string} [status] Status do agendamento (ex: 'Aguardando', 'Coletado')
  */
 
 /** @type {HTMLFormElement} */
-const agendamentoForm = document.forms.agendamento
-const inputData = agendamentoForm.data;
-const selectHora = agendamentoForm.hora;
+const appointmentForm = document.forms.appointment
+const inputDate = appointmentForm.date;
+const selectTime = appointmentForm.time;
 
 
-//(Inspirado em um codigo que vi no github)
+/**
+ * Obtém a data atual no formato ISO (YYYY-MM-DD)
+ * @returns {string} Data atual no formato ISO
+ */
 function getTimeOfDay() {
     const today = new Date();
     // Ajuste para o fuso horário local para evitar problemas de data
@@ -25,43 +28,45 @@ function getTimeOfDay() {
 }
 
 // Define a data mínima como hoje
-inputData.min = getTimeOfDay(); 
+inputDate.min = getTimeOfDay(); 
 
 
-const MAX_VAGAS_POR_HORA = 4;
-const HORARIOS_DISPONIVEIS = ['07', '08', '09', '10', '11', '12'];
+const MAX_SLOTS_PER_HOUR = 4;
+const AVAILABLE_TIMES = ['07', '08', '09', '10', '11', '12'];
 
 /**
- * 
- * @param {string} dataString - 
- * @param {string} horaString -
- * @returns {number} 
+ * Verifica quantos agendamentos existem para uma data e horário específicos
+ * @param {string} dateString Data no formato ISO (YYYY-MM-DD)
+ * @param {string} timeString Hora no formato 24h (ex: '07', '08')
+ * @returns {number} Número de agendamentos para aquele horário
  */
-function available(dataString, horaString) {
-    const agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
+function checkAvailability(dateString, timeString) {
+    const appointments = JSON.parse(localStorage.getItem('appointments')) || [];
     let count = 0;
 
-    for (const ag of agendamentos) {
+    for (const appointment of appointments) {
         try {
-            const agDate = new Date(ag.dataHora);
+            const appointmentDate = new Date(appointment.dateTime);
             
-            // Verifica se a data e a hora
-            if (agDate.toISOString().substring(0, 10) === dataString &&
-                agDate.getHours().toString().padStart(2, '0') === horaString) {
+            // Verifica se a data e a hora correspondem
+            if (appointmentDate.toISOString().substring(0, 10) === dateString &&
+                appointmentDate.getHours().toString().padStart(2, '0') === timeString) {
                 count++;
             }
         } catch (e) {
             // Ignora os agendamentos inválidos
-            console.error("Agendamento inválido:", ag);
+            console.error("Agendamento inválido:", appointment);
         }
     }
     return count;
 }
 
-//função que seta os horarios disponíveis no select
+/**
+ * Renderiza os horários disponíveis no select com base na data selecionada
+ */
 function renderTimeSlots() {
-    const selectedDate = inputData.value;
-    selectHora.innerHTML = '';
+    const selectedDate = inputDate.value;
+    selectTime.innerHTML = '';
     
     // Aqui é onde validamos a data (Inspirado em um codigo que vi no github)
     const todayString = getTimeOfDay();
@@ -78,7 +83,7 @@ function renderTimeSlots() {
             defaultOption.disabled = true;
         }
 
-        selectHora.appendChild(defaultOption);
+        selectTime.appendChild(defaultOption);
         return;
     }
 
@@ -88,84 +93,88 @@ function renderTimeSlots() {
     let headerOption = document.createElement('option');
     headerOption.value = '';
     headerOption.textContent = 'Selecione o Horário';
-    selectHora.appendChild(headerOption);
+    selectTime.appendChild(headerOption);
 
     // aqui preenche as opcoes de horario
-    for (let h of HORARIOS_DISPONIVEIS) {
-        const agendados = available(selectedDate, h);
-        const vagasDisponiveis = MAX_VAGAS_POR_HORA - agendados;
-        const horaFormatada = `${h}:00h`;
+    for (let timeHour of AVAILABLE_TIMES) {
+        const scheduled = checkAvailability(selectedDate, timeHour);
+        const availableSlots = MAX_SLOTS_PER_HOUR - scheduled;
+        const formattedTime = `${timeHour}:00h`;
 
         let option = document.createElement('option');
-        option.value = h; 
-        option.textContent = `${horaFormatada} (${vagasDisponiveis} vaga${vagasDisponiveis !== 1 ? 's' : ''})`;
+        option.value = timeHour; 
+        option.textContent = `${formattedTime} (${availableSlots} vaga${availableSlots !== 1 ? 's' : ''})`;
         
         // se nao tiver vagas, desabilita a opcao
-        if (vagasDisponiveis <= 0) {
+        if (availableSlots <= 0) {
             option.disabled = true;
             option.textContent += ' - Sem Vagas';
         }
         
-        selectHora.appendChild(option);
+        selectTime.appendChild(option);
     }
 }
-inputData.addEventListener('change', renderTimeSlots);
+inputDate.addEventListener('change', renderTimeSlots);
 renderTimeSlots();
-agendamentoForm.addEventListener('submit', (e) => {
+appointmentForm.addEventListener('submit', (e) => {
     e.preventDefault()
 
   
-    const horaSelecionada = selectHora.value.padStart(2, '0');
-    let dt = new Date(`${inputData.value}T${horaSelecionada}:00:00`); 
+    const selectedTime = selectTime.value.padStart(2, '0');
+    let dateTime = new Date(`${inputDate.value}T${selectedTime}:00:00`); 
     
     
-    if (!horaSelecionada) {
+    if (!selectedTime) {
         formAlert("Por favor, selecione um horário válido.", 'error');
         return;
     }
 
-    /** @type {Agendamento} */
-    let ag = {
+    /** @type {Appointment} */
+    let appointment = {
         id: crypto.randomUUID(), 
-        nome: agendamentoForm.nomePessoa.value,
-        tipoSanguineo: agendamentoForm.tipoSanguineo.value,
-        telefone: agendamentoForm.telefone.value,
-        email: agendamentoForm.email.value,
-        dataHora: dt,
+        name: appointmentForm.name.value,
+        bloodType: appointmentForm.bloodType.value,
+        phone: appointmentForm.phone.value,
+        email: appointmentForm.email.value,
+        dateTime: dateTime,
         status: "Aguardando" 
     }
 
     try {
-        validar(ag)
+        validate(appointment)
     } catch (error) {
         formAlert(error.message, 'error')
         return
     }
     
     // Verifica disponibilidade antes de confirmar o agendamento
-    const agendadosNoHorario = available(inputData.value, horaSelecionada);
-    if (agendadosNoHorario >= MAX_VAGAS_POR_HORA) {
+    const scheduledAtTime = checkAvailability(inputDate.value, selectedTime);
+    if (scheduledAtTime >= MAX_SLOTS_PER_HOUR) {
         formAlert("Desculpe, este horário acabou de ser preenchido. Por favor, selecione outro.", 'error');
         renderTimeSlots(); 
         return;
     }
 
 
-    if(localStorage.getItem('agendamentos') === null) {
-        localStorage.setItem('agendamentos', JSON.stringify([ag]))
+    if(localStorage.getItem('appointments') === null) {
+        localStorage.setItem('appointments', JSON.stringify([appointment]))
     } else {
-        let agendamentos = JSON.parse(localStorage.getItem('agendamentos'))
-        agendamentos.push(ag)
-        localStorage.setItem('agendamentos', JSON.stringify(agendamentos))
+        let appointments = JSON.parse(localStorage.getItem('appointments'))
+        appointments.push(appointment)
+        localStorage.setItem('appointments', JSON.stringify(appointments))
     }
 
-    agendamentoForm.reset()
-    formAlert('Agendamento realizado com sucesso!')
     renderTimeSlots(); // Atualiza a lista após o agendamento
+    appointmentForm.reset()
+    formAlert('Agendamento realizado com sucesso!')
     
 })
 
-//função de alerta customizado
+/**
+ * Exibe um alerta customizado na tela
+ * @param {string} message Mensagem a ser exibida
+ * @param {string} type Tipo do alerta ('success' ou 'error')
+ */
 function formAlert(message, type='success') {
     let alertContainer = document.createElement('div')
     alertContainer.style.cssText = `
@@ -226,17 +235,23 @@ function formAlert(message, type='success') {
     }, 5000)
 }
 
-function validar(agendamento) {
-    const agendamentosExistentes = JSON.parse(localStorage.getItem('agendamentos')) || []
+/**
+ * Valida se um agendamento pode ser criado
+ * Verifica se o e-mail já possui um agendamento pendente
+ * @param {Appointment} appointment Objeto do agendamento a ser validado
+ * @throws {Error} Se o e-mail já possuir um agendamento pendente
+ */
+function validate(appointment) {
+    const existingAppointments = JSON.parse(localStorage.getItem('appointments')) || []
     
-    const novoEmail = agendamento.email.toLowerCase()
+    const newEmail = appointment.email.toLowerCase()
 
-    const agendamentoDuplicado = agendamentosExistentes.find(ag => {
-        const agEmail = ag.email ? ag.email.toLowerCase() : '';
-        return agEmail === novoEmail && ag.status === 'Aguardando'
+    const duplicateAppointment = existingAppointments.find(existing => {
+        const existingEmail = existing.email ? existing.email.toLowerCase() : '';
+        return existingEmail === newEmail && existing.status === 'Aguardando'
     })
 
-    if (agendamentoDuplicado) {
-        throw new Error(`O e-mail ${agendamento.email} já possui um agendamento pendente. Por favor, aguarde a data da coleta ou entre em contato com a gestão.`)
+    if (duplicateAppointment) {
+        throw new Error(`O e-mail ${appointment.email} já possui um agendamento pendente. Por favor, aguarde a data da coleta ou entre em contato com a gestão.`)
     }
 }

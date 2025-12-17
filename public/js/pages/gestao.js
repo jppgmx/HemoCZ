@@ -1,6 +1,27 @@
-let greetingsElement = document.getElementById('greetings');
+/**
+ * @typedef {Object} Appointment
+ * @property {string} id ID único do agendamento
+ * @property {string} name Nome completo da pessoa
+ * @property {string} bloodType Tipo sanguíneo da pessoa
+ * @property {string} phone Telefone da pessoa
+ * @property {string} email E-mail da pessoa
+ * @property {Date} dateTime Data e hora da coleta
+ * @property {string} status Status do agendamento (ex: 'Aguardando', 'Coletado')
+ */
 
-let uiResponse = fetch('/api/session/userinfo', {
+/**
+ * @typedef {Object} Message
+ * @property {string} id ID único da mensagem
+ * @property {string} name Nome do remetente
+ * @property {string} email E-mail do remetente
+ * @property {string} subject Assunto da mensagem
+ * @property {string} message Conteúdo da mensagem
+ * @property {string} date Data de envio em formato ISO
+ */
+
+const greetingsElement = document.getElementById('greetings');
+
+fetch('/api/session/userinfo', {
     method: 'GET',
     credentials: 'include'
 }).then(async response => {
@@ -8,7 +29,7 @@ let uiResponse = fetch('/api/session/userinfo', {
         throw new Error('Failed to fetch user info');
     }
 
-    let data = await response.json();
+    const data = await response.json();
     localStorage.setItem('user', data.username);
     greetingsElement.innerText = `Olá, ${data.name}!`
 }).catch(error => {
@@ -17,54 +38,56 @@ let uiResponse = fetch('/api/session/userinfo', {
 });
 
 /**
- * Deleta um agendamento específico do localStorage pelo seu ID único.
- * @param {string} id - O ID do agendamento a ser deletado.
+ * Deleta um agendamento específico do localStorage
+ * @param {string} id ID do agendamento a ser deletado
  */
-function deletarAgendamento(id) {
-    let agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
-    agendamentos = agendamentos.filter(a => a.id !== id);
+function deleteAppointment(id) {
+    let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+    appointments = appointments.filter(appointment => appointment.id !== id);
     
-    localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
-    renderizarTabelaAgendamentos(); 
+    localStorage.setItem('appointments', JSON.stringify(appointments));
+    renderAppointmentsTable(); 
 }
 
 /**
- * Atualiza o status de um agendamento para o valor selecionado.
- * @param {string} id - O ID do agendamento a ser atualizado.
- * @param {string} novoStatus - O novo status ('Aguardando Coleta' ou 'Coletado').
+ * Atualiza o status de um agendamento
+ * @param {string} id ID do agendamento a ser atualizado
+ * @param {string} newStatus Novo status ('Aguardando' ou 'Coletado')
  */
-function atualizarStatus(id, novoStatus) {
-    let agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
-    const index = agendamentos.findIndex(a => a.id === id);
-
+function updateStatus(id, newStatus) {
+    let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+    const index = appointments.findIndex(appointment => appointment.id === id);
     
-    if (index > -1 && ['Aguardando', 'Coletado'].includes(novoStatus)) {
-        agendamentos[index].status = novoStatus;
-        localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
-        renderizarTabelaAgendamentos(); 
+    if (index > -1 && ['Aguardando', 'Coletado'].includes(newStatus)) {
+        appointments[index].status = newStatus;
+        localStorage.setItem('appointments', JSON.stringify(appointments));
+        renderAppointmentsTable(); 
     }
 }
 
 
-function renderizarTabelaAgendamentos() {
+/**
+ * Renderiza a tabela de agendamentos
+ */
+function renderAppointmentsTable() {
     const tableBody = document.querySelector('#appointments-table tbody');
     tableBody.innerHTML = '';
-    let agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
+    let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
 
-    for (let agendamento of agendamentos) {
+    for (let appointment of appointments) {
        
-        const status = agendamento.status || "Aguardando";
+        const status = appointment.status || "Aguardando";
         
         let row = document.createElement('tr');
-        const keys = ['id', 'nome', 'tipoSanguineo', 'telefone', 'email', 'dataHora'];
+        const keys = ['id', 'name', 'bloodType', 'phone', 'email', 'dateTime'];
 
         for(let key of keys) {
             let cell = document.createElement('td');
-            if (key === 'dataHora') {
-                const date = new Date(agendamento[key]);
+            if (key === 'dateTime') {
+                const date = new Date(appointment[key]);
                 cell.innerText = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
             } else {
-                cell.innerText = key === 'id' ? agendamento[key].substring(0, 8) + '...' : agendamento[key];
+                cell.innerText = key === 'id' ? appointment[key].substring(0, 8) + '...' : appointment[key];
             }
             row.appendChild(cell);
         }
@@ -84,7 +107,6 @@ function renderizarTabelaAgendamentos() {
         let statusSelect = document.createElement('select');
         statusSelect.className = 'status-select';
         
-// aqui são as opções
         const options = [
              { value: '', text: 'Status', disabled: true, selected: true }, 
              { value: 'Aguardando', text: 'Aguardando' }, 
@@ -96,7 +118,6 @@ function renderizarTabelaAgendamentos() {
             option.value = optionData.value;
             option.text = optionData.text;
             
-            // Define o status selecionado com base no status atual do agendamento
             if (optionData.value === status) {
                  option.selected = true;
             }
@@ -113,13 +134,11 @@ function renderizarTabelaAgendamentos() {
             
             if (!newStatus) return; 
 
-            const confirmationMessage = `Confirma a alteração do status do agendamento de ${agendamento.nome} para "${newStatus}"?`;
+            const confirmationMessage = `Confirma a alteração do status do agendamento de ${appointment.name} para "${newStatus}"?`;
 
             if (confirm(confirmationMessage)) {
-                // Se o usuário confirmar, atualiza o status
-                atualizarStatus(agendamento.id, newStatus);
+                updateStatus(appointment.id, newStatus);
             } else {
-                // caso cancelar a opção volta ao status anterior
                 e.target.value = status; 
             }
         };
@@ -134,8 +153,8 @@ function renderizarTabelaAgendamentos() {
         deleteButton.style.padding = '5px 10px'; 
         deleteButton.style.borderRadius = '4px'; 
         deleteButton.onclick = () => {
-            if (confirm(`Tem certeza que deseja deletar o agendamento de ${agendamento.nome}?`)) {
-                deletarAgendamento(agendamento.id);
+            if (confirm(`Tem certeza que deseja deletar o agendamento de ${appointment.name}?`)) {
+                deleteAppointment(appointment.id);
             }
         };
         actionsCell.appendChild(deleteButton);
@@ -145,44 +164,41 @@ function renderizarTabelaAgendamentos() {
         
         tableBody.appendChild(row);
     }
-    atualizarMetricas(agendamentos); 
+    updateMetrics(appointments); 
 }
 /**
- * Atualiza os cards de métricas no topo do painel.
- * @param {Array<Object>} agendamentos - Lista de agendamentos.
+ * Atualiza as métricas no painel de controle
+ * @param {Appointment[]} appointments
  */
-function atualizarMetricas(agendamentos) {
-    const totalAppointments = agendamentos.length;
+function updateMetrics(appointments) {
+    const totalAppointments = appointments.length;
     
     const now = new Date();
     
- 
-    const currentMonthAppointments = agendamentos.filter(ag => {
-        const date = new Date(ag.dataHora);
+    const currentMonthAppointments = appointments.filter(appointment => {
+        const date = new Date(appointment.dateTime);
         const isCurrentMonth = date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
-        const isCollected = ag.status === "Coletado"; 
+        const isCollected = appointment.status === "Coletado"; 
 
         return isCurrentMonth && isCollected;
     }).length;
 
-    // Conta agendamentos pendentes 
-    const pendingAppointments = agendamentos.filter(ag => ag.status === "Aguardando" || ag.status === undefined).length;
+    const pendingAppointments = appointments.filter(appointment => appointment.status === "Aguardando" || appointment.status === undefined).length;
 
     document.getElementById('total-appointments').innerText = totalAppointments;
     document.getElementById('month-appointments').innerText = currentMonthAppointments;
     document.getElementById('pending-appointments').innerText = pendingAppointments;
 
-    // Atualizar distribuição de tipos sanguíneos
-    atualizarDistribuicaoTiposSanguineos(agendamentos);
+    updateBloodTypeDistribution(appointments);
 }
 
 /**
  * Calcula e renderiza a distribuição de tipos sanguíneos
- * @param {Array<Object>} agendamentos - Lista de agendamentos.
+ * @param {Appointment[]} appointments
  */
-function atualizarDistribuicaoTiposSanguineos(agendamentos) {
+function updateBloodTypeDistribution(appointments) {
     const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
-    const total = agendamentos.length;
+    const total = appointments.length;
 
     if (total === 0) {
         document.getElementById('blood-type-grid').innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #999;">Nenhum agendamento registrado</p>';
@@ -194,18 +210,16 @@ function atualizarDistribuicaoTiposSanguineos(agendamentos) {
 
     
     const distribution = bloodTypes.map(type => {
-        const count = agendamentos.filter(ag => ag.tipoSanguineo === type).length;
+        const count = appointments.filter(appointment => appointment.bloodType === type).length;
         const percentage = ((count / total) * 100).toFixed(1);
         return { type, count, percentage };
     }).filter(item => item.count > 0);
 
-    // Se nenhum tipo tiver agendamentos, mostrar mensagem
     if (distribution.length === 0) {
         grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #999;">Nenhum agendamento registrado</p>';
         return;
     }
 
-    // Renderizar cards de tipos sanguíneos
     distribution.forEach(item => {
         const card = document.createElement('div');
         card.className = 'blood-type-card';
@@ -229,52 +243,46 @@ function atualizarDistribuicaoTiposSanguineos(agendamentos) {
 /**
  * Renderiza a tabela de mensagens recebidas
  */
-function renderizarTabelaMensagens() {
+function renderMessagesTable() {
     const tableBody = document.querySelector('#messages-table tbody');
     tableBody.innerHTML = '';
-    let mensagens = JSON.parse(localStorage.getItem('mensagens')) || [];
+    let messages = JSON.parse(localStorage.getItem('messages')) || [];
 
-    for (let mensagem of mensagens) {
+    for (let message of messages) {
         let row = document.createElement('tr');
         
-        // Checkbox para seleção
         let checkboxCell = document.createElement('td');
         let checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.className = 'message-checkbox';
-        checkbox.dataset.messageId = mensagem.id;
+        checkbox.dataset.messageId = message.id;
         checkboxCell.appendChild(checkbox);
         row.appendChild(checkboxCell);
         
-        // Nome
-        let nomeCell = document.createElement('td');
-        nomeCell.innerText = mensagem.nome;
-        row.appendChild(nomeCell);
+        let nameCell = document.createElement('td');
+        nameCell.innerText = message.name;
+        row.appendChild(nameCell);
         
-        // Email
         let emailCell = document.createElement('td');
-        emailCell.innerText = mensagem.email;
+        emailCell.innerText = message.email;
         row.appendChild(emailCell);
         
-        // Assunto
-        let assuntoCell = document.createElement('td');
-        assuntoCell.innerText = mensagem.assunto;
-        row.appendChild(assuntoCell);
+        let subjectCell = document.createElement('td');
+        subjectCell.innerText = message.subject;
+        row.appendChild(subjectCell);
         
-        // Mensagem (truncada com botão para abrir)
         let msgCell = document.createElement('td');
         msgCell.style.cursor = 'pointer';
         msgCell.style.color = '#8B0000';
         msgCell.style.textDecoration = 'underline';
-        msgCell.innerText = mensagem.mensagem.substring(0, 50) + (mensagem.mensagem.length > 50 ? '...' : '');
-        msgCell.onclick = () => abrirModalMensagem(mensagem);
+        msgCell.innerText = message.message.substring(0, 50) + (message.message.length > 50 ? '...' : '');
+        msgCell.onclick = () => openMessageModal(message);
         row.appendChild(msgCell);
         
-        // Data
-        let dataCell = document.createElement('td');
-        const date = new Date(mensagem.data);
-        dataCell.innerText = date.toLocaleDateString();
-        row.appendChild(dataCell);
+        let dateCell = document.createElement('td');
+        const date = new Date(message.date);
+        dateCell.innerText = date.toLocaleDateString();
+        row.appendChild(dateCell);
         
         tableBody.appendChild(row);
     }
@@ -283,7 +291,7 @@ function renderizarTabelaMensagens() {
 /**
  * Deleta as mensagens selecionadas
  */
-function deletarMensagensEscolhidas() {
+function deleteSelectedMessages() {
     const checkboxes = document.querySelectorAll('.message-checkbox:checked');
     if (checkboxes.length === 0) {
         alert('Nenhuma mensagem selecionada.');
@@ -294,19 +302,19 @@ function deletarMensagensEscolhidas() {
         return;
     }
     
-    let mensagens = JSON.parse(localStorage.getItem('mensagens')) || [];
+    let messages = JSON.parse(localStorage.getItem('messages')) || [];
     const idsToDelete = Array.from(checkboxes).map(cb => cb.dataset.messageId);
     
-    mensagens = mensagens.filter(m => !idsToDelete.includes(m.id));
-    localStorage.setItem('mensagens', JSON.stringify(mensagens));
+    messages = messages.filter(m => !idsToDelete.includes(m.id));
+    localStorage.setItem('messages', JSON.stringify(messages));
     
-    renderizarTabelaMensagens();
+    renderMessagesTable();
 }
 
 /**
- * Aqui verificamos se a mensagem esta selecionada
+ * Envia respostas para as mensagens selecionadas
  */
-function enviarRespostasMensagens() {
+function sendMessageReplies() {
     const checkboxes = document.querySelectorAll('.message-checkbox:checked');
     if (checkboxes.length === 0) {
         alert('Nenhuma mensagem selecionada.');
@@ -314,35 +322,35 @@ function enviarRespostasMensagens() {
     }
     
     const idsToRespond = Array.from(checkboxes).map(cb => cb.dataset.messageId);
-    let mensagens = JSON.parse(localStorage.getItem('mensagens')) || [];
-    const toAnswer = mensagens.filter(m => idsToRespond.includes(m.id))
+    let messages = JSON.parse(localStorage.getItem('messages')) || [];
+    const toAnswer = messages.filter(m => idsToRespond.includes(m.id))
     
     let i = 0;
     let onSend = (hasSend) => {
         if (hasSend) {
-            let mensagens = JSON.parse(localStorage.getItem('mensagens')) || [];
-            mensagens = mensagens.filter(m => m.id !== toAnswer[i].id);
-            localStorage.setItem('mensagens', JSON.stringify(mensagens));
+            let messages = JSON.parse(localStorage.getItem('messages')) || [];
+            messages = messages.filter(m => m.id !== toAnswer[i].id);
+            localStorage.setItem('messages', JSON.stringify(messages));
             
-            renderizarTabelaMensagens();
+            renderMessagesTable();
         }
 
         if(i < toAnswer.length - 1) {
             i++;
-            abrirModalResposta(toAnswer[i], i + 1, idsToRespond.length, onSend);
+            openReplyModal(toAnswer[i], i + 1, idsToRespond.length, onSend);
         }
     };
-    abrirModalResposta(toAnswer[i], i + 1, idsToRespond.length, onSend);
+    openReplyModal(toAnswer[i], i + 1, idsToRespond.length, onSend);
 }
 
 /**
- * Abre o modal para responder a uma mensagem específica
- * @param {Object} mensagem - A mensagem a ser respondida.
- * @param {number} ordem - A ordem da mensagem na lista (para contador).
- * @param {function} onSend - Callback chamado após o envio da resposta.
+ * Abre o modal para responder uma mensagem
+ * @param {Message} message
+ * @param {number} order Ordem da mensagem na lista
+ * @param {number} total Total de mensagens a responder
+ * @param {function} onSend Callback após envio
  */
-function abrirModalResposta(mensagem, ordem, total, onSend) {
-    // Cria o modal dinamicamente se não existir
+function openReplyModal(message, order, total, onSend) {
     let modal = document.getElementById('reply-modal');
     if (!modal) {
         modal = document.createElement('div');
@@ -352,7 +360,7 @@ function abrirModalResposta(mensagem, ordem, total, onSend) {
             <div class="modal-content">
                 <div class="modal-header">
                     <h2 id="reply-modal-title">Respondendo Mensagem</h2>
-                    <button class="modal-close" onclick="fecharModalResposta()">&times;</button>
+                    <button class="modal-close" onclick="closeReplyModal()">&times;</button>
                 </div>
                 <div class="modal-body">
                     <div class="modal-info-row">
@@ -375,52 +383,47 @@ function abrirModalResposta(mensagem, ordem, total, onSend) {
                     </form>
                 </div>
                 <div class="modal-actions">
-                    <button type="button" class="btn" onclick="fecharModalResposta()" style="background-color: #999;">Cancelar</button>
+                    <button type="button" class="btn" onclick="closeReplyModal()" style="background-color: #999;">Cancelar</button>
                     <button type="submit" form="reply-form" class="btn" style="background-color: var(--color-primary);">Enviar Resposta</button>
                 </div>
             </div>
         `;
         document.body.appendChild(modal);
         
-        // Event listener para fechar ao clicar fora
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
-                fecharModalResposta();
+                closeReplyModal();
             }
         });
     }
 
     modal.onSend = onSend;
     modal.dataset.hasSend = 'false';
-    document.getElementById('reply-modal-title').innerText = `Enviando ${ordem} de ${total}`;
+    document.getElementById('reply-modal-title').innerText = `Enviando ${order} de ${total}`;
 
-    // Preenche informações do remetente
-    document.getElementById('reply-from-name').innerText = mensagem.nome;
-    document.getElementById('reply-from-email').innerText = mensagem.email;
-    document.getElementById('reply-subject-display').innerText = mensagem.assunto;
-    document.getElementById('reply-original-message').innerText = mensagem.mensagem;
+    document.getElementById('reply-from-name').innerText = message.name;
+    document.getElementById('reply-from-email').innerText = message.email;
+    document.getElementById('reply-subject-display').innerText = message.subject;
+    document.getElementById('reply-original-message').innerText = message.message;
 
-    // Limpa o corpo da resposta anterior
     const replyBodyInput = document.getElementById('reply-body');
     replyBodyInput.value = '';
 
     modal.style.display = 'flex';
     modal.querySelector('button[type="submit"]').disabled = false;
 
-    // Handler para o envio do formulário
     document.getElementById('reply-form').onsubmit = async (e) => {
         e.preventDefault();
         modal.querySelector('button[type="submit"]').disabled = true;
-        const corpo = replyBodyInput.value;
+        const body = replyBodyInput.value;
         
-        // Simulação de envio
-        console.log(`Resposta enviada para ${mensagem.email}: ${corpo}`);
+        console.log(`Resposta enviada para ${message.email}: ${body}`);
         let resp = await fetch('/api/management/send-reply', {
             method: 'POST',
             credentials: 'include',
             body: JSON.stringify({
-                originalMessage: mensagem,
-                replyBody: corpo
+                originalMessage: message,
+                replyBody: body
             }),
             headers: {
                 'Content-Type': 'application/json'
@@ -428,16 +431,16 @@ function abrirModalResposta(mensagem, ordem, total, onSend) {
         });
         
         if (!resp.ok) {
-            alert(`Falha ao enviar resposta para ${mensagem.email}.`);
+            alert(`Falha ao enviar resposta para ${message.email}.`);
         } else {
             modal.dataset.hasSend = 'true';
         }
 
-        fecharModalResposta();
+        closeReplyModal();
     };
 }
 
-function fecharModalResposta() {
+function closeReplyModal() {
     const modal = document.getElementById('reply-modal');
     if (modal) {
         const onSend = modal.onSend;
@@ -447,7 +450,7 @@ function fecharModalResposta() {
     }
 }
 
-function alternarSelecionarTodosMensagens(isChecked) {
+function toggleSelectAllMessages(isChecked) {
     const checkboxes = document.querySelectorAll('.message-checkbox');
     checkboxes.forEach(cb => cb.checked = isChecked);
 }
@@ -455,43 +458,40 @@ function alternarSelecionarTodosMensagens(isChecked) {
 /**
  * Abre o modal com a mensagem completa
  */
-function abrirModalMensagem(mensagem) {
-    document.getElementById('modal-nome').innerText = mensagem.nome;
-    document.getElementById('modal-email').innerText = mensagem.email;
-    document.getElementById('modal-assunto').innerText = mensagem.assunto;
-    document.getElementById('modal-mensagem').innerText = mensagem.mensagem;
-    document.getElementById('modal-data').innerText = new Date(mensagem.data).toLocaleDateString('pt-BR');
+function openMessageModal(message) {
+    document.getElementById('modal-name').innerText = message.name;
+    document.getElementById('modal-email').innerText = message.email;
+    document.getElementById('modal-subject').innerText = message.subject;
+    document.getElementById('modal-message').innerText = message.message;
+    document.getElementById('modal-date').innerText = new Date(message.date).toLocaleDateString('pt-BR');
     document.getElementById('message-modal').style.display = 'flex';
 }
 
-
-function fecharModalMensagem() {
+function closeMessageModal() {
     document.getElementById('message-modal').style.display = 'none';
 }
-
 
 document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('message-modal');
     if (modal) {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
-                fecharModalMensagem();
+                closeMessageModal();
             }
         });
     }
 });
 
-let ti = setInterval(async () => {
-    renderizarTabelaAgendamentos();
-    renderizarTabelaMensagens();
+setInterval(async () => {
+    renderAppointmentsTable();
+    renderMessagesTable();
 }, 5000);
 
-renderizarTabelaAgendamentos();
-renderizarTabelaMensagens();
+renderAppointmentsTable();
+renderMessagesTable();
 
- // Adiciona event listeners aos botões
-document.getElementById('delete-messages-btn').addEventListener('click', deletarMensagensEscolhidas);
-document.getElementById('send-messages-btn').addEventListener('click', enviarRespostasMensagens);
+document.getElementById('delete-messages-btn').addEventListener('click', deleteSelectedMessages);
+document.getElementById('send-messages-btn').addEventListener('click', sendMessageReplies);
 document.getElementById('select-all-messages').addEventListener('change', (e) => {
-    alternarSelecionarTodosMensagens(e.target.checked);
+    toggleSelectAllMessages(e.target.checked);
 });

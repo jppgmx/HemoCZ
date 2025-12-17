@@ -1,32 +1,53 @@
-const contatoForm = document.forms.contato;
+/**
+ * @typedef {Object} Message
+ * @property {string} id ID único da mensagem
+ * @property {string} name Nome do remetente
+ * @property {string} email E-mail do remetente
+ * @property {string} subject Assunto da mensagem
+ * @property {string} message Conteúdo da mensagem
+ * @property {string} date Data de envio em formato ISO
+ */
 
-contatoForm.addEventListener('submit', (event) => {
+/** @type {HTMLFormElement} */
+const contactForm = document.forms.contact;
+
+/**
+ * Handler do evento de submit do formulário de contato
+ * Salva a mensagem no localStorage para ser revisada pela gestão
+ */
+contactForm.addEventListener('submit', (event) => {
     event.preventDefault();
     
-    const msg = {
+    /** @type {Message} */
+    const messageData = {
         id: crypto.randomUUID(),
-        nome: contatoForm.nome.value,
-        email: contatoForm.email.value,
-        assunto: contatoForm.assunto.value,
-        mensagem: contatoForm.mensagem.value,
-        data: new Date().toISOString()
+        name: contactForm.name.value,
+        email: contactForm.email.value,
+        subject: contactForm.subject.value,
+        message: contactForm.message.value,
+        date: new Date().toISOString()
     };
 
     // Salvar mensagem em localStorage para gestão revisar
-    if (localStorage.getItem('mensagens') === null) {
-        localStorage.setItem('mensagens', JSON.stringify([msg]));
+    if (localStorage.getItem('messages') === null) {
+        localStorage.setItem('messages', JSON.stringify([messageData]));
     } else {
-        let mensagens = JSON.parse(localStorage.getItem('mensagens'));
-        mensagens.push(msg);
-        localStorage.setItem('mensagens', JSON.stringify(mensagens));
+        let messages = JSON.parse(localStorage.getItem('messages'));
+        messages.push(messageData);
+        localStorage.setItem('messages', JSON.stringify(messages));
     }
 
-    contatoForm.reset();
+    contactForm.reset();
     formAlert('Mensagem enviada com sucesso! A equipe de gestão responderá em breve.');
 });
 
-// Função de alerta customizado
-function formAlert(message, type = 'success') {
+/**
+ * Exibe um alerta customizado na tela
+ * @param {string} messageText Texto da mensagem a ser exibida
+ * @param {string} type Tipo do alerta ('success' ou 'error')
+ */
+function formAlert(messageText, type = 'success') {
+    // Container principal do alerta
     let alertContainer = document.createElement('div');
     alertContainer.style.cssText = `
         position: fixed;
@@ -46,13 +67,15 @@ function formAlert(message, type = 'success') {
         max-width: 90%;
     `;
 
+    // Ícone do alerta
     let icon = document.createElement('span');
     icon.innerHTML = type === 'error' ? '⚠️' : '✓';
     icon.style.fontSize = '1.5rem';
     icon.style.flexShrink = '0';
 
+    // Texto da mensagem
     let text = document.createElement('p');
-    text.textContent = message;
+    text.textContent = messageText;
     text.style.cssText = `
         margin: 0;
         color: ${type === 'error' ? '#c41e3a' : '#27ae60'};
@@ -60,6 +83,7 @@ function formAlert(message, type = 'success') {
         font-size: 1rem;
     `;
 
+    // Botão de fechar (X)
     let closeBtn = document.createElement('button');
     closeBtn.innerHTML = '×';
     closeBtn.style.cssText = `
@@ -73,11 +97,13 @@ function formAlert(message, type = 'success') {
     `;
     closeBtn.onclick = () => alertContainer.remove();
 
+    // Monta o alerta
     alertContainer.appendChild(icon);
     alertContainer.appendChild(text);
     alertContainer.appendChild(closeBtn);
     document.body.appendChild(alertContainer);
 
+    // Remove automaticamente após 5 segundos com animação de saída
     setTimeout(() => {
         alertContainer.style.animation = 'slideOutRight 0.3s ease-in';
         setTimeout(() => alertContainer.remove(), 300);
