@@ -27,14 +27,14 @@ async function loginUser(req, res) {
 
         if (!user) {
             console.warn('User not found:', username);
-            res.status(401).json({ message: 'Invalid username or password' });
+            res.status(401).json({ message: 'Usuário ou senha inválidos' });
             return;
         }
 
         // Usando Argon2 para verificar a senha
         if (!await a2.verify(user.passwd, password)) {
             console.warn('Invalid password for user:', username);
-            res.status(401).json({ message: 'Invalid username or password' });
+            res.status(401).json({ message: 'Usuário ou senha inválidos' });
             return;
         }
 
@@ -58,7 +58,7 @@ async function loginUser(req, res) {
         res.sendStatus(200);
     } catch (error) {
         console.error('Error during login:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: 'Erro interno do servidor' });
     }
 }
 
@@ -76,7 +76,7 @@ async function getUserInfo(req, res) {
     const username = tk.getUsernameFromToken(sessionToken);
     if (!username) {
         console.warn('Invalid or missing session token');
-        res.status(401).json({ message: 'Unauthorized' });
+        res.status(401).json({ message: 'Não autorizado' });
         return;
     }
 

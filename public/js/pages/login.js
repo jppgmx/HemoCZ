@@ -32,11 +32,11 @@ loginForm.addEventListener('submit', async (event) => {
         } else {
             const errorData = await response.json();
             console.error('Login failed:', errorData);
-            reportError(errorData.message || 'Unknown login error');
+            reportError(errorData.message || 'Erro desconhecido no login');
         }
     } catch (error) {
         console.error('Error during login:', error);
-        reportError(error.message || 'Unknown login error');
+        reportError(error.message || 'Erro desconhecido no login');
     }
 });
 

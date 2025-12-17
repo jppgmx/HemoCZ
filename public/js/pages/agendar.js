@@ -164,9 +164,9 @@ appointmentForm.addEventListener('submit', (e) => {
         localStorage.setItem('appointments', JSON.stringify(appointments))
     }
 
+    renderTimeSlots(); // Atualiza a lista após o agendamento
     appointmentForm.reset()
     formAlert('Agendamento realizado com sucesso!')
-    renderTimeSlots(); // Atualiza a lista após o agendamento
     
 })
 
