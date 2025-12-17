@@ -1,12 +1,22 @@
+/**
+ * @typedef {Object} LoginCredentials
+ * @property {string} username Nome de usuário
+ * @property {string} password Senha do usuário
+ */
+
 /** @type {HTMLFormElement} */
 const loginForm = document.forms.login;
 
+/**
+ * Manipula o envio do formulário de login
+ */
 loginForm.addEventListener('submit', async (event) => {
     event.preventDefault();
 
+    /** @type {LoginCredentials} */
     const loginCredentials = {
-        username: loginForm.usuario.value,
-        password: loginForm.senha.value,
+        username: loginForm.username.value,
+        password: loginForm.password.value,
     };
 
     try {
@@ -30,6 +40,10 @@ loginForm.addEventListener('submit', async (event) => {
     }
 });
 
+/**
+ * Exibe uma mensagem de erro em um alerta visual
+ * @param {string} message Mensagem de erro a ser exibida
+ */
 function reportError(message) {
     let alertContainer = document.createElement('div')
     alertContainer.style.cssText = `

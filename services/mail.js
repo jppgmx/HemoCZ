@@ -1,3 +1,8 @@
+/**
+ * @module services/mail
+ * Serviço de envio de e-mails automáticos usando Nodemailer.
+ */
+
 const nm = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
@@ -5,7 +10,7 @@ const hb = require('handlebars');
 
 /**
  * Obtém uma lista de servidores de e-mail suportados para envio.
- * @returns {Object} Um objeto contendo as configurações dos servidores de e-mail suportados.
+ * @returns {Object.<string, {host: string, port: number, secure: boolean, requireTLS: boolean}>} Um objeto contendo as configurações dos servidores de e-mail suportados.
  */
 function getMailSupportedServers() {
     return {
@@ -21,7 +26,7 @@ function getMailSupportedServers() {
 /**
  * Cria um transportador de e-mail usando as configurações do servidor especificado.
  * @param {string} serverName O nome do servidor de e-mail. 
- * @param {Object} auth As credenciais de autenticação (usuário e senha).
+ * @param {{user: string, pass: string}} auth As credenciais de autenticação (usuário e senha).
  * @returns {nm.Transporter} O transportador de e-mail configurado.
  */
 function createMailTransporter(serverName, auth) {
@@ -45,10 +50,11 @@ module.exports = {
 
     /**
      * Envia um e-mail de resposta automática sem a opção de resposta direta.
-     * @param {Object} mensagem A mensagem original recebida. 
+     * @param {{name: string, email: string, subject: string, message: string, date: string}} message A mensagem original recebida. 
      * @param {string} replyBody A resposta a ser incluída no e-mail.
+     * @returns {Promise<void>}
      */
-    noreplyMail: async function(mensagem, replyBody) {
+    noreplyMail: async function(message, replyBody) {
         const transporter = createMailTransporter('gmailTls', {
             user: process.env.NOREPLY_EMAIL_USER,
             pass: process.env.NOREPLY_EMAIL_PASS
@@ -58,15 +64,15 @@ module.exports = {
 
         const mailOptions = {
             from: `"Hemonúcleo de Cajazeiras" <${process.env.NOREPLY_EMAIL_USER}>`,
-            to: mensagem.email,
-            subject: `Re: ${mensagem.assunto}`,
+            to: message.email,
+            subject: `Re: ${message.subject}`,
             html: content({
-                nome: mensagem.nome,
-                email: mensagem.email,
-                assunto: mensagem.assunto,
-                mensagem: mensagem.mensagem,
-                data: mensagem.data,
-                respostaCorpo: replyBody
+                name: message.name,
+                email: message.email,
+                subject: message.subject,
+                message: message.message,
+                date: message.date,
+                replyBody: replyBody
             })
         };
 

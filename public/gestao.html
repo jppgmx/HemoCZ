@@ -126,22 +126,22 @@
     <div id="message-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modal-assunto">Assunto</h2>
-                <button class="modal-close" onclick="fecharModalMensagem()">&times;</button>
+                <h2 id="modal-subject">Assunto</h2>
+                <button class="modal-close" onclick="closeMessageModal()">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="modal-info-row">
-                    <strong>De:</strong> <span id="modal-nome"></span> (<span id="modal-email"></span>)
+                    <strong>De:</strong> <span id="modal-name"></span> (<span id="modal-email"></span>)
                 </div>
                 <div class="modal-info-row">
-                    <strong>Data:</strong> <span id="modal-data"></span>
+                    <strong>Data:</strong> <span id="modal-date"></span>
                 </div>
                 <div class="modal-message-content">
-                    <p id="modal-mensagem"></p>
+                    <p id="modal-message"></p>
                 </div>
             </div>
             <div class="modal-actions">
-                <button class="btn" onclick="fecharModalMensagem()">Fechar</button>
+                <button class="btn" onclick="closeMessageModal()">Fechar</button>
             </div>
         </div>
     </div>

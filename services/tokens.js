@@ -1,3 +1,8 @@
+/**
+ * @module services/tokens
+ * Serviço de geração e validação de tokens JWT para autenticação.
+ */
+
 const jwt = require('jsonwebtoken')
 
 const secretKey = process.env.TOKEN_SECRET || 'default_secret_key';
@@ -12,7 +17,8 @@ const secretKey = process.env.TOKEN_SECRET || 'default_secret_key';
  * Cria um novo token JWT para um usuário e dispositivo específicos.
  * @param {string} userId O ID do usuário.
  * @param {DeviceData} device Os dados do dispositivo do usuário.
- * @param {number} expiresInSeconds O tempo de expiração do token em segundos.
+ * @param {number} [expiresInSeconds=1800] O tempo de expiração do token em segundos.
+ * @returns {string} O token JWT gerado.
  */
 function newToken(userId, device, expiresInSeconds = 1800) {
     const header = {
@@ -35,7 +41,7 @@ function newToken(userId, device, expiresInSeconds = 1800) {
 /**
  * Analisa o status de um token JWT.
  * @param {string} tokenStr O token JWT como string.
- * @returns {string} 'valid', 'expired' ou 'invalid' dependendo do status do token.
+ * @returns {'valid'|'expired'|'invalid'} 'valid', 'expired' ou 'invalid' dependendo do status do token.
  */
 function tokenStatus(tokenStr) {
     return jwt.verify(tokenStr, secretKey, (err, decoded) => {
@@ -53,8 +59,8 @@ function tokenStatus(tokenStr) {
 
 /**
  * Obtém o nome de usuário a partir de um token JWT.
- * @param {string} tokenStr O token a extrair o nome de usuário.
- * @returns {string} O nome de usuário extraído do token.
+ * @param {string} tokenStr O token JWT a ser decodificado.
+ * @returns {string} O nome de usuário extraído do token (campo 'sub').
  */
 function getUsernameFromToken(tokenStr) {
     return jwt.decode(tokenStr).sub;

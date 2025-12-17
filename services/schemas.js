@@ -1,5 +1,9 @@
+/**
+ * Schemas SQL e inserções padrão para o banco de dados
+ * @module services/schemas
+ */
 
-// Define SQL schema para 'Usuario'
+// Define SQL schema para 'user'
 const userSchema = `
     CREATE TABLE IF NOT EXISTS user (
         id SERIAL PRIMARY KEY,
@@ -17,9 +21,17 @@ const adminUserInsert = `
 `;
 
 module.exports = {
+    /**
+     * Schemas das tabelas do banco de dados
+     * @type {Object.<string, string>}
+     */
     schemas: {
         user: userSchema
     },
+    /**
+     * Inserções padrão para popular o banco de dados
+     * @type {Object.<string, string>}
+     */
     defaultInserts: {
         adminUserInsert: adminUserInsert
     }

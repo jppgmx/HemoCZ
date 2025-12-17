@@ -1,9 +1,13 @@
+/**
+ * @module services/database
+ * Gerenciamento de conexão e operações do banco de dados SQLite3.
+ */
+
 const sq3 = require('sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
 
 const schemas = require('./schemas');
-const { each } = require('chart.js/helpers');
 
 const dbBasePath = path.resolve(__dirname, '../data');
 const dbFilePath = path.join(dbBasePath, 'app_database.db')
@@ -47,15 +51,15 @@ let db = new sq3.Database(dbFilePath, (err) => {
 module.exports = {
     /**
      * Obtém a instância do banco de dados SQLite.
-     * @returns A instância do banco de dados SQLite.
+     * @returns {sq3.Database} A instância do banco de dados SQLite.
      */
     getDB: () => db,
 
     /**
      * Executa uma consulta SQL no banco de dados sem retornar resultados.
      * @param {string} query A consulta SQL a ser executada.
-     * @param {Array} params Os parâmetros para a consulta SQL.
-     * @returns {Promise} Uma Promise que resolve quando a consulta é concluída.
+     * @param {Array<any>} params Os parâmetros para a consulta SQL.
+     * @returns {Promise<sq3.RunResult>} Uma Promise que resolve quando a consulta é concluída.
      */
     run: async (query, params = []) => {
         return new Promise((resolve, reject) => {
@@ -72,8 +76,8 @@ module.exports = {
     /**
      * Executa uma consulta SQL que retorna uma única linha.
      * @param {string} query A consulta SQL a ser executada.
-     * @param {Array} params Os parâmetros para a consulta SQL.
-     * @returns {Promise} Uma Promise que resolve com a linha retornada.
+     * @param {Array<any>} params Os parâmetros para a consulta SQL.
+     * @returns {Promise<any>} Uma Promise que resolve com a linha retornada.
      */
     get: async (query, params = []) => {
         return new Promise((resolve, reject) => {
@@ -90,8 +94,8 @@ module.exports = {
     /**
      * Executa uma consulta SQL que retorna múltiplas linhas.
      * @param {string} query A consulta SQL a ser executada. 
-     * @param {Array} params Os parâmetros para a consulta SQL.
-     * @returns {Promise} Uma Promise que resolve com as linhas retornadas.
+     * @param {Array<any>} params Os parâmetros para a consulta SQL.
+     * @returns {Promise<any[]>} Uma Promise que resolve com as linhas retornadas.
      */
     all: async (query, params = []) => {
         return new Promise((resolve, reject) => {
@@ -108,9 +112,9 @@ module.exports = {
     /**
      * Executa uma consulta SQL e chama um callback para cada linha retornada.
      * @param {string} query A consulta SQL a ser executada.
-     * @param {Array} params Os parâmetros para a consulta SQL.
-     * @param {Function} callback O callback a ser chamado para cada linha.
-     * @returns {Promise} Uma Promise que resolve com o número de linhas processadas.
+     * @param {Array<any>} params Os parâmetros para a consulta SQL.
+     * @param {(err: Error | null, row: any) => void} callback O callback a ser chamado para cada linha.
+     * @returns {Promise<number>} Uma Promise que resolve com o número de linhas processadas.
      */
     each: async (query, params = [], callback) => {
         return new Promise((resolve, reject) => {

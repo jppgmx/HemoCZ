@@ -26,12 +26,12 @@
     </header>
     <main>
         <h1>Agende aqui sua coleta!</h1>
-        <form action method="post" name="agendamento">
-            <label for="nomePessoa">Nome Completo:</label>
+        <form action method="post" name="appointment">
+            <label for="name">Nome Completo:</label>
             <input
                 type="text"
-                id="nomePessoa"
-                name="nomePessoa"
+                id="name"
+                name="name"
                 required
                 autocomplete="name"
                 minlength="3"
@@ -49,11 +49,11 @@
                 autocomplete="email"
             >
 
-            <label for="telefone">Telefone:</label>
+            <label for="phone">Telefone:</label>
             <input
                 type="tel"
-                id="telefone"
-                name="telefone"
+                id="phone"
+                name="phone"
                 required
                 autocomplete="tel"
                 inputmode="tel"
@@ -62,8 +62,8 @@
                 maxlength="16"
             >
 
-            <label for="tipoSanguineo">Grupo Sanguíneo:</label>
-            <select id="tipoSanguineo" name="tipoSanguineo" required>
+            <label for="bloodType">Grupo Sanguíneo:</label>
+            <select id="bloodType" name="bloodType" required>
                 <option value="">Selecione</option>
                 <option value="A+">A+</option>
                 <option value="A-">A-</option>
@@ -75,18 +75,18 @@
                 <option value="O-">O-</option>
             </select>
 
-            <label for="data">Data Preferida:</label>
+            <label for="date">Data Preferida:</label>
             <input
                 type="date"
-                id="data"
-                name="data"
+                id="date"
+                name="date"
                 required
             >
 
-            <label for="hora">Horários Disponíveis:</label>
+            <label for="time">Horários Disponíveis:</label>
             <select
-                id="hora"
-                name="hora"
+                id="time"
+                name="time"
                 required
             >
                 <option value="">Carregando horários...</option>

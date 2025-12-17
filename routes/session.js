@@ -1,3 +1,8 @@
+/**
+ * @module routes/session
+ * Rotas públicas para gerenciamento de sessão de usuário.
+ */
+
 const a2 = require('argon2');
 const express = require('express');
 
@@ -5,14 +10,14 @@ const db = require('../services/database');
 const tk = require('../services/tokens');
 
 /**
- * HTTP POST /login
+ * HTTP POST /api/session/login
  * Autentica o usuário com base nas credenciais fornecidas na requisição.
  * @param {import("express").Request} req - Objeto de requisição do Express.
  * @param {import("express").Response} res - Objeto de resposta do Express.
  * @returns {void} Envia uma resposta HTTP; não retorna valor.
  */
 async function loginUser(req, res) {
-    // Usamos o PostgreSQL como banco de dados relacional.
+    // Usamos o SQLite3 como banco de dados relacional.
     const { username, password } = req.body;
     console.log('Login attempt for user:', username);
 
@@ -58,7 +63,7 @@ async function loginUser(req, res) {
 }
 
 /**
- * HTTP GET /user-info
+ * HTTP GET /api/session/userinfo
  * Retorna informações do usuário autenticado.
  * @param {import('express').Request} req Objeto de requisição.
  * @param {import('express').Response} res Objeto de resposta.
