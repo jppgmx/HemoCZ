@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resposta - HemoCZ</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Ubuntu', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .email-header {
+            background: linear-gradient(135deg, #8B0000 0%, #c41e3a 100%);
+            padding: 30px 20px;
+            text-align: center;
+            color: #ffffff;
+        }
+        .email-header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .email-header p {
+            margin: 8px 0 0 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .email-body {
+            padding: 30px 25px;
+            color: #333333;
+            line-height: 1.6;
+        }
+        .greeting {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #8B0000;
+        }
+        .original-message-section {
+            background-color: #f9f9f9;
+            border-left: 4px solid #c41e3a;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .original-message-section h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .original-message-section p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #555;
+        }
+        .reply-message {
+            margin: 20px 0;
+            font-size: 15px;
+            color: #333;
+        }
+        .email-footer {
+            background-color: #f8f8f8;
+            padding: 20px 25px;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+            font-size: 13px;
+            color: #666;
+        }
+        .email-footer p {
+            margin: 5px 0;
+        }
+        .no-reply-notice {
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 4px;
+            padding: 12px;
+            margin: 20px 0;
+            font-size: 13px;
+            color: #856404;
+        }
+        .signature {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        .signature p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        .signature strong {
+            color: #8B0000;
+        }
+        @media only screen and (max-width: 600px) {
+            .email-container {
+                margin: 0;
+                border-radius: 0;
+            }
+            .email-body {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="email-header">
+            <h1>Hemonúcleo de Cajazeiras</h1>
+            <p>Centro de Doação de Sangue</p>
+        </div>
+        
+        <div class="email-body">
+            <p class="greeting">Olá, {{nome}}!</p>
+            
+            <div class="reply-message">
+                <p>{{respostaCorpo}}</p>
+            </div>
+            
+            <div class="original-message-section">
+                <h3>Sua Mensagem Original</h3>
+                <p><strong>Assunto:</strong> {{assunto}}</p>
+                <p><strong>Data:</strong> {{data}}</p>
+                <p style="margin-top: 10px; font-style: italic;">"{{mensagem}}"</p>
+            </div>
+            
+            <div class="no-reply-notice">
+                <strong>Atenção:</strong> Este é um e-mail automático de resposta. Por favor, não responda diretamente a este e-mail. Se precisar de mais informações, entre em contato através do nosso site ou telefone.
+            </div>
+            
+            <div class="signature">
+                <p><strong>Equipe Hemonúcleo de Cajazeiras</strong></p>
+                <p>Centro de Doação de Sangue</p>
+                <p>📧 contato@hemonucleo-cz.com.br</p>
+                <p>📱 (83) 3333-4444</p>
+                <p>🌐 www.hemonucleo-cz.com.br</p>
+            </div>
+        </div>
+        
+        <div class="email-footer">
+            <p><strong>Doe Sangue, Doe Vida!</strong></p>
+            <p>© 2025 Hemonúcleo de Cajazeiras - Todos os direitos reservados</p>
+            <p style="margin-top: 10px; font-size: 11px;">
+                Este e-mail foi enviado para {{email}} em resposta à sua mensagem de contato.
+            </p>
+        </div>
+    </div>
+</body>
+</html></p>
