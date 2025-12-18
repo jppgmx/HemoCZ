@@ -119,15 +119,22 @@ renderTimeSlots();
 appointmentForm.addEventListener('submit', (e) => {
     e.preventDefault()
 
-  
     const selectedTime = selectTime.value.padStart(2, '0');
-    let dateTime = new Date(`${inputDate.value}T${selectedTime}:00:00`); 
+    const selectedDate = inputDate.value;
     
-    
+    // Validação inicial de horário selecionado
     if (!selectedTime) {
         formAlert("Por favor, selecione um horário válido.", 'error');
         return;
     }
+
+    // Validação inicial de data selecionada
+    if (!selectedDate) {
+        formAlert("Por favor, selecione uma data.", 'error');
+        return;
+    }
+
+    let dateTime = new Date(`${selectedDate}T${selectedTime}:00:00`);
 
     /** @type {Appointment} */
     let appointment = {
@@ -145,14 +152,6 @@ appointmentForm.addEventListener('submit', (e) => {
     } catch (error) {
         formAlert(error.message, 'error')
         return
-    }
-    
-    // Verifica disponibilidade antes de confirmar o agendamento
-    const scheduledAtTime = checkAvailability(inputDate.value, selectedTime);
-    if (scheduledAtTime >= MAX_SLOTS_PER_HOUR) {
-        formAlert("Desculpe, este horário acabou de ser preenchido. Por favor, selecione outro.", 'error');
-        renderTimeSlots(); 
-        return;
     }
 
 
@@ -236,22 +235,102 @@ function formAlert(message, type='success') {
 }
 
 /**
+ * Valida se um endereço de e-mail possui formato válido
+ * @param {string} email E-mail a ser validado
+ * @returns {boolean} True se o e-mail for válido
+ */
+function isValidEmail(email) {
+    // Regex RFC 5322 simplificada para validação de e-mail
+    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    return emailRegex.test(email);
+}
+
+/**
+ * Valida se um número de telefone possui formato válido
+ * @param {string} phone Telefone a ser validado
+ * @returns {boolean} True se o telefone for válido
+ */
+function isValidPhone(phone) {
+    // Formato: (XX) 9XXXX-XXXX
+    const phoneRegex = /^\(\d{2}\)\s9\d{4}-\d{4}$/;
+    return phoneRegex.test(phone);
+}
+
+/**
+ * Valida se um nome possui formato válido
+ * @param {string} name Nome a ser validado
+ * @returns {boolean} True se o nome for válido
+ */
+function isValidName(name) {
+    // Apenas letras e espaços, 3-80 caracteres
+    const nameRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ\s]{3,80}$/;
+    return nameRegex.test(name);
+}
+
+/**
  * Valida se um agendamento pode ser criado
- * Verifica se o e-mail já possui um agendamento pendente
+ * Verifica todos os campos obrigatórios, formatos e se já existe um agendamento pendente
  * @param {Appointment} appointment Objeto do agendamento a ser validado
- * @throws {Error} Se o e-mail já possuir um agendamento pendente
+ * @throws {Error} Se alguma validação falhar
  */
 function validate(appointment) {
-    const existingAppointments = JSON.parse(localStorage.getItem('appointments')) || []
-    
-    const newEmail = appointment.email.toLowerCase()
+    // 1. Validar nome
+    if (!appointment.name.trim()) {
+        throw new Error('O campo Nome Completo é obrigatório.');
+    }
+    if (!isValidName(appointment.name)) {
+        throw new Error('Nome inválido. Use apenas letras e espaços (3 a 80 caracteres).');
+    }
 
+    // 2. Validar email
+    if (!appointment.email.trim()) {
+        throw new Error('O campo E-mail é obrigatório.');
+    }
+    if (!isValidEmail(appointment.email)) {
+        throw new Error('Por favor, insira um endereço de e-mail válido.');
+    }
+
+    // 3. Validar telefone
+    if (!appointment.phone.trim()) {
+        throw new Error('O campo Telefone é obrigatório.');
+    }
+    if (!isValidPhone(appointment.phone)) {
+        throw new Error('Telefone inválido. Use o formato: (XX) 9XXXX-XXXX');
+    }
+
+    // 4. Validar tipo sanguíneo
+    const validBloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+    if (!appointment.bloodType || !validBloodTypes.includes(appointment.bloodType)) {
+        throw new Error('Por favor, selecione um tipo sanguíneo válido.');
+    }
+
+    // 5. Validar data
+    if (!appointment.dateTime || isNaN(appointment.dateTime.getTime())) {
+        throw new Error('Por favor, selecione uma data válida.');
+    }
+
+    // 6. Validar horário selecionado
+    const selectedHour = appointment.dateTime.getHours().toString().padStart(2, '0');
+    if (!AVAILABLE_TIMES.includes(selectedHour)) {
+        throw new Error('Por favor, selecione um horário válido.');
+    }
+
+    // 7. Verificar disponibilidade de vagas para o horário
+    const dateString = appointment.dateTime.toISOString().substring(0, 10);
+    const scheduledAtTime = checkAvailability(dateString, selectedHour);
+    if (scheduledAtTime >= MAX_SLOTS_PER_HOUR) {
+        throw new Error(`O horário ${selectedHour}:00h não possui mais vagas disponíveis. Por favor, selecione outro horário.`);
+    }
+
+    // 8. Verificar duplicidade de email
+    const existingAppointments = JSON.parse(localStorage.getItem('appointments')) || [];
+    const newEmail = appointment.email.toLowerCase();
     const duplicateAppointment = existingAppointments.find(existing => {
         const existingEmail = existing.email ? existing.email.toLowerCase() : '';
-        return existingEmail === newEmail && existing.status === 'Aguardando'
-    })
+        return existingEmail === newEmail && existing.status === 'Aguardando';
+    });
 
     if (duplicateAppointment) {
-        throw new Error(`O e-mail ${appointment.email} já possui um agendamento pendente. Por favor, aguarde a data da coleta ou entre em contato com a gestão.`)
+        throw new Error(`O e-mail ${appointment.email} já possui um agendamento pendente. Por favor, aguarde a data da coleta ou entre em contato com a gestão.`);
     }
 }

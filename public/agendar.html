@@ -32,20 +32,14 @@
                 type="text"
                 id="name"
                 name="name"
-                required
                 autocomplete="name"
-                minlength="3"
-                maxlength="80"
-                pattern="^[A-Za-zÀ-ÖØ-öø-ÿ\s]{3,80}$"
-                title="Digite apenas letras e espaços (3 a 80 caracteres)."
             >
 
             <label for="email">E-mail:</label>
             <input
-                type="email"
+                type="text"
                 id="email"
                 name="email"
-                required
                 autocomplete="email"
             >
 
@@ -54,16 +48,13 @@
                 type="tel"
                 id="phone"
                 name="phone"
-                required
                 autocomplete="tel"
                 inputmode="tel"
-                pattern="^\(\d{2}\)\s9\d{4}-\d{4}$"
-                title="Formato esperado: (XX) 9XXXX-XXXX"
                 maxlength="16"
             >
 
             <label for="bloodType">Grupo Sanguíneo:</label>
-            <select id="bloodType" name="bloodType" required>
+            <select id="bloodType" name="bloodType">
                 <option value="">Selecione</option>
                 <option value="A+">A+</option>
                 <option value="A-">A-</option>
@@ -80,14 +71,12 @@
                 type="date"
                 id="date"
                 name="date"
-                required
             >
 
             <label for="time">Horários Disponíveis:</label>
             <select
                 id="time"
                 name="time"
-                required
             >
                 <option value="">Carregando horários...</option>
             </select>
