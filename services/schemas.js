@@ -62,6 +62,7 @@ const announcementSchema = `
         id INT NOT NULL,
         title VARCHAR(150) NOT NULL,
         text TEXT NOT NULL,
+        mime VARCHAR(50) NOT NULL,
         image BLOB NOT NULL,
         CONSTRAINT PK_Announcement PRIMARY KEY (id)
     );
@@ -85,9 +86,31 @@ const eventSchema = `
     );
 `;
 
+// Define a inserção padrão do usuário administrador
 const adminUserInsert = `
     INSERT INTO user (username, name, email, passwd) VALUES
     ('admin', 'Administrator', 'admin@example.com', '$argon2id$v=19$m=64,t=8,p=8$bzJiWm9ZWk12Y0R5Y2tXWA$Eby7mcYDFR5d2xygj/VouqmFRQFAdYqNKbrSEPd0PAODY5K3wuOaSG9lnKbPnoUlaOUSbGdgvuG+QhyY8zTK1g');
+`;
+
+// Inserções padrão para campanhas, anúncios e eventos
+const campaignInserts = `
+    INSERT INTO campaign (id, title, description, icon) VALUES
+    (1, 'Campanha Outubro Vermelho', 'Aumentar os estoques regionais com doações programadas.', '🩸'),
+    (2, 'Unidades Móveis', 'Agende uma visita da nossa unidade móvel à sua comunidade.', '🚐'),
+    (3, 'Campanha Universitária', 'Parcerias com universidades para doações durante o semestre.', '🏫');
+`;
+
+const announcementInserts = `
+    INSERT INTO announcement (id, title, text, mime, image) VALUES
+    (1, 'Doe sangue, salve vidas', 'Campanhas regulares em diversas unidades — veja como participar.', 'image/jpeg', rdf('assets/announcements/img1.jpg')),
+    (2, 'Junte sua equipe', 'Empresas, escolas e clubes podem organizar coletas para doação.', 'image/jpeg', rdf('assets/announcements/img2.jpg')),
+    (3, 'Voluntariado', 'Participe como voluntário e aprenda a ajudar nos eventos locais.', 'image/jpeg', rdf('assets/announcements/img3.jpg'));
+`;
+
+const eventInserts = `
+    INSERT INTO event (id, title, description, datetime, street, number, city, state) VALUES
+    (1, 'Coleta na Praça Central', 'Coleta aberta a toda população — venha doar e convidar amigos.', '2025-06-12 09:00:00', 'Praça Central, Centro', NULL, 'João Pessoa', 'PB'),
+    (2, 'Campanha Empresarial', 'Coleta exclusiva para funcionários (inscrição prévia).', '2025-07-02 14:00:00', 'Av. Brasil', '1234', 'João Pessoa', 'PB');
 `;
 
 module.exports = {
@@ -108,6 +131,9 @@ module.exports = {
      * @type {Object.<string, string>}
      */
     defaultInserts: {
-        adminUserInsert: adminUserInsert
+        adminUserInsert: adminUserInsert,
+        campaignInserts: campaignInserts,
+        announcementInserts: announcementInserts,
+        eventInserts: eventInserts
     }
 };
