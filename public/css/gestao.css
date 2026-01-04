@@ -199,6 +199,11 @@ tbody tr:last-child td {
     border-bottom: none;
 }
 
+.status-cancelado {
+    color: #dc3545;
+    font-weight: 600;
+}
+
 .status-coletado {
     color: #28a745;
     font-weight: 600;
