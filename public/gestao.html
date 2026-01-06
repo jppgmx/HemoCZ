@@ -71,6 +71,37 @@
             </div>
         </div>
 
+        <!-- Assistência -->
+        <section class="assistencia-section table-section" aria-labelledby="assistencia-heading">
+            <div class="section-header-row">
+                <div>
+                    <h2 id="assistencia-heading">Assistência</h2>
+                    <p class="section-subtitle">Gerencie campanhas, eventos e ações de apoio.</p>
+                </div>
+                <div class="assist-actions">
+                    <button id="assist-refresh" class="btn-action" aria-label="Atualizar lista">Atualizar</button>
+                    <button id="assist-create" class="btn-action" style="background-color: var(--color-primary);" aria-label="Nova informação de assistência">Nova Campanha</button>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="assistencia-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Tipo</th>
+                            <th>Data</th>
+                            <th>Status</th>
+                            <th style="width: 180px;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Aqui vai ser gerado  via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
         <!-- Appointments Table -->
         <div class="table-section">
             <h2>Agendamentos em Processo</h2>
@@ -122,29 +153,87 @@
         </div>
     </main>
 
-    <!-- Modal para Visualizar Mensagem Completa -->
-    <div id="message-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modal-subject">Assunto</h2>
-                <button class="modal-close" onclick="closeMessageModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="modal-info-row">
-                    <strong>De:</strong> <span id="modal-name"></span> (<span id="modal-email"></span>)
+        <!-- Modal Assistência -->
+        <div id="assistencia-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="assistencia-modal-title" aria-describedby="assistencia-modal-desc">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="assistencia-modal-title">Nova informação</h2>
+                    <button class="modal-close" aria-label="Fechar" id="assistencia-modal-close">&times;</button>
                 </div>
-                <div class="modal-info-row">
-                    <strong>Data:</strong> <span id="modal-date"></span>
+                <div class="modal-body">
+                    <p id="assistencia-modal-desc" class="section-subtitle">Preencha os dados da ação de assistência.</p>
+                    <form id="assistencia-form">
+                        <input type="hidden" id="assistencia-id" name="id">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="assistencia-nome">Título</label>
+                                <input id="assistencia-nome" name="nome" type="text" required placeholder="Ex: Campanha de Doação de Sangue">
+                            </div>
+                            <div class="form-group">
+                                <label for="assistencia-tipo">Tipo</label>
+                                <select id="assistencia-tipo" name="tipo" required>
+                                    <option value="">Selecione</option>
+                                    <option value="Campanha">Campanha</option>
+                                    <option value="Evento">Evento</option>
+                                    <option value="Ação">Ação</option>
+                                    <option value="Aviso">Aviso</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="assistencia-data">Data</label>
+                                <input id="assistencia-data" name="data" type="date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="assistencia-status">Status</label>
+                                <select id="assistencia-status" name="status" required>
+                                    <option value="">Selecione</option>
+                                    <option value="Ativo">Ativo</option>
+                                    <option value="Em breve">Em breve</option>
+                                    <option value="Encerrado">Encerrado</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="assistencia-imagem">Imagem (PNG ou JPEG, até 10 MB)</label>
+                            <input id="assistencia-imagem" name="imagem" type="file" accept="image/png, image/jpeg">
+                        </div>
+                        <div class="form-group">
+                            <label for="assistencia-descricao">Descrição</label>
+                            <textarea id="assistencia-descricao" name="descricao" rows="4" placeholder="Detahles" required></textarea>
+                        </div>
+                        <div class="modal-actions">
+                            <button type="button" class="btn" id="assistencia-cancel" style="background-color: #999;">Cancelar</button>
+                            <button type="submit" class="btn" style="background-color: var(--color-primary);">Salvar</button>
+                        </div>
+                    </form>
                 </div>
-                <div class="modal-message-content">
-                    <p id="modal-message"></p>
-                </div>
-            </div>
-            <div class="modal-actions">
-                <button class="btn" onclick="closeMessageModal()">Fechar</button>
             </div>
         </div>
-    </div>
+
+        <!-- Modal para Visualizar Mensagem Completa -->
+        <div id="message-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modal-subject">Assunto</h2>
+                    <button class="modal-close" onclick="closeMessageModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-info-row">
+                        <strong>De:</strong> <span id="modal-name"></span> (<span id="modal-email"></span>)
+                    </div>
+                    <div class="modal-info-row">
+                        <strong>Data:</strong> <span id="modal-date"></span>
+                    </div>
+                    <div class="modal-message-content">
+                        <p id="modal-message"></p>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn" onclick="closeMessageModal()">Fechar</button>
+                </div>
+            </div>
+        </div>
+    
 
     <footer>
         <div class="footer-content">

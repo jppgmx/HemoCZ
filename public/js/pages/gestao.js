@@ -37,6 +37,59 @@ fetch('/api/session/userinfo', {
     greetingsElement.innerText = `Olá, usuário!`
 });
 
+/* Modal de assistencia */
+const assistModal = document.getElementById('assistencia-modal');
+const assistForm = document.getElementById('assistencia-form');
+const assistCancelBtn = document.getElementById('assistencia-cancel');
+const assistCloseBtn = document.getElementById('assistencia-modal-close');
+const assistCreateBtn = document.getElementById('assist-create');
+const assistFileInput = document.getElementById('assistencia-imagem');
+
+function openAssistModal() {
+    if (!assistModal) return;
+    document.getElementById('assistencia-modal-title').innerText = 'Nova informação';
+    assistForm?.reset();
+    assistModal.style.display = 'flex';
+}
+
+function closeAssistModal() {
+    if (!assistModal) return;
+    assistModal.style.display = 'none';
+}
+
+function bindAssistenciaEvents() {
+    assistCreateBtn?.addEventListener('click', () => openAssistModal());
+    assistCancelBtn?.addEventListener('click', closeAssistModal);
+    assistCloseBtn?.addEventListener('click', closeAssistModal);
+
+    if (assistModal) {
+        assistModal.addEventListener('click', (e) => {
+            if (e.target === assistModal) closeAssistModal();
+        });
+    }
+
+    assistForm?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const file = assistFileInput?.files?.[0];
+        if (file) {
+            const isValidType = ['image/png', 'image/jpeg'].includes(file.type);
+            const isValidSize = file.size <= 10 * 1024 * 1024;
+            if (!isValidType) {
+                alert('Envie apenas imagens PNG ou JPEG.');
+                return;
+            }
+            if (!isValidSize) {
+                alert('Tamanho máximo permitido: 10 MB.');
+                return;
+            }
+        }
+        //Logica a ser implementada de envio da assistencia
+        closeAssistModal();
+    });
+}
+
+bindAssistenciaEvents();
+
 /**
  * Deleta um agendamento específico do localStorage
  * @param {string} id ID do agendamento a ser deletado
