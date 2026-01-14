@@ -43,24 +43,77 @@ const assistForm = document.getElementById('assistencia-form');
 const assistCancelBtn = document.getElementById('assistencia-cancel');
 const assistCloseBtn = document.getElementById('assistencia-modal-close');
 const assistCreateBtn = document.getElementById('assist-create');
-const assistFileInput = document.getElementById('assistencia-imagem');
+const assistTipoSelect = document.getElementById('assistencia-tipo');
 
-function openAssistModal() {
+/**
+ * Mostra/oculta campos do formulário baseado no tipo selecionado
+ */
+function handleTipoChange() {
+    const tipo = assistTipoSelect?.value;
+    
+    // Oculta todos os grupos de campos
+    document.querySelectorAll('.tipo-fields').forEach(field => {
+        field.style.display = 'none';
+        // Limpa os valores dos campos
+        field.querySelectorAll('input, textarea').forEach(input => {
+            if (input.type === 'file') {
+                input.value = '';
+            } else {
+                input.value = '';
+            }
+        });
+    });
+
+    // Mostra apenas os campos do tipo selecionado
+    if (tipo === 'Campanha') {
+        document.getElementById('campanha-fields').style.display = 'block';
+    } else if (tipo === 'Evento') {
+        document.getElementById('evento-fields').style.display = 'block';
+    } else if (tipo === 'Slider') {
+        document.getElementById('slider-fields').style.display = 'block';
+    }
+}
+
+function openAssistModal(editData = null) {
     if (!assistModal) return;
-    document.getElementById('assistencia-modal-title').innerText = 'Nova informação';
+    
     assistForm?.reset();
+    handleTipoChange(); // Reseta os campos
+    
+    if (editData) {
+        document.getElementById('assistencia-modal-title').innerText = 'Editar informação';
+        document.getElementById('assistencia-id').value = editData.id;
+        // Bloqueia edição do tipo
+        if (assistTipoSelect) {
+            assistTipoSelect.disabled = true;
+        }
+        // Preencher campos de edição aqui se necessário
+    } else {
+        document.getElementById('assistencia-modal-title').innerText = 'Nova informação';
+        document.getElementById('assistencia-id').value = '';
+        // Habilita edição do tipo
+        if (assistTipoSelect) {
+            assistTipoSelect.disabled = false;
+        }
+    }
+    
     assistModal.style.display = 'flex';
 }
 
 function closeAssistModal() {
     if (!assistModal) return;
     assistModal.style.display = 'none';
+    assistForm?.reset();
+    handleTipoChange();
 }
 
 function bindAssistenciaEvents() {
     assistCreateBtn?.addEventListener('click', () => openAssistModal());
     assistCancelBtn?.addEventListener('click', closeAssistModal);
     assistCloseBtn?.addEventListener('click', closeAssistModal);
+    
+    // Event listener para mudança de tipo
+    assistTipoSelect?.addEventListener('change', handleTipoChange);
 
     if (assistModal) {
         assistModal.addEventListener('click', (e) => {
@@ -70,22 +123,133 @@ function bindAssistenciaEvents() {
 
     assistForm?.addEventListener('submit', (e) => {
         e.preventDefault();
-        const file = assistFileInput?.files?.[0];
-        if (file) {
-            const isValidType = ['image/png', 'image/jpeg'].includes(file.type);
-            const isValidSize = file.size <= 10 * 1024 * 1024;
-            if (!isValidType) {
-                alert('Envie apenas imagens PNG ou JPEG.');
+        
+        const tipo = assistTipoSelect?.value;
+        const id = document.getElementById('assistencia-id')?.value;
+
+        // Validações específicas por tipo
+        if (tipo === 'Campanha') {
+            const icone = document.getElementById('campanha-icone')?.files?.[0];
+            const nome = document.getElementById('campanha-nome')?.value;
+            const informacoes = document.getElementById('campanha-informacoes')?.value;
+            
+            if (!nome || !informacoes) {
+                alert('Preencha todos os campos obrigatórios.');
                 return;
             }
-            if (!isValidSize) {
-                alert('Tamanho máximo permitido: 10 MB.');
+            
+            if (icone) {
+                const isValidType = ['image/png', 'image/jpeg'].includes(icone.type);
+                const isValidSize = icone.size <= 2 * 1024 * 1024;
+                if (!isValidType || !isValidSize) {
+                    alert('Ícone deve ser PNG ou JPEG, até 2 MB.');
+                    return;
+                }
+            }
+
+            if (id) {
+                editarAssistencia(id, { tipo, icone, nome, informacoes });
+            } else {
+                criarAssistencia({ tipo, icone, nome, informacoes });
+            }
+            
+        } else if (tipo === 'Evento') {
+            const cidade = document.getElementById('evento-cidade')?.value;
+            const estado = document.getElementById('evento-estado')?.value;
+            const horario = document.getElementById('evento-horario')?.value;
+            const descricao = document.getElementById('evento-descricao')?.value;
+            
+            if (!cidade || !estado || !horario || !descricao) {
+                alert('Preencha todos os campos obrigatórios.');
                 return;
             }
+
+            if (id) {
+                editarAssistencia(id, { tipo, cidade, estado, horario, descricao });
+            } else {
+                criarAssistencia({ tipo, cidade, estado, horario, descricao });
+            }
+            
+        } else if (tipo === 'Slider') {
+            const imagens = document.getElementById('slider-imagens')?.files;
+            
+            if (!imagens || imagens.length !== 3) {
+                alert('Selecione exatamente 3 imagens.');
+                return;
+            }
+            
+            //Aqui creio eu que precisa validar a imagem primeiro ;D
+            for (let i = 0; i < imagens.length; i++) {
+                const img = imagens[i];
+                const isValidType = ['image/png', 'image/jpeg'].includes(img.type);
+                const isValidSize = img.size <= 5 * 1024 * 1024;
+                
+                if (!isValidType || !isValidSize) {
+                    alert(`Imagem ${i + 1}: deve ser PNG ou JPEG, até 5 MB.`);
+                    return;
+                }
+            }
+
+            if (id) {
+                editarAssistencia(id, { tipo, imagens: Array.from(imagens) });
+            } else {
+                criarAssistencia({ tipo, imagens: Array.from(imagens) });
+            }
+            
+        } else {
+            alert('Selecione um tipo válido.');
+            return;
         }
-        //Logica a ser implementada de envio da assistencia
+        
         closeAssistModal();
     });
+}
+
+/**
+ * Cria uma nova assistência (Campanha, Evento ou Slider)
+ * @param {Object} data - Dados da assistência
+ * @param {string} data.tipo - Tipo: 'Campanha', 'Evento' ou 'Slider'
+ * 
+ * Para Campanha:
+ * @param {File} [data.icone] - Arquivo do ícone
+ * @param {string} data.nome - Nome da campanha
+ * @param {string} data.informacoes - Informações da campanha
+ * 
+ * Para Evento:
+ * @param {string} data.cidade - Cidade do evento
+ * @param {string} data.estado - Estado do evento
+ * @param {string} data.horario - Horário do evento
+ * @param {string} data.descricao - Descrição do evento
+ * 
+ * Para Slider:
+ * @param {File[]} data.imagens - Array com 3 imagens
+ */
+function criarAssistencia(data) {
+    console.log('Criar assistência:', data);
+    alert('Logica a ser implementada');
+
+}
+
+/**
+ * Edita uma assistência existente
+ * @param {string} id - ID da assistência a ser editada
+ * @param {Object} data - Dados atualizados (mesma estrutura de criarAssistencia)
+ */
+function editarAssistencia(id, data) {
+    console.log('Editar assistência:', id, data);
+    alert('Logica a ser implementada');
+
+}
+
+/**
+ * Remove uma assistência
+ * @param {string} id - ID da assistência a ser removida
+ * @param {string} tipo - Tipo da assistência ('Campanha', 'Evento' ou 'Slider')
+ */
+function removerAssistencia(id, tipo) {
+    console.log('Remover assistência:', id, tipo);
+    alert('Logica a ser implementada');
+ 
 }
 
 bindAssistenciaEvents();

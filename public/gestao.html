@@ -96,7 +96,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Aqui vai ser gerado  via JavaScript -->
+                        <!-- Falta criar função para renderizar a tabela De assistencia no JS de gestão -->
                     </tbody>
                 </table>
             </div>
@@ -164,43 +164,63 @@
                     <p id="assistencia-modal-desc" class="section-subtitle">Preencha os dados da ação de assistência.</p>
                     <form id="assistencia-form">
                         <input type="hidden" id="assistencia-id" name="id">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="assistencia-nome">Título</label>
-                                <input id="assistencia-nome" name="nome" type="text" required placeholder="Ex: Campanha de Doação de Sangue">
-                            </div>
-                            <div class="form-group">
-                                <label for="assistencia-tipo">Tipo</label>
-                                <select id="assistencia-tipo" name="tipo" required>
-                                    <option value="">Selecione</option>
-                                    <option value="Campanha">Campanha</option>
-                                    <option value="Evento">Evento</option>
-                                    <option value="Ação">Ação</option>
-                                    <option value="Aviso">Aviso</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="assistencia-data">Data</label>
-                                <input id="assistencia-data" name="data" type="date" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="assistencia-status">Status</label>
-                                <select id="assistencia-status" name="status" required>
-                                    <option value="">Selecione</option>
-                                    <option value="Ativo">Ativo</option>
-                                    <option value="Em breve">Em breve</option>
-                                    <option value="Encerrado">Encerrado</option>
-                                </select>
-                            </div>
-                        </div>
+                        
+                        <!-- Seletor de Tipo -->
                         <div class="form-group">
-                            <label for="assistencia-imagem">Imagem (PNG ou JPEG, até 10 MB)</label>
-                            <input id="assistencia-imagem" name="imagem" type="file" accept="image/png, image/jpeg">
+                            <label for="assistencia-tipo">Tipo</label>
+                            <select id="assistencia-tipo" name="tipo" required>
+                                <option value="">Selecione</option>
+                                <option value="Campanha">Campanha</option>
+                                <option value="Evento">Evento</option>
+                                <option value="Slider">Sliders</option>
+                            </select>
                         </div>
-                        <div class="form-group">
-                            <label for="assistencia-descricao">Descrição</label>
-                            <textarea id="assistencia-descricao" name="descricao" rows="4" placeholder="Detahles" required></textarea>
+
+                        <!-- Campos para Campanha -->
+                        <div id="campanha-fields" class="tipo-fields" style="display: none;">
+                            <div class="form-group">
+                                <label for="campanha-icone">Ícone (PNG ou JPEG, até 2 MB)</label>
+                                <input id="campanha-icone" name="icone" type="file" accept="image/png, image/jpeg">
+                            </div>
+                            <div class="form-group">
+                                <label for="campanha-nome">Nome da Campanha</label>
+                                <input id="campanha-nome" name="nome" type="text" placeholder="Ex: Campanha Doe Sangue">
+                            </div>
+                            <div class="form-group">
+                                <label for="campanha-informacoes">Informações</label>
+                                <textarea id="campanha-informacoes" name="informacoes" rows="5" placeholder="Descreva as informações da campanha..."></textarea>
+                            </div>
                         </div>
+
+                        <!-- Campos para Evento -->
+                        <div id="evento-fields" class="tipo-fields" style="display: none;">
+                            <div class="form-group">
+                                <label for="evento-cidade">Cidade</label>
+                                <input id="evento-cidade" name="cidade" type="text" placeholder="Ex: Cajazeiras">
+                            </div>
+                            <div class="form-group">
+                                <label for="evento-estado">Estado</label>
+                                <input id="evento-estado" name="estado" type="text" placeholder="Ex: PB">
+                            </div>
+                            <div class="form-group">
+                                <label for="evento-horario">Horário</label>
+                                <input id="evento-horario" name="horario" type="text" placeholder="Ex: 08:00 - 17:00">
+                            </div>
+                            <div class="form-group">
+                                <label for="evento-descricao">Descrição</label>
+                                <textarea id="evento-descricao" name="descricao" rows="5" placeholder="Descreva o evento..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Campos para Slider -->
+                        <div id="slider-fields" class="tipo-fields" style="display: none;">
+                            <div class="form-group">
+                                <label for="slider-imagens">Selecione 3 imagens (PNG ou JPEG, até 5 MB cada)</label>
+                                <input id="slider-imagens" name="imagens" type="file" accept="image/png, image/jpeg" multiple>
+                                <small style="color: #666; font-size: 0.85rem;">Selecione exatamente 3 imagens</small>
+                            </div>
+                        </div>
+
                         <div class="modal-actions">
                             <button type="button" class="btn" id="assistencia-cancel" style="background-color: #999;">Cancelar</button>
                             <button type="submit" class="btn" style="background-color: var(--color-primary);">Salvar</button>
