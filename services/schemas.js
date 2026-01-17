@@ -77,6 +77,7 @@ const eventSchema = `
         datetime TIMESTAMP NOT NULL,
         street VARCHAR(100) NOT NULL,
         number VARCHAR(10),
+        neighborhood VARCHAR(100) NOT NULL,
         city VARCHAR(50) NOT NULL,
         state VARCHAR(50) NOT NULL,
         CONSTRAINT PK_Event PRIMARY KEY (id),
@@ -108,9 +109,9 @@ const announcementInserts = `
 `;
 
 const eventInserts = `
-    INSERT INTO event (id, title, description, datetime, street, number, city, state) VALUES
-    (1, 'Coleta na Praça Central', 'Coleta aberta a toda população — venha doar e convidar amigos.', '2025-06-12 09:00:00', 'Praça Central, Centro', NULL, 'João Pessoa', 'PB'),
-    (2, 'Campanha Empresarial', 'Coleta exclusiva para funcionários (inscrição prévia).', '2025-07-02 14:00:00', 'Av. Brasil', '1234', 'João Pessoa', 'PB');
+    INSERT INTO event (id, title, description, datetime, street, number, neighborhood, city, state) VALUES
+    (1, 'Coleta na Praça Central', 'Coleta aberta a toda população — venha doar e convidar amigos.', '2025-06-12 09:00:00', 'Praça Central, Centro', NULL, 'Centro', 'João Pessoa', 'PB'),
+    (2, 'Campanha Empresarial', 'Coleta exclusiva para funcionários (inscrição prévia).', '2025-07-02 14:00:00', 'Av. Brasil', '1234', 'Bairro Industrial', 'João Pessoa', 'PB');
 `;
 
 module.exports = {
