@@ -44,7 +44,7 @@ fetch('/api/session/userinfo', {
  */
 function isValidEmoji(char) {
     // Regex para detectar emojis comuns
-    const emojiRegex = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]|[\u2600-\u26FF]|\u2700-\u27BF)/g;
+    const emojiRegex = /\p{Extended_Pictographic}/u;
     return emojiRegex.test(char);
 }
 
