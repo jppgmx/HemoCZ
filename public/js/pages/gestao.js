@@ -37,6 +37,17 @@ fetch('/api/session/userinfo', {
     greetingsElement.innerText = `Olá, usuário!`
 });
 
+/**
+ * Valida se um caractere é um emoji
+ * @param {string} char Caractere a ser validado
+ * @returns {boolean} True se for um emoji válido
+ */
+function isValidEmoji(char) {
+    // Regex para detectar emojis comuns
+    const emojiRegex = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]|[\u2600-\u26FF]|\u2700-\u27BF)/g;
+    return emojiRegex.test(char);
+}
+
 /* Modal de assistencia */
 const assistModal = document.getElementById('assistencia-modal');
 const assistForm = document.getElementById('assistencia-form');
@@ -69,8 +80,8 @@ function handleTipoChange() {
         document.getElementById('campanha-fields').style.display = 'block';
     } else if (tipo === 'Evento') {
         document.getElementById('evento-fields').style.display = 'block';
-    } else if (tipo === 'Slider') {
-        document.getElementById('slider-fields').style.display = 'block';
+    } else if (tipo === 'Anuncio') {
+        document.getElementById('anuncio-fields').style.display = 'block';
     }
 }
 
@@ -129,56 +140,94 @@ function bindAssistenciaEvents() {
 
         // Validações específicas por tipo
         if (tipo === 'Campanha') {
-            const icone = document.getElementById('campanha-icone')?.files?.[0];
-            const nome = document.getElementById('campanha-nome')?.value;
-            const informacoes = document.getElementById('campanha-informacoes')?.value;
+            const emoji = document.getElementById('assistencia-emoji')?.value;
+            const nome = document.getElementById('assistencia-nome')?.value;
+            const descricao = document.getElementById('assistencia-descricao')?.value;
             
-            if (!nome || !informacoes) {
+            if (!emoji || !nome || !descricao) {
                 alert('Preencha todos os campos obrigatórios.');
                 return;
             }
             
-            if (icone) {
-                const isValidType = ['image/png', 'image/jpeg'].includes(icone.type);
-                const isValidSize = icone.size <= 2 * 1024 * 1024;
-                if (!isValidType || !isValidSize) {
-                    alert('Ícone deve ser PNG ou JPEG, até 2 MB.');
-                    return;
-                }
+            const emojiChars = Array.from(emoji);
+            if (emojiChars.length !== 1) {
+                alert('O emoji deve conter exatamente 1 caractere.');
+                return;
+            }
+            
+            if (!isValidEmoji(emoji)) {
+                alert('Por favor, insira um emoji válido.');
+                return;
+            }
+            
+            if (nome.trim().length < 3) {
+                alert('O nome da campanha deve ter pelo menos 3 caracteres.');
+                return;
+            }
+            
+            if (descricao.trim().length < 10) {
+                alert('As informações devem ter pelo menos 10 caracteres.');
+                return;
             }
 
             if (id) {
-                editarAssistencia(id, { tipo, icone, nome, informacoes });
+                editarAssistencia(id, { tipo, emoji, nome, descricao });
             } else {
-                criarAssistencia({ tipo, icone, nome, informacoes });
+                criarAssistencia({ tipo, emoji, nome, descricao });
             }
             
         } else if (tipo === 'Evento') {
-            const cidade = document.getElementById('evento-cidade')?.value;
-            const estado = document.getElementById('evento-estado')?.value;
-            const horario = document.getElementById('evento-horario')?.value;
-            const descricao = document.getElementById('evento-descricao')?.value;
+            const titulo = document.getElementById('assistencia-nome')?.value;
+            const rua = document.getElementById('evento-rua')?.value;
+            const numero = document.getElementById('evento-numero')?.value;
+            const bairro = document.getElementById('evento-bairro')?.value;
+            const datetime = document.getElementById('evento-datetime')?.value;
+            const descricao = document.getElementById('assistencia-descricao')?.value;
             
-            if (!cidade || !estado || !horario || !descricao) {
+            if (!titulo || !rua || !numero || !bairro || !datetime || !descricao) {
                 alert('Preencha todos os campos obrigatórios.');
+                return;
+            }
+            
+            if (titulo.trim().length < 3) {
+                alert('O título deve ter pelo menos 3 caracteres.');
+                return;
+            }
+            
+            if (rua.trim().length < 3) {
+                alert('O nome da rua deve ter pelo menos 3 caracteres.');
+                return;
+            }
+            
+            if (numero.trim().length < 1) {
+                alert('O número é obrigatório.');
+                return;
+            }
+            
+            if (bairro.trim().length < 3) {
+                alert('O bairro deve ter pelo menos 3 caracteres.');
+                return;
+            }
+            
+            if (descricao.trim().length < 10) {
+                alert('A descrição deve ter pelo menos 10 caracteres.');
                 return;
             }
 
             if (id) {
-                editarAssistencia(id, { tipo, cidade, estado, horario, descricao });
+                editarAssistencia(id, { tipo, titulo, rua, numero, bairro, datetime, descricao });
             } else {
-                criarAssistencia({ tipo, cidade, estado, horario, descricao });
+                criarAssistencia({ tipo, titulo, rua, numero, bairro, datetime, descricao });
             }
             
-        } else if (tipo === 'Slider') {
-            const imagens = document.getElementById('slider-imagens')?.files;
+        } else if (tipo === 'Anuncio') {
+            const imagens = document.getElementById('anuncio-imagens')?.files;
             
             if (!imagens || imagens.length !== 3) {
                 alert('Selecione exatamente 3 imagens.');
                 return;
             }
             
-            //Aqui creio eu que precisa validar a imagem primeiro ;D
             for (let i = 0; i < imagens.length; i++) {
                 const img = imagens[i];
                 const isValidType = ['image/png', 'image/jpeg'].includes(img.type);
@@ -253,6 +302,36 @@ function removerAssistencia(id, tipo) {
 }
 
 bindAssistenciaEvents();
+
+/**
+ * Valida e limita o campo de emoji a apenas 1 caractere
+ * Permite colar emojis corretamente
+ */
+function setupEmojiInput() {
+    const emojiInput = document.getElementById('assistencia-emoji');
+    if (!emojiInput) return;
+    
+    emojiInput.addEventListener('input', (e) => {
+        // Pega o primeiro caractere/emoji
+        const value = e.target.value;
+        // Usa Array.from para separar emojis corretamente
+        const chars = Array.from(value);
+        if (chars.length > 1) {
+            e.target.value = chars[0];
+        }
+    });
+    
+    emojiInput.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+        const chars = Array.from(pastedText);
+        if (chars.length > 0) {
+            e.target.value = chars[0];
+        }
+    });
+}
+
+setupEmojiInput();
 
 /**
  * Deleta um agendamento específico do localStorage

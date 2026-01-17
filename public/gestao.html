@@ -172,51 +172,59 @@
                                 <option value="">Selecione</option>
                                 <option value="Campanha">Campanha</option>
                                 <option value="Evento">Evento</option>
-                                <option value="Slider">Sliders</option>
+                                <option value="Anuncio">Anúncio</option>
                             </select>
                         </div>
 
                         <!-- Campos para Campanha -->
                         <div id="campanha-fields" class="tipo-fields" style="display: none;">
                             <div class="form-group">
-                                <label for="campanha-icone">Ícone (PNG ou JPEG, até 2 MB)</label>
-                                <input id="campanha-icone" name="icone" type="file" accept="image/png, image/jpeg">
+                                <label for="assistencia-emoji">Emoji</label>
+                                <input id="assistencia-emoji" name="emoji" type="text" placeholder="Ex: 🩸">
                             </div>
                             <div class="form-group">
-                                <label for="campanha-nome">Nome da Campanha</label>
-                                <input id="campanha-nome" name="nome" type="text" placeholder="Ex: Campanha Doe Sangue">
+                                <label for="assistencia-nome">Nome da Campanha</label>
+                                <input id="assistencia-nome" name="nome" type="text" placeholder="Ex: Campanha Doe Sangue">
                             </div>
                             <div class="form-group">
-                                <label for="campanha-informacoes">Informações</label>
-                                <textarea id="campanha-informacoes" name="informacoes" rows="5" placeholder="Descreva as informações da campanha..."></textarea>
+                                <label for="assistencia-descricao">Informações</label>
+                                <textarea id="assistencia-descricao" name="descricao" rows="5" placeholder="Descreva as informações da campanha..."></textarea>
                             </div>
                         </div>
 
                         <!-- Campos para Evento -->
                         <div id="evento-fields" class="tipo-fields" style="display: none;">
                             <div class="form-group">
-                                <label for="evento-cidade">Cidade</label>
-                                <input id="evento-cidade" name="cidade" type="text" placeholder="Ex: Cajazeiras">
+                                <label for="assistencia-nome">Título</label>
+                                <input id="assistencia-nome" name="nome" type="text" placeholder="Ex: Coleta na Praça Central">
                             </div>
                             <div class="form-group">
-                                <label for="evento-estado">Estado</label>
-                                <input id="evento-estado" name="estado" type="text" placeholder="Ex: PB">
+                                <label for="evento-rua">Rua</label>
+                                <input id="evento-rua" name="rua" type="text" placeholder="Ex: Rua José Rodovalho">
                             </div>
                             <div class="form-group">
-                                <label for="evento-horario">Horário</label>
-                                <input id="evento-horario" name="horario" type="text" placeholder="Ex: 08:00 - 17:00">
+                                <label for="evento-numero">Número</label>
+                                <input id="evento-numero" name="numero" type="text" placeholder="Ex: 1234">
                             </div>
                             <div class="form-group">
-                                <label for="evento-descricao">Descrição</label>
-                                <textarea id="evento-descricao" name="descricao" rows="5" placeholder="Descreva o evento..."></textarea>
+                                <label for="evento-bairro">Bairro</label>
+                                <input id="evento-bairro" name="bairro" type="text" placeholder="Ex: Centro">
+                            </div>
+                            <div class="form-group">
+                                <label for="evento-datetime">Data e Hora</label>
+                                <input id="evento-datetime" name="datetime" type="datetime-local">
+                            </div>
+                            <div class="form-group">
+                                <label for="assistencia-descricao">Descrição</label>
+                                <textarea id="assistencia-descricao" name="descricao" rows="5" placeholder="Descreva o evento..."></textarea>
                             </div>
                         </div>
 
-                        <!-- Campos para Slider -->
-                        <div id="slider-fields" class="tipo-fields" style="display: none;">
+                        <!-- Campos para Anúncio -->
+                        <div id="anuncio-fields" class="tipo-fields" style="display: none;">
                             <div class="form-group">
-                                <label for="slider-imagens">Selecione 3 imagens (PNG ou JPEG, até 5 MB cada)</label>
-                                <input id="slider-imagens" name="imagens" type="file" accept="image/png, image/jpeg" multiple>
+                                <label for="anuncio-imagens">Selecione 3 imagens (PNG ou JPEG, até 5 MB cada)</label>
+                                <input id="anuncio-imagens" name="imagens" type="file" accept="image/png, image/jpeg" multiple>
                                 <small style="color: #666; font-size: 0.85rem;">Selecione exatamente 3 imagens</small>
                             </div>
                         </div>

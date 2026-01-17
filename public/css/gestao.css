@@ -375,6 +375,7 @@ table button:active {
     display: flex;
     flex-direction: column;
     gap: 6px;
+    margin-bottom: 12px;
 }
 
 .form-group label {
