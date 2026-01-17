@@ -10,9 +10,9 @@ const mailService = require('../services/mail');
 /**
  * HTTP POST /api/management/send-reply
  * Envia uma resposta automática por e-mail para uma mensagem recebida.
- * @param {import('express').Request} req Objeto de requisição do Express contendo originalMessage e replyBody no body.
- * @param {import('express').Response} res Objeto de resposta do Express.
- * @returns {Promise<void>}
+ * @param {import("express").Request} req - Objeto de requisição do Express contendo originalMessage e replyBody no body.
+ * @param {import("express").Response} res - Objeto de resposta do Express.
+ * @returns {Promise<void>} Envia uma resposta HTTP; não retorna valor.
  */
 async function sendReply(req, res) {
     const { originalMessage, replyBody } = req.body;

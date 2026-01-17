@@ -9,6 +9,13 @@ const db = require('../services/database');
 
 // region CRUD Agendamentos
 
+/**
+ * HTTP POST /api/appointments/create
+ * Cria um novo agendamento de doação de sangue.
+ * @param {import("express").Request} req - Objeto de requisição do Express contendo name, bloodType, phone, email, dateTime, id e status no body.
+ * @param {import("express").Response} res - Objeto de resposta do Express.
+ * @returns {Promise<void>} Envia uma resposta HTTP; não retorna valor.
+ */
 async function createAppointment(req, res) {
     const {
         name, bloodType, phone, email, dateTime, id, status
@@ -32,6 +39,13 @@ async function createAppointment(req, res) {
     }
 }
 
+/**
+ * HTTP GET /api/appointments/count
+ * Conta a quantidade de agendamentos para uma data e hora específica.
+ * @param {import("express").Request} req - Objeto de requisição do Express contendo dateTime na query string.
+ * @param {import("express").Response} res - Objeto de resposta do Express.
+ * @returns {Promise<void>} Envia uma resposta HTTP com a contagem; não retorna valor.
+ */
 async function countAppointmentsForDatetime(req, res) {
     const { dateTime } = req.query;
     const datetime = new Date(dateTime);
@@ -48,6 +62,13 @@ async function countAppointmentsForDatetime(req, res) {
     }
 }
 
+/**
+ * HTTP GET /api/appointments/
+ * Obtém todos os agendamentos cadastrados (requer autenticação).
+ * @param {import("express").Request} req - Objeto de requisição do Express.
+ * @param {import("express").Response} res - Objeto de resposta do Express.
+ * @returns {Promise<void>} Envia uma resposta HTTP com a lista de agendamentos; não retorna valor.
+ */
 async function getAppointments(req, res) {
     try {
         const appointments = db.all('SELECT * FROM appointment');
@@ -58,6 +79,13 @@ async function getAppointments(req, res) {
     }
 }
 
+/**
+ * HTTP PUT /api/appointments/update-status
+ * Atualiza o status de um agendamento existente (requer autenticação).
+ * @param {import("express").Request} req - Objeto de requisição do Express contendo id e status no body.
+ * @param {import("express").Response} res - Objeto de resposta do Express.
+ * @returns {Promise<void>} Envia uma resposta HTTP; não retorna valor.
+ */
 async function updateAppointmentStatus(req, res) {
     const { id, status } = req.body;
     try {
@@ -75,6 +103,13 @@ async function updateAppointmentStatus(req, res) {
     }
 }
 
+/**
+ * HTTP DELETE /api/appointments/delete/:id
+ * Remove um agendamento pelo ID (requer autenticação).
+ * @param {import("express").Request} req - Objeto de requisição do Express contendo id nos parâmetros da URL.
+ * @param {import("express").Response} res - Objeto de resposta do Express.
+ * @returns {Promise<void>} Envia uma resposta HTTP; não retorna valor.
+ */
 async function deleteAppointment(req, res) {
     const { id } = req.params;
     try {

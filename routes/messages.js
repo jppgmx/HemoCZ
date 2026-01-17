@@ -7,6 +7,13 @@ const db = require('../services/database');
 const authRequired = require('../middlewares/auth');
 const express = require('express');
 
+/**
+ * HTTP POST /api/messages/send
+ * Envia uma nova mensagem de contato.
+ * @param {import("express").Request} req - Objeto de requisição do Express contendo id, name, email, subject, message e date no body.
+ * @param {import("express").Response} res - Objeto de resposta do Express.
+ * @returns {Promise<void>} Envia uma resposta HTTP; não retorna valor.
+ */
 async function sendMessage(req, res) {
     const { id, name, email, subject, message, date } = req.body;
 
@@ -22,6 +29,13 @@ async function sendMessage(req, res) {
     }
 }
 
+/**
+ * HTTP GET /api/messages/
+ * Obtém todas as mensagens de contato recebidas (requer autenticação).
+ * @param {import("express").Request} req - Objeto de requisição do Express.
+ * @param {import("express").Response} res - Objeto de resposta do Express.
+ * @returns {Promise<void>} Envia uma resposta HTTP com a lista de mensagens; não retorna valor.
+ */
 async function getMessages(req, res) {
     try {
         const messages = db.all('SELECT * FROM message');
@@ -31,6 +45,13 @@ async function getMessages(req, res) {
     }
 }
 
+/**
+ * HTTP DELETE /api/messages/:id
+ * Remove uma mensagem pelo ID (requer autenticação).
+ * @param {import("express").Request} req - Objeto de requisição do Express contendo id nos parâmetros da URL.
+ * @param {import("express").Response} res - Objeto de resposta do Express.
+ * @returns {Promise<void>} Envia uma resposta HTTP; não retorna valor.
+ */
 async function deleteMessage(req, res) {
     const { id } = req.params;
     try {
