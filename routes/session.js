@@ -23,7 +23,7 @@ async function loginUser(req, res) {
 
     try {
         const userQuery = `SELECT * FROM user WHERE username = ?`;
-        const user = await db.get(userQuery, [username]);
+        const user = db.get(userQuery, [username]);
 
         if (!user) {
             console.warn('User not found:', username);
@@ -81,7 +81,7 @@ async function getUserInfo(req, res) {
     }
 
     const userQuery = `SELECT username, name FROM user WHERE username = ?`;
-    const user = await db.get(userQuery, [username]);
+    const user = db.get(userQuery, [username]);
 
     res.status(200).json({ 
         username: user.username,

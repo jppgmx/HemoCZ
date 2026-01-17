@@ -30,7 +30,6 @@ function getTimeOfDay() {
 // Define a data mínima como hoje
 inputDate.min = getTimeOfDay(); 
 
-
 const MAX_SLOTS_PER_HOUR = 4;
 const AVAILABLE_TIMES = ['07', '08', '09', '10', '11', '12'];
 
@@ -40,31 +39,21 @@ const AVAILABLE_TIMES = ['07', '08', '09', '10', '11', '12'];
  * @param {string} timeString Hora no formato 24h (ex: '07', '08')
  * @returns {number} Número de agendamentos para aquele horário
  */
-function checkAvailability(dateString, timeString) {
-    const appointments = JSON.parse(localStorage.getItem('appointments')) || [];
-    let count = 0;
-
-    for (const appointment of appointments) {
-        try {
-            const appointmentDate = new Date(appointment.dateTime);
-            
-            // Verifica se a data e a hora correspondem
-            if (appointmentDate.toISOString().substring(0, 10) === dateString &&
-                appointmentDate.getHours().toString().padStart(2, '0') === timeString) {
-                count++;
-            }
-        } catch (e) {
-            // Ignora os agendamentos inválidos
-            console.error("Agendamento inválido:", appointment);
+async function checkAvailability(dateString, timeString) {
+    const response = await fetch(`/api/appointments/count?dateTime=${dateString}T${timeString}:00:00`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
         }
-    }
-    return count;
+    });
+    const result = await response.json();
+    return result.count;
 }
 
 /**
  * Renderiza os horários disponíveis no select com base na data selecionada
  */
-function renderTimeSlots() {
+async function renderTimeSlots() {
     const selectedDate = inputDate.value;
     selectTime.innerHTML = '';
     
@@ -86,9 +75,6 @@ function renderTimeSlots() {
         selectTime.appendChild(defaultOption);
         return;
     }
-
-    
-
     
     let headerOption = document.createElement('option');
     headerOption.value = '';
@@ -97,7 +83,7 @@ function renderTimeSlots() {
 
     // aqui preenche as opcoes de horario
     for (let timeHour of AVAILABLE_TIMES) {
-        const scheduled = checkAvailability(selectedDate, timeHour);
+        const scheduled = await checkAvailability(selectedDate, timeHour);
         const availableSlots = MAX_SLOTS_PER_HOUR - scheduled;
         const formattedTime = `${timeHour}:00h`;
 
@@ -114,9 +100,10 @@ function renderTimeSlots() {
         selectTime.appendChild(option);
     }
 }
-inputDate.addEventListener('change', renderTimeSlots);
-renderTimeSlots();
-appointmentForm.addEventListener('submit', (e) => {
+inputDate.addEventListener('change', async () => {
+    await renderTimeSlots();
+});
+appointmentForm.addEventListener('submit', async (e) => {
     e.preventDefault()
 
     const selectedTime = selectTime.value.padStart(2, '0');
@@ -154,19 +141,23 @@ appointmentForm.addEventListener('submit', (e) => {
         return
     }
 
+    fetch('/api/appointments/create', {
+        method: 'POST',
+        body: JSON.stringify(appointment),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(async response => {
+        const status = await response.json();
+        formAlert(status.message, response.ok ? 'success' : 'error');
+    }).catch(error => {
+        console.error('Erro na requisição:', error);
+        formAlert('Erro ao salvar o agendamento no servidor.', 'error');
+        return;
+    });
 
-    if(localStorage.getItem('appointments') === null) {
-        localStorage.setItem('appointments', JSON.stringify([appointment]))
-    } else {
-        let appointments = JSON.parse(localStorage.getItem('appointments'))
-        appointments.push(appointment)
-        localStorage.setItem('appointments', JSON.stringify(appointments))
-    }
-
-    renderTimeSlots(); // Atualiza a lista após o agendamento
-    appointmentForm.reset()
-    formAlert('Agendamento realizado com sucesso!')
-    
+    await renderTimeSlots(); // Atualiza a lista após o agendamento
+    appointmentForm.reset();
 })
 
 /**
@@ -320,17 +311,5 @@ function validate(appointment) {
     const scheduledAtTime = checkAvailability(dateString, selectedHour);
     if (scheduledAtTime >= MAX_SLOTS_PER_HOUR) {
         throw new Error(`O horário ${selectedHour}:00h não possui mais vagas disponíveis. Por favor, selecione outro horário.`);
-    }
-
-    // 8. Verificar duplicidade de email
-    const existingAppointments = JSON.parse(localStorage.getItem('appointments')) || [];
-    const newEmail = appointment.email.toLowerCase();
-    const duplicateAppointment = existingAppointments.find(existing => {
-        const existingEmail = existing.email ? existing.email.toLowerCase() : '';
-        return existingEmail === newEmail && existing.status === 'Aguardando';
-    });
-
-    if (duplicateAppointment) {
-        throw new Error(`O e-mail ${appointment.email} já possui um agendamento pendente. Por favor, aguarde a data da coleta ou entre em contato com a gestão.`);
     }
 }

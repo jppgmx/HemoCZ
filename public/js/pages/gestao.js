@@ -2,10 +2,10 @@
  * @typedef {Object} Appointment
  * @property {string} id ID único do agendamento
  * @property {string} name Nome completo da pessoa
- * @property {string} bloodType Tipo sanguíneo da pessoa
+ * @property {string} blood_type Tipo sanguíneo da pessoa
  * @property {string} phone Telefone da pessoa
  * @property {string} email E-mail da pessoa
- * @property {Date} dateTime Data e hora da coleta
+ * @property {Date} appointment_date Data e hora da coleta
  * @property {string} status Status do agendamento (ex: 'Aguardando', 'Coletado')
  */
 
@@ -338,11 +338,18 @@ setupEmojiInput();
  * @param {string} id ID do agendamento a ser deletado
  */
 function deleteAppointment(id) {
-    let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
-    appointments = appointments.filter(appointment => appointment.id !== id);
-    
-    localStorage.setItem('appointments', JSON.stringify(appointments));
-    renderAppointmentsTable(); 
+    fetch(`/api/appointments/delete/${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+    }).then(async response => {
+        if (!response.ok) {
+            throw new Error('Failed to delete appointment');
+        }
+        await renderAppointmentsTable();
+    }).catch(error => {
+        console.error('Error deleting appointment:', error);
+        alert('Erro ao deletar o agendamento.');
+    });
 }
 
 /**
@@ -351,35 +358,54 @@ function deleteAppointment(id) {
  * @param {string} newStatus Novo status ('Aguardando' ou 'Coletado')
  */
 function updateStatus(id, newStatus) {
-    let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
-    const index = appointments.findIndex(appointment => appointment.id === id);
-    
-    if (index > -1 && ['Aguardando', 'Coletado'].includes(newStatus)) {
-        appointments[index].status = newStatus;
-        localStorage.setItem('appointments', JSON.stringify(appointments));
-        renderAppointmentsTable(); 
-    }
+    fetch('/api/appointments/update-status', {
+        method: 'PUT',
+        credentials: 'include',
+        body: JSON.stringify({ id: id, status: newStatus }),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(async response => {
+        if (!response.ok) {
+            throw new Error('Failed to update appointment status');
+        }
+        renderAppointmentsTable();
+    }).catch(error => {
+        console.error('Error updating appointment status:', error);
+        alert('Erro ao atualizar o status do agendamento.');
+    });
 }
 
 
 /**
  * Renderiza a tabela de agendamentos
  */
-function renderAppointmentsTable() {
+async function renderAppointmentsTable() {
     const tableBody = document.querySelector('#appointments-table tbody');
     tableBody.innerHTML = '';
-    let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+    
+    const appointmentsResponse = await fetch('/api/appointments', {
+        method: 'GET',
+        credentials: 'include'
+    });
+
+    if (!appointmentsResponse.ok) {
+        console.error('Erro ao obter agendamentos:', appointmentsResponse.statusText);
+        return;
+    }
+
+    const appointments = await appointmentsResponse.json();
 
     for (let appointment of appointments) {
        
         const status = appointment.status || "Aguardando";
         
         let row = document.createElement('tr');
-        const keys = ['id', 'name', 'bloodType', 'phone', 'email', 'dateTime'];
+        const keys = ['id', 'name', 'blood_type', 'phone', 'email', 'appointment_date'];
 
         for(let key of keys) {
             let cell = document.createElement('td');
-            if (key === 'dateTime') {
+            if (key === 'appointment_date') {
                 const date = new Date(appointment[key]);
                 cell.innerText = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
             } else {
@@ -391,7 +417,7 @@ function renderAppointmentsTable() {
 
         let statusCell = document.createElement('td');
         statusCell.innerText = status;
-        statusCell.className = status === "Coletado" ? 'status-coletado' : 'status-aguardando';
+        statusCell.className = status === "Coletado" ? 'status-coletado' : (status === "Cancelado" ? 'status-cancelado' : 'status-aguardando');
         row.appendChild(statusCell);
 
       
@@ -406,7 +432,8 @@ function renderAppointmentsTable() {
         const options = [
              { value: '', text: 'Status', disabled: true, selected: true }, 
              { value: 'Aguardando', text: 'Aguardando' }, 
-             { value: 'Coletado', text: 'Coletado' }
+             { value: 'Coletado', text: 'Coletado' },
+             { value: 'Cancelado', text: 'Cancelado' }
         ];
 
         options.forEach(optionData => {
@@ -472,7 +499,7 @@ function updateMetrics(appointments) {
     const now = new Date();
     
     const currentMonthAppointments = appointments.filter(appointment => {
-        const date = new Date(appointment.dateTime);
+        const date = new Date(appointment.appointment_date);
         const isCurrentMonth = date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
         const isCollected = appointment.status === "Coletado"; 
 
@@ -506,7 +533,7 @@ function updateBloodTypeDistribution(appointments) {
 
     
     const distribution = bloodTypes.map(type => {
-        const count = appointments.filter(appointment => appointment.bloodType === type).length;
+        const count = appointments.filter(appointment => appointment.blood_type === type).length;
         const percentage = ((count / total) * 100).toFixed(1);
         return { type, count, percentage };
     }).filter(item => item.count > 0);
@@ -539,10 +566,20 @@ function updateBloodTypeDistribution(appointments) {
 /**
  * Renderiza a tabela de mensagens recebidas
  */
-function renderMessagesTable() {
+async function renderMessagesTable() {
     const tableBody = document.querySelector('#messages-table tbody');
     tableBody.innerHTML = '';
-    let messages = JSON.parse(localStorage.getItem('messages')) || [];
+    let messagesResponse = await fetch('/api/messages', {
+        method: 'GET',
+        credentials: 'include'
+    });
+
+    if(!messagesResponse.ok) {
+        console.error('Erro ao obter mensagens:', messagesResponse.statusText);
+        return;
+    }
+
+    let messages = await messagesResponse.json();
 
     for (let message of messages) {
         let row = document.createElement('tr');
@@ -598,19 +635,29 @@ function deleteSelectedMessages() {
         return;
     }
     
-    let messages = JSON.parse(localStorage.getItem('messages')) || [];
-    const idsToDelete = Array.from(checkboxes).map(cb => cb.dataset.messageId);
-    
-    messages = messages.filter(m => !idsToDelete.includes(m.id));
-    localStorage.setItem('messages', JSON.stringify(messages));
-    
+    Array.from(checkboxes).forEach(async (cb) => {
+        const messageId = cb.dataset.messageId;
+        try {
+            let resp = await fetch(`/api/messages/${messageId}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+            if (!resp.ok) {
+                throw new Error(`Failed to delete message with ID ${messageId}`);
+            }
+        } catch (error) {
+            console.error('Error deleting message:', error);
+            alert('Erro ao deletar algumas mensagens.');
+        }
+    });
+
     renderMessagesTable();
 }
 
 /**
  * Envia respostas para as mensagens selecionadas
  */
-function sendMessageReplies() {
+async function sendMessageReplies() {
     const checkboxes = document.querySelectorAll('.message-checkbox:checked');
     if (checkboxes.length === 0) {
         alert('Nenhuma mensagem selecionada.');
@@ -618,17 +665,28 @@ function sendMessageReplies() {
     }
     
     const idsToRespond = Array.from(checkboxes).map(cb => cb.dataset.messageId);
-    let messages = JSON.parse(localStorage.getItem('messages')) || [];
-    const toAnswer = messages.filter(m => idsToRespond.includes(m.id))
+    let messagesResponse = await fetch('/api/messages', {
+        method: 'GET',
+        credentials: 'include'
+    });
+    if(!messagesResponse.ok) {
+        console.error('Erro ao obter mensagens:', messagesResponse.statusText);
+        return;
+    }
+    let allMessages = await messagesResponse.json();
+    const toAnswer = allMessages.filter(msg => idsToRespond.includes(msg.id));
     
     let i = 0;
     let onSend = (hasSend) => {
         if (hasSend) {
-            let messages = JSON.parse(localStorage.getItem('messages')) || [];
-            messages = messages.filter(m => m.id !== toAnswer[i].id);
-            localStorage.setItem('messages', JSON.stringify(messages));
-            
-            renderMessagesTable();
+            fetch(`/api/messages/${toAnswer[i].id}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            }).then(async response => {
+                await renderMessagesTable();
+            }).catch(error => {
+                console.error('Error deleting message after reply:', error);
+            });
         }
 
         if(i < toAnswer.length - 1) {
@@ -778,16 +836,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-setInterval(async () => {
-    renderAppointmentsTable();
-    renderMessagesTable();
-}, 5000);
-
-renderAppointmentsTable();
-renderMessagesTable();
+(async () => {
+    await renderAppointmentsTable();
+    await renderMessagesTable();
+    setInterval(async () => {
+        await renderAppointmentsTable();
+        await renderMessagesTable();
+    }, 5000);
+})();
 
 document.getElementById('delete-messages-btn').addEventListener('click', deleteSelectedMessages);
-document.getElementById('send-messages-btn').addEventListener('click', sendMessageReplies);
+document.getElementById('send-messages-btn').addEventListener('click', async (e) => {
+    await sendMessageReplies();
+});
 document.getElementById('select-all-messages').addEventListener('change', (e) => {
     toggleSelectAllMessages(e.target.checked);
 });

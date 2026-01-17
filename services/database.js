@@ -1,57 +1,58 @@
 /**
  * @module services/database
- * Gerenciamento de conexão e operações do banco de dados SQLite3.
+ * Gerenciamento de conexão e operações do banco de dados SQLite (node:sqlite).
+ * Requer Node.js >= 22.5.0
  */
 
-const sq3 = require('sqlite3').verbose();
+const { DatabaseSync } = require('node:sqlite');
 const path = require('path');
 const fs = require('fs');
 
 const schemas = require('./schemas');
 
 const dbBasePath = path.resolve(__dirname, '../data');
-const dbFilePath = path.join(dbBasePath, 'app_database.db')
+const dbFilePath = path.join(dbBasePath, 'app_database.db');
+const rootDir = path.resolve(__dirname, '../');
 
-if(!fs.existsSync(dbBasePath)) {
+if (!fs.existsSync(dbBasePath)) {
     fs.mkdirSync(dbBasePath, { recursive: true });
 }
 
-let db = new sq3.Database(dbFilePath, (err) => {
-    if (err) {
-        console.error('Error opening database:', err.message);
-    } else {
-        console.log('Connected to the SQLite database.');
+const db = new DatabaseSync(dbFilePath);
+console.log('Connected to the SQLite database.');
+
+// Registrar a função rdf como UDF no SQLite
+db.function('rdf', (relativePath) => {
+    const fullPath = path.resolve(path.join(rootDir, relativePath));
+    return fs.readFileSync(fullPath);
+});
+
+// Initialize the database schema if necessary
+Object.values(schemas.schemas).forEach((tableSchema) => {
+    try {
+        db.exec(tableSchema);
+    } catch (err) {
+        console.error('Error creating table:', err.message);
     }
+});
 
-    // Initialize the database schema if necessary
-    Object.values(schemas.schemas).forEach((tableSchema) => {
-        db.run(tableSchema, (err) => {
-            if (err) {
-                console.error('Error creating table:', err.message);
-            }
-        });
-    });
-
-    let adminCheckQuery = `SELECT COUNT(*) as count FROM user WHERE username = ?`;
-    db.get(adminCheckQuery, ['admin'], (err, row) => {
-        if (err) {
-            console.error('Error checking for admin user:', err.message);
-        } else if (row.count === 0) {
-            db.run(schemas.defaultInserts.adminUserInsert, (err) => {
-                if (err) {
-                    console.error('Error inserting admin user:', err.message);
-                } else {
-                    console.log('Admin user inserted.');
-                }
-            });
+// Insert default data
+Object.entries(schemas.defaultInserts).forEach(([key, insertQuery]) => {
+    console.log(`Inserting default data for ${key}...`);
+    try {
+        db.exec(insertQuery);
+    } catch (err) {
+        // Ignora erros de dados já existentes (UNIQUE constraint)
+        if (!err.message.includes('UNIQUE constraint')) {
+            console.error('Error inserting default data:', err.message);
         }
-    });
+    }
 });
 
 module.exports = {
     /**
      * Obtém a instância do banco de dados SQLite.
-     * @returns {sq3.Database} A instância do banco de dados SQLite.
+     * @returns {DatabaseSync} A instância do banco de dados SQLite.
      */
     getDB: () => db,
 
@@ -59,72 +60,45 @@ module.exports = {
      * Executa uma consulta SQL no banco de dados sem retornar resultados.
      * @param {string} query A consulta SQL a ser executada.
      * @param {Array<any>} params Os parâmetros para a consulta SQL.
-     * @returns {Promise<sq3.RunResult>} Uma Promise que resolve quando a consulta é concluída.
+     * @returns {{ changes: number, lastInsertRowid: number }} Resultado da execução.
      */
-    run: async (query, params = []) => {
-        return new Promise((resolve, reject) => {
-            db.run(query, params, function(err) {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(this);
-                }
-            });
-        });
+    run: (query, params = []) => {
+        const stmt = db.prepare(query);
+        return stmt.run(...params);
     },
 
     /**
      * Executa uma consulta SQL que retorna uma única linha.
      * @param {string} query A consulta SQL a ser executada.
      * @param {Array<any>} params Os parâmetros para a consulta SQL.
-     * @returns {Promise<any>} Uma Promise que resolve com a linha retornada.
+     * @returns {any} A linha retornada ou undefined.
      */
-    get: async (query, params = []) => {
-        return new Promise((resolve, reject) => {
-            db.get(query, params, (err, row) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(row);
-                }
-            });
-        });
+    get: (query, params = []) => {
+        const stmt = db.prepare(query);
+        return stmt.get(...params);
     },
 
     /**
      * Executa uma consulta SQL que retorna múltiplas linhas.
      * @param {string} query A consulta SQL a ser executada. 
      * @param {Array<any>} params Os parâmetros para a consulta SQL.
-     * @returns {Promise<any[]>} Uma Promise que resolve com as linhas retornadas.
+     * @returns {any[]} As linhas retornadas.
      */
-    all: async (query, params = []) => {
-        return new Promise((resolve, reject) => {
-            db.all(query, params, (err, rows) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(rows);
-                }
-            });
-        });
+    all: (query, params = []) => {
+        const stmt = db.prepare(query);
+        return stmt.all(...params);
     },
 
     /**
      * Executa uma consulta SQL e chama um callback para cada linha retornada.
      * @param {string} query A consulta SQL a ser executada.
      * @param {Array<any>} params Os parâmetros para a consulta SQL.
-     * @param {(err: Error | null, row: any) => void} callback O callback a ser chamado para cada linha.
-     * @returns {Promise<number>} Uma Promise que resolve com o número de linhas processadas.
+     * @param {(row: any) => void} callback O callback a ser chamado para cada linha.
+     * @returns {number} O número de linhas processadas.
      */
-    each: async (query, params = [], callback) => {
-        return new Promise((resolve, reject) => {
-            db.each(query, params, callback, (err, count) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(count);
-                }
-            });
-        });
+    each: (query, params = [], callback) => {
+        const rows = db.prepare(query).all(...params);
+        rows.forEach(callback);
+        return rows.length;
     }
 }
