@@ -81,7 +81,7 @@ const eventSchema = `
         city VARCHAR(50) NOT NULL,
         state VARCHAR(50) NOT NULL,
         CONSTRAINT PK_Event PRIMARY KEY (id),
-        CONSTRAINT CHK_Datetime CHECK (datetime >= CURRENT_TIMESTAMP),
+        -- CONSTRAINT CHK_Datetime CHECK (datetime >= CURRENT_TIMESTAMP),
         CONSTRAINT CHK_State CHECK (state IN ('AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO')),
         CONSTRAINT CHK_Number CHECK (number > 0 OR number IS NULL)
     );
@@ -110,7 +110,7 @@ const announcementInserts = `
 
 const eventInserts = `
     INSERT INTO event (id, title, description, datetime, street, number, neighborhood, city, state) VALUES
-    (1, 'Coleta na Praça Central', 'Coleta aberta a toda população — venha doar e convidar amigos.', '2025-06-12 09:00:00', 'Praça Central, Centro', NULL, 'Centro', 'João Pessoa', 'PB'),
+    (1, 'Coleta na Praça Central', 'Coleta aberta a toda população — venha doar e convidar amigos.', '2025-06-12 09:00:00', 'Praça Central', NULL, 'Centro', 'João Pessoa', 'PB'),
     (2, 'Campanha Empresarial', 'Coleta exclusiva para funcionários (inscrição prévia).', '2025-07-02 14:00:00', 'Av. Brasil', '1234', 'Bairro Industrial', 'João Pessoa', 'PB');
 `;
 
