@@ -86,9 +86,8 @@ async function fetchEvents() {
       const datetime = new Date(item.datetime);
       const date = datetime.toISOString().split('T')[0];
       const time = datetime.toTimeString().slice(0, 5);
-      const location = item.number 
-        ? `${item.street}, ${item.number}, ${item.neighborhood}, ${item.city}`
-        : `${item.street}, ${item.neighborhood}, ${item.city}`;
+      const numero = item.number || 'S/N';
+      const location = `${item.street}, ${numero}, ${item.neighborhood}, ${item.city} - ${item.state}`;
       return {
         id: `evt-${item.id}`,
         date,

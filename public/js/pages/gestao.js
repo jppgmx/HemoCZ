@@ -85,7 +85,86 @@ function handleTipoChange() {
     }
 }
 
-function openAssistModal(editData = null) {
+/**
+ * Busca os dados de uma assistência pelo ID e tipo
+ * @param {string} id - ID da assistência
+ * @param {string} tipo - Tipo: 'Campanha', 'Evento' ou 'Anuncio'
+ * @returns {Promise<Object|null>} Dados da assistência ou null se não encontrar
+ */
+async function fetchAssistenciaData(id, tipo) {
+    try {
+        let endpoint = '';
+        if (tipo === 'Campanha') {
+            endpoint = '/api/assistance/campaigns';
+        } else if (tipo === 'Evento') {
+            endpoint = '/api/assistance/events';
+        } else if (tipo === 'Anuncio') {
+            endpoint = '/api/assistance/announcements';
+        }
+
+        const response = await fetch(endpoint);
+        if (!response.ok) throw new Error('Erro ao buscar dados');
+        
+        const items = await response.json();
+        return items.find(item => String(item.id) === String(id)) || null;
+    } catch (error) {
+        console.error('Erro ao buscar dados da assistência:', error);
+        return null;
+    }
+}
+
+/**
+ * Preenche os campos do formulário com os dados existentes
+ * @param {string} tipo - Tipo da assistência
+ * @param {Object} data - Dados da assistência
+ */
+function preencherCamposEdicao(tipo, data) {
+    if (tipo === 'Campanha') {
+        const emojiInput = document.getElementById('campanha-emoji');
+        const nomeInput = document.getElementById('campanha-nome');
+        const descricaoInput = document.getElementById('campanha-descricao');
+        
+        if (emojiInput) emojiInput.value = data.icon || '';
+        if (nomeInput) nomeInput.value = data.title || '';
+        if (descricaoInput) descricaoInput.value = data.description || '';
+        
+    } else if (tipo === 'Evento') {
+        const tituloInput = document.getElementById('evento-titulo');
+        const ruaInput = document.getElementById('evento-rua');
+        const numeroInput = document.getElementById('evento-numero');
+        const bairroInput = document.getElementById('evento-bairro');
+        const cidadeInput = document.getElementById('evento-cidade');
+        const estadoInput = document.getElementById('evento-estado');
+        const datetimeInput = document.getElementById('evento-datetime');
+        const descricaoInput = document.getElementById('evento-descricao');
+        
+        if (tituloInput) tituloInput.value = data.title || '';
+        if (ruaInput) ruaInput.value = data.street || '';
+        if (numeroInput) numeroInput.value = data.number || '';
+        if (bairroInput) bairroInput.value = data.neighborhood || '';
+        if (cidadeInput) cidadeInput.value = data.city || '';
+        if (estadoInput) estadoInput.value = data.state || '';
+        if (datetimeInput) {
+            // Formata a data para o formato esperado pelo input datetime-local
+            const dt = new Date(data.datetime);
+            if (!isNaN(dt.getTime())) {
+                const formatted = dt.toISOString().slice(0, 16);
+                datetimeInput.value = formatted;
+            }
+        }
+        if (descricaoInput) descricaoInput.value = data.description || '';
+        
+    } else if (tipo === 'Anuncio') {
+        const tituloInput = document.getElementById('anuncio-titulo');
+        const descricaoInput = document.getElementById('anuncio-descricao');
+        
+        if (tituloInput) tituloInput.value = data.title || '';
+        if (descricaoInput) descricaoInput.value = data.text || '';
+        // Nota: O campo de imagem não pode ser preenchido programaticamente por segurança do navegador
+    }
+}
+
+async function openAssistModal(editData = null) {
     if (!assistModal) return;
     
     assistForm?.reset();
@@ -97,8 +176,15 @@ function openAssistModal(editData = null) {
         // Bloqueia edição do tipo
         if (assistTipoSelect) {
             assistTipoSelect.disabled = true;
+            assistTipoSelect.value = editData.tipo;
+            handleTipoChange();
         }
-        // Preencher campos de edição aqui se necessário
+        
+        // Busca e preenche os dados existentes
+        const dadosExistentes = await fetchAssistenciaData(editData.id, editData.tipo);
+        if (dadosExistentes) {
+            preencherCamposEdicao(editData.tipo, dadosExistentes);
+        }
     } else {
         document.getElementById('assistencia-modal-title').innerText = 'Nova informação';
         document.getElementById('assistencia-id').value = '';
@@ -140,9 +226,9 @@ function bindAssistenciaEvents() {
 
         // Validações específicas por tipo
         if (tipo === 'Campanha') {
-            const emoji = document.getElementById('assistencia-emoji')?.value;
-            const nome = document.getElementById('assistencia-nome')?.value;
-            const descricao = document.getElementById('assistencia-descricao')?.value;
+            const emoji = document.getElementById('campanha-emoji')?.value;
+            const nome = document.getElementById('campanha-nome')?.value;
+            const descricao = document.getElementById('campanha-descricao')?.value;
             
             if (!emoji || !nome || !descricao) {
                 alert('Preencha todos os campos obrigatórios.');
@@ -177,14 +263,16 @@ function bindAssistenciaEvents() {
             }
             
         } else if (tipo === 'Evento') {
-            const titulo = document.getElementById('assistencia-nome')?.value;
+            const titulo = document.getElementById('evento-titulo')?.value;
             const rua = document.getElementById('evento-rua')?.value;
             const numero = document.getElementById('evento-numero')?.value;
             const bairro = document.getElementById('evento-bairro')?.value;
+            const cidade = document.getElementById('evento-cidade')?.value;
+            const estado = document.getElementById('evento-estado')?.value;
             const datetime = document.getElementById('evento-datetime')?.value;
-            const descricao = document.getElementById('assistencia-descricao')?.value;
+            const descricao = document.getElementById('evento-descricao')?.value;
             
-            if (!titulo || !rua || !numero || !bairro || !datetime || !descricao) {
+            if (!titulo || !rua || !bairro || !cidade || !estado || !datetime || !descricao) {
                 alert('Preencha todos os campos obrigatórios.');
                 return;
             }
@@ -199,13 +287,24 @@ function bindAssistenciaEvents() {
                 return;
             }
             
-            if (numero.trim().length < 1) {
-                alert('O número é obrigatório.');
+            // Número é opcional, mas se preenchido deve conter apenas dígitos
+            if (numero && numero.trim().length > 0 && !/^\d+$/.test(numero.trim())) {
+                alert('O número deve conter apenas dígitos.');
                 return;
             }
             
             if (bairro.trim().length < 3) {
                 alert('O bairro deve ter pelo menos 3 caracteres.');
+                return;
+            }
+
+            if (cidade.trim().length < 3) {
+                alert('A cidade deve ter pelo menos 3 caracteres.');
+                return;
+            }
+
+            if (!estado) {
+                alert('Selecione um estado.');
                 return;
             }
             
@@ -215,34 +314,49 @@ function bindAssistenciaEvents() {
             }
 
             if (id) {
-                editarAssistencia(id, { tipo, titulo, rua, numero, bairro, datetime, descricao });
+                editarAssistencia(id, { tipo, titulo, rua, numero, bairro, cidade, estado, datetime, descricao });
             } else {
-                criarAssistencia({ tipo, titulo, rua, numero, bairro, datetime, descricao });
+                criarAssistencia({ tipo, titulo, rua, numero, bairro, cidade, estado, datetime, descricao });
             }
             
         } else if (tipo === 'Anuncio') {
+            const anuncioTitulo = document.getElementById('anuncio-titulo')?.value;
+            const anuncioDescricao = document.getElementById('anuncio-descricao')?.value;
             const imagens = document.getElementById('anuncio-imagens')?.files;
             
-            if (!imagens || imagens.length !== 3) {
-                alert('Selecione exatamente 3 imagens.');
+            if (!anuncioTitulo || !anuncioDescricao) {
+                alert('Preencha o título e a descrição do anúncio.');
+                return;
+            }
+
+            if (anuncioTitulo.trim().length < 3) {
+                alert('O título deve ter pelo menos 3 caracteres.');
+                return;
+            }
+
+            if (anuncioDescricao.trim().length < 10) {
+                alert('A descrição deve ter pelo menos 10 caracteres.');
+                return;
+            }
+
+            if (!imagens || imagens.length !== 1) {
+                alert('Selecione exatamente 1 imagem.');
                 return;
             }
             
-            for (let i = 0; i < imagens.length; i++) {
-                const img = imagens[i];
-                const isValidType = ['image/png', 'image/jpeg'].includes(img.type);
-                const isValidSize = img.size <= 5 * 1024 * 1024;
-                
-                if (!isValidType || !isValidSize) {
-                    alert(`Imagem ${i + 1}: deve ser PNG ou JPEG, até 5 MB.`);
-                    return;
-                }
+            const img = imagens[0];
+            const isValidType = ['image/png', 'image/jpeg'].includes(img.type);
+            const isValidSize = img.size <= 5 * 1024 * 1024;
+            
+            if (!isValidType || !isValidSize) {
+                alert('A imagem deve ser PNG ou JPEG, até 5 MB.');
+                return;
             }
 
             if (id) {
-                editarAssistencia(id, { tipo, imagens: Array.from(imagens) });
+                editarAssistencia(id, { tipo, titulo: anuncioTitulo, descricao: anuncioDescricao, imagem: img });
             } else {
-                criarAssistencia({ tipo, imagens: Array.from(imagens) });
+                criarAssistencia({ tipo, titulo: anuncioTitulo, descricao: anuncioDescricao, imagem: img });
             }
             
         } else {
@@ -255,28 +369,116 @@ function bindAssistenciaEvents() {
 }
 
 /**
- * Cria uma nova assistência (Campanha, Evento ou Slider)
+ * Cria uma nova assistência (Campanha, Evento ou Anúncio)
  * @param {Object} data - Dados da assistência
- * @param {string} data.tipo - Tipo: 'Campanha', 'Evento' ou 'Slider'
+ * @param {string} data.tipo - Tipo: 'Campanha', 'Evento' ou 'Anuncio'
  * 
  * Para Campanha:
- * @param {File} [data.icone] - Arquivo do ícone
+ * @param {string} data.emoji - Emoji/ícone da campanha
  * @param {string} data.nome - Nome da campanha
- * @param {string} data.informacoes - Informações da campanha
+ * @param {string} data.descricao - Descrição da campanha
  * 
  * Para Evento:
- * @param {string} data.cidade - Cidade do evento
- * @param {string} data.estado - Estado do evento
- * @param {string} data.horario - Horário do evento
+ * @param {string} data.titulo - Título do evento
+ * @param {string} data.rua - Rua do evento
+ * @param {string} data.numero - Número do endereço
+ * @param {string} data.bairro - Bairro do evento
+ * @param {string} data.datetime - Data e hora do evento
  * @param {string} data.descricao - Descrição do evento
  * 
- * Para Slider:
+ * Para Anuncio:
  * @param {File[]} data.imagens - Array com 3 imagens
  */
-function criarAssistencia(data) {
-    console.log('Criar assistência:', data);
-    alert('Logica a ser implementada');
+async function criarAssistencia(data) {
+    try {
+        if (data.tipo === 'Campanha') {
+            // Busca o próximo ID disponível
+            const campaignsRes = await fetch('/api/assistance/campaigns');
+            const campaigns = await campaignsRes.json();
+            const nextId = campaigns.length > 0 ? Math.max(...campaigns.map(c => c.id)) + 1 : 1;
 
+            const response = await fetch('/api/assistance/campaigns', {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: nextId,
+                    title: data.nome,
+                    description: data.descricao,
+                    icon: data.emoji
+                })
+            });
+
+            if (!response.ok) throw new Error('Erro ao criar campanha');
+            alert('Campanha criada com sucesso!');
+
+        } else if (data.tipo === 'Evento') {
+            // Busca o próximo ID disponível
+            const eventsRes = await fetch('/api/assistance/events');
+            const events = await eventsRes.json();
+            const nextId = events.length > 0 ? Math.max(...events.map(e => e.id)) + 1 : 1;
+
+            const response = await fetch('/api/assistance/events', {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: nextId,
+                    title: data.titulo,
+                    description: data.descricao,
+                    datetime: data.datetime,
+                    street: data.rua,
+                    number: data.numero,
+                    neighborhood: data.bairro,
+                    city: data.cidade,
+                    state: data.estado
+                })
+            });
+
+            if (!response.ok) throw new Error('Erro ao criar evento');
+            alert('Evento criado com sucesso!');
+
+        } else if (data.tipo === 'Anuncio') {
+            // Cria um anúncio com título e descrição do formulário
+            const announcementsRes = await fetch('/api/assistance/announcements');
+            const announcements = await announcementsRes.json();
+            const nextId = announcements.length > 0 ? Math.max(...announcements.map(a => a.id)) + 1 : 1;
+
+            const fd = new FormData();
+            fd.append('id', nextId);
+            fd.append('title', data.titulo);
+            fd.append('text', data.descricao);
+            fd.append('mime', data.imagem.type);
+            fd.append('image', data.imagem);
+            const response = await fetch('/api/assistance/announcements', {
+                method: 'POST',
+                credentials: 'include',
+                body: fd
+            });
+
+            if (!response.ok) throw new Error('Erro ao criar anúncio');
+            alert('Anúncio criado com sucesso!');
+        }
+
+        await renderAssistenciaTable();
+    } catch (error) {
+        console.error('Erro ao criar assistência:', error);
+        alert('Erro ao criar assistência. Verifique o console.');
+    }
+}
+
+/**
+ * Converte um arquivo para Base64
+ * @param {File} file - Arquivo a ser convertido
+ * @returns {Promise<string>} String Base64 do arquivo
+ */
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = error => reject(error);
+    });
 }
 
 /**
@@ -284,31 +486,208 @@ function criarAssistencia(data) {
  * @param {string} id - ID da assistência a ser editada
  * @param {Object} data - Dados atualizados (mesma estrutura de criarAssistencia)
  */
-function editarAssistencia(id, data) {
-    console.log('Editar assistência:', id, data);
-    alert('Logica a ser implementada');
+async function editarAssistencia(id, data) {
+    try {
+        if (data.tipo === 'Campanha') {
+            const response = await fetch(`/api/assistance/campaigns/${id}`, {
+                method: 'PUT',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title: data.nome,
+                    description: data.descricao,
+                    icon: data.emoji
+                })
+            });
 
+            if (!response.ok) throw new Error('Erro ao atualizar campanha');
+            alert('Campanha atualizada com sucesso!');
+
+        } else if (data.tipo === 'Evento') {
+            const response = await fetch(`/api/assistance/events/${id}`, {
+                method: 'PUT',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title: data.titulo,
+                    description: data.descricao,
+                    datetime: data.datetime,
+                    street: data.rua,
+                    number: data.numero,
+                    neighborhood: data.bairro,
+                    city: data.cidade,
+                    state: data.estado
+                })
+            });
+
+            if (!response.ok) throw new Error('Erro ao atualizar evento');
+            alert('Evento atualizado com sucesso!');
+
+        } else if (data.tipo === 'Anuncio') {
+            // Atualiza o anúncio com os dados do formulário
+            const fd = new FormData();
+            fd.append('image', data.imagem);
+            fd.append('id', id);
+            fd.append('title', data.titulo);
+            fd.append('text', data.descricao);
+            fd.append('mime', data.imagem.type);
+            const response = await fetch(`/api/assistance/announcements/${id}`, {
+                method: 'PUT',
+                credentials: 'include',
+                body: fd
+            });
+
+            if (!response.ok) throw new Error('Erro ao atualizar anúncio');
+            alert('Anúncio atualizado com sucesso!');
+        }
+
+        await renderAssistenciaTable();
+    } catch (error) {
+        console.error('Erro ao editar assistência:', error);
+        alert('Erro ao editar assistência. Verifique o console.');
+    }
 }
 
 /**
  * Remove uma assistência
  * @param {string} id - ID da assistência a ser removida
- * @param {string} tipo - Tipo da assistência ('Campanha', 'Evento' ou 'Slider')
+ * @param {string} tipo - Tipo da assistência ('Campanha', 'Evento' ou 'Anuncio')
  */
-function removerAssistencia(id, tipo) {
-    console.log('Remover assistência:', id, tipo);
-    alert('Logica a ser implementada');
- 
+async function removerAssistencia(id, tipo) {
+    if (!confirm('Tem certeza que deseja remover esta assistência?')) return;
+
+    try {
+        let endpoint = '';
+        if (tipo === 'Campanha') {
+            endpoint = `/api/assistance/campaigns/${id}`;
+        } else if (tipo === 'Evento') {
+            endpoint = `/api/assistance/events/${id}`;
+        } else if (tipo === 'Anuncio') {
+            endpoint = `/api/assistance/announcements/${id}`;
+        }
+
+        const response = await fetch(endpoint, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+
+        if (!response.ok) throw new Error('Erro ao remover assistência');
+        alert('Assistência removida com sucesso!');
+        await renderAssistenciaTable();
+    } catch (error) {
+        console.error('Erro ao remover assistência:', error);
+        alert('Erro ao remover assistência. Verifique o console.');
+    }
+}
+
+/**
+ * Renderiza a tabela de assistências (campanhas, eventos e anúncios)
+ */
+async function renderAssistenciaTable() {
+    const tableBody = document.querySelector('#assistencia-table tbody');
+    if (!tableBody) return;
+    tableBody.innerHTML = '';
+
+    try {
+        // Busca todos os dados em paralelo
+        const [campaignsRes, eventsRes, announcementsRes] = await Promise.all([
+            fetch('/api/assistance/campaigns'),
+            fetch('/api/assistance/events'),
+            fetch('/api/assistance/announcements')
+        ]);
+
+        const campaigns = await campaignsRes.json();
+        const events = await eventsRes.json();
+        const announcements = await announcementsRes.json();
+
+        // Renderiza campanhas
+        campaigns.forEach(campaign => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${campaign.icon} ${campaign.title}</td>
+                <td>Campanha</td>
+                <td>-</td>
+                <td><span class="status-ativo">Ativo</span></td>
+                <td>
+                    <button class="btn-action btn-edit" data-id="${campaign.id}" data-tipo="Campanha">Editar</button>
+                    <button class="btn-action btn-delete" data-id="${campaign.id}" data-tipo="Campanha">Excluir</button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+
+        // Renderiza eventos
+        events.forEach(event => {
+            const datetime = new Date(event.datetime);
+            const dateStr = datetime.toLocaleDateString('pt-BR');
+            const timeStr = datetime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            const isActive = datetime >= new Date();
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${event.title}</td>
+                <td>Evento</td>
+                <td>${dateStr} ${timeStr}</td>
+                <td><span class="${isActive ? 'status-ativo' : 'status-inativo'}">${isActive ? 'Ativo' : 'Encerrado'}</span></td>
+                <td>
+                    <button class="btn-action btn-edit" data-id="${event.id}" data-tipo="Evento">Editar</button>
+                    <button class="btn-action btn-delete" data-id="${event.id}" data-tipo="Evento">Excluir</button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+
+        // Renderiza anúncios
+        announcements.forEach(announcement => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${announcement.title}</td>
+                <td>Anúncio</td>
+                <td>-</td>
+                <td><span class="status-ativo">Ativo</span></td>
+                <td>
+                    <button class="btn-action btn-edit" data-id="${announcement.id}" data-tipo="Anuncio">Editar</button>
+                    <button class="btn-action btn-delete" data-id="${announcement.id}" data-tipo="Anuncio">Excluir</button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+
+        // Adiciona event listeners aos botões
+        tableBody.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = e.currentTarget.dataset.id;
+                const tipo = e.currentTarget.dataset.tipo;
+                removerAssistencia(id, tipo);
+            });
+        });
+
+        tableBody.querySelectorAll('.btn-edit').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = e.currentTarget.dataset.id;
+                const tipo = e.currentTarget.dataset.tipo;
+                openAssistModal({ id, tipo });
+            });
+        });
+
+    } catch (error) {
+        console.error('Erro ao carregar assistências:', error);
+        tableBody.innerHTML = '<tr><td colspan="5">Erro ao carregar dados.</td></tr>';
+    }
 }
 
 bindAssistenciaEvents();
+
+// Inicializa a tabela de assistências e configura o botão de atualizar
+renderAssistenciaTable();
+document.getElementById('assist-refresh')?.addEventListener('click', renderAssistenciaTable);
 
 /**
  * Valida e limita o campo de emoji a apenas 1 caractere
  * Permite colar emojis corretamente
  */
 function setupEmojiInput() {
-    const emojiInput = document.getElementById('assistencia-emoji');
+    const emojiInput = document.getElementById('campanha-emoji');
     if (!emojiInput) return;
     
     emojiInput.addEventListener('input', (e) => {
