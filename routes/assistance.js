@@ -7,6 +7,19 @@ const express = require('express');
 const authRequired = require('../middlewares/auth');
 const db = require('../services/database');
 
+const multer = require('multer');
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024 }, // Limite de 5MB por arquivo
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+            cb(null, true);
+        } else {
+            cb(new Error('Apenas arquivos de imagem JPEG e PNG são permitidos.'));
+        }
+    }
+})
+
 // region CRUD Anúncios (Slides)
 
 /**
@@ -17,10 +30,17 @@ const db = require('../services/database');
  * @returns {Promise<void>} Envia uma resposta HTTP; não retorna valor.
  */
 async function createAnnouncement(req, res) {
-    const { id, title, text, mime, image } = req.body;
+    const createData = {
+        id: parseInt(req.body.id, 10),
+        title: req.body.title,
+        text: req.body.text,
+    };
+
+    const mime = req.file?.mimetype;
+    const image = req.file?.buffer;
 
     try {
-        const exists = db.get('SELECT COUNT(*) AS count FROM announcement WHERE id = ?', [id]);
+        const exists = db.get('SELECT COUNT(*) AS count FROM announcement WHERE id = ?', [createData.id]);
         if (exists.count > 0) {
             return res.status(400).json({ message: 'Um anúncio com este ID já existe.' });
         }
@@ -28,7 +48,7 @@ async function createAnnouncement(req, res) {
         db.run(
             `INSERT INTO announcement (id, title, text, mime, image)
              VALUES (?, ?, ?, ?, ?)`,
-            [id, title, text, mime, image]
+            [createData.id, createData.title, createData.text, mime, image]
         );
         res.status(201).json({ message: 'Anúncio criado com sucesso.' });
     } catch (error) {
@@ -84,17 +104,23 @@ async function getAnnouncementImage(req, res) {
  * @returns {Promise<void>} Envia uma resposta HTTP; não retorna valor.
  */
 async function updateAnnouncement(req, res) {
-    const { id } = req.params;
-    const { title, text, mime, image } = req.body;
+    const updateData = {
+        id: parseInt(req.params.id, 10),
+        title: req.body.title,
+        text: req.body.text,
+    };
+
+    const mime = req.file?.mimetype;
+    const image = req.file?.buffer;
 
     try {
         let query, params;
         if (image) {
             query = 'UPDATE announcement SET title = ?, text = ?, mime = ?, image = ? WHERE id = ?';
-            params = [title, text, mime, image, id];
+            params = [updateData.title, updateData.text, mime, image, updateData.id];
         } else {
             query = 'UPDATE announcement SET title = ?, text = ? WHERE id = ?';
-            params = [title, text, id];
+            params = [updateData.title, updateData.text, updateData.id];
         }
 
         const result = db.run(query, params);
@@ -329,8 +355,8 @@ const router = express.Router();
 // Rotas de Anúncios (públicas para GET, protegidas para modificações)
 router.get('/announcements', getAnnouncements);
 router.get('/announcements/:id/image', getAnnouncementImage);
-router.post('/announcements', authRequired, createAnnouncement);
-router.put('/announcements/:id', authRequired, updateAnnouncement);
+router.post('/announcements', authRequired, upload.single('image'), createAnnouncement);
+router.put('/announcements/:id', authRequired, upload.single('image'), updateAnnouncement);
 router.delete('/announcements/:id', authRequired, deleteAnnouncement);
 
 // Rotas de Campanhas (públicas para GET, protegidas para modificações)

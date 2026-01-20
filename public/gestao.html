@@ -71,6 +71,37 @@
             </div>
         </div>
 
+        <!-- Assistência -->
+        <section class="assistencia-section table-section" aria-labelledby="assistencia-heading">
+            <div class="section-header-row">
+                <div>
+                    <h2 id="assistencia-heading">Assistência</h2>
+                    <p class="section-subtitle">Gerencie campanhas, eventos e ações de apoio.</p>
+                </div>
+                <div class="assist-actions">
+                    <button id="assist-refresh" class="btn-action" aria-label="Atualizar lista">Atualizar</button>
+                    <button id="assist-create" class="btn-action" style="background-color: var(--color-primary);" aria-label="Nova informação de assistência">Nova Campanha</button>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="assistencia-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Tipo</th>
+                            <th>Data</th>
+                            <th>Status</th>
+                            <th style="width: 180px;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Falta criar função para renderizar a tabela De assistencia no JS de gestão -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
         <!-- Appointments Table -->
         <div class="table-section">
             <h2>Agendamentos em Processo</h2>
@@ -122,29 +153,159 @@
         </div>
     </main>
 
-    <!-- Modal para Visualizar Mensagem Completa -->
-    <div id="message-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modal-subject">Assunto</h2>
-                <button class="modal-close" onclick="closeMessageModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="modal-info-row">
-                    <strong>De:</strong> <span id="modal-name"></span> (<span id="modal-email"></span>)
+        <!-- Modal Assistência -->
+        <div id="assistencia-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="assistencia-modal-title" aria-describedby="assistencia-modal-desc">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="assistencia-modal-title">Nova informação</h2>
+                    <button class="modal-close" aria-label="Fechar" id="assistencia-modal-close">&times;</button>
                 </div>
-                <div class="modal-info-row">
-                    <strong>Data:</strong> <span id="modal-date"></span>
+                <div class="modal-body">
+                    <p id="assistencia-modal-desc" class="section-subtitle">Preencha os dados da ação de assistência.</p>
+                    <form id="assistencia-form">
+                        <input type="hidden" id="assistencia-id" name="id">
+                        
+                        <!-- Seletor de Tipo -->
+                        <div class="form-group">
+                            <label for="assistencia-tipo">Tipo</label>
+                            <select id="assistencia-tipo" name="tipo" required>
+                                <option value="">Selecione</option>
+                                <option value="Campanha">Campanha</option>
+                                <option value="Evento">Evento</option>
+                                <option value="Anuncio">Anúncio</option>
+                            </select>
+                        </div>
+
+                        <!-- Campos para Campanha -->
+                        <div id="campanha-fields" class="tipo-fields" style="display: none;">
+                            <div class="form-group">
+                                <label for="campanha-emoji">Emoji</label>
+                                <input id="campanha-emoji" name="emoji" type="text" placeholder="Ex: 🩸">
+                            </div>
+                            <div class="form-group">
+                                <label for="campanha-nome">Nome da Campanha</label>
+                                <input id="campanha-nome" name="nome" type="text" placeholder="Ex: Campanha Doe Sangue">
+                            </div>
+                            <div class="form-group">
+                                <label for="campanha-descricao">Informações</label>
+                                <textarea id="campanha-descricao" name="descricao" rows="5" placeholder="Descreva as informações da campanha..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Campos para Evento -->
+                        <div id="evento-fields" class="tipo-fields" style="display: none;">
+                            <div class="form-group">
+                                <label for="evento-titulo">Título</label>
+                                <input id="evento-titulo" name="nome" type="text" placeholder="Ex: Coleta na Praça Central">
+                            </div>
+                            <div class="form-group">
+                                <label for="evento-rua">Rua</label>
+                                <input id="evento-rua" name="rua" type="text" placeholder="Ex: Rua José Rodovalho">
+                            </div>
+                            <div class="form-group">
+                                <label for="evento-numero">Número</label>
+                                <input id="evento-numero" name="numero" type="text" placeholder="Ex: 1234">
+                            </div>
+                            <div class="form-group">
+                                <label for="evento-bairro">Bairro</label>
+                                <input id="evento-bairro" name="bairro" type="text" placeholder="Ex: Centro">
+                            </div>
+                            <div class="form-group">
+                                <label for="evento-cidade">Cidade</label>
+                                <input id="evento-cidade" name="cidade" type="text" placeholder="Ex: João Pessoa">
+                            </div>
+                            <div class="form-group">
+                                <label for="evento-estado">Estado</label>
+                                <select id="evento-estado" name="estado">
+                                    <option value="">Selecione</option>
+                                    <option value="AC">AC - Acre</option>
+                                    <option value="AL">AL - Alagoas</option>
+                                    <option value="AP">AP - Amapá</option>
+                                    <option value="AM">AM - Amazonas</option>
+                                    <option value="BA">BA - Bahia</option>
+                                    <option value="CE">CE - Ceará</option>
+                                    <option value="DF">DF - Distrito Federal</option>
+                                    <option value="ES">ES - Espírito Santo</option>
+                                    <option value="GO">GO - Goiás</option>
+                                    <option value="MA">MA - Maranhão</option>
+                                    <option value="MT">MT - Mato Grosso</option>
+                                    <option value="MS">MS - Mato Grosso do Sul</option>
+                                    <option value="MG">MG - Minas Gerais</option>
+                                    <option value="PA">PA - Pará</option>
+                                    <option value="PB" selected>PB - Paraíba</option>
+                                    <option value="PR">PR - Paraná</option>
+                                    <option value="PE">PE - Pernambuco</option>
+                                    <option value="PI">PI - Piauí</option>
+                                    <option value="RJ">RJ - Rio de Janeiro</option>
+                                    <option value="RN">RN - Rio Grande do Norte</option>
+                                    <option value="RS">RS - Rio Grande do Sul</option>
+                                    <option value="RO">RO - Rondônia</option>
+                                    <option value="RR">RR - Roraima</option>
+                                    <option value="SC">SC - Santa Catarina</option>
+                                    <option value="SP">SP - São Paulo</option>
+                                    <option value="SE">SE - Sergipe</option>
+                                    <option value="TO">TO - Tocantins</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="evento-datetime">Data e Hora</label>
+                                <input id="evento-datetime" name="datetime" type="datetime-local">
+                            </div>
+                            <div class="form-group">
+                                <label for="evento-descricao">Descrição</label>
+                                <textarea id="evento-descricao" name="descricao" rows="5" placeholder="Descreva o evento..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Campos para Anúncio -->
+                        <div id="anuncio-fields" class="tipo-fields" style="display: none;">
+                            <div class="form-group">
+                                <label for="anuncio-titulo">Título do Anúncio</label>
+                                <input id="anuncio-titulo" name="anuncio-titulo" type="text" placeholder="Ex: Doe sangue, salve vidas">
+                            </div>
+                            <div class="form-group">
+                                <label for="anuncio-descricao">Descrição</label>
+                                <textarea id="anuncio-descricao" name="anuncio-descricao" rows="3" placeholder="Descreva o anúncio..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="anuncio-imagens">Selecione 1 imagem (PNG ou JPEG, até 5 MB)</label>
+                                <input id="anuncio-imagens" name="imagens" type="file" accept="image/png, image/jpeg">
+                            </div>
+                        </div>
+
+                        <div class="modal-actions">
+                            <button type="button" class="btn" id="assistencia-cancel" style="background-color: #999;">Cancelar</button>
+                            <button type="submit" class="btn" style="background-color: var(--color-primary);">Salvar</button>
+                        </div>
+                    </form>
                 </div>
-                <div class="modal-message-content">
-                    <p id="modal-message"></p>
-                </div>
-            </div>
-            <div class="modal-actions">
-                <button class="btn" onclick="closeMessageModal()">Fechar</button>
             </div>
         </div>
-    </div>
+
+        <!-- Modal para Visualizar Mensagem Completa -->
+        <div id="message-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modal-subject">Assunto</h2>
+                    <button class="modal-close" onclick="closeMessageModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-info-row">
+                        <strong>De:</strong> <span id="modal-name"></span> (<span id="modal-email"></span>)
+                    </div>
+                    <div class="modal-info-row">
+                        <strong>Data:</strong> <span id="modal-date"></span>
+                    </div>
+                    <div class="modal-message-content">
+                        <p id="modal-message"></p>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn" onclick="closeMessageModal()">Fechar</button>
+                </div>
+            </div>
+        </div>
+    
 
     <footer>
         <div class="footer-content">
