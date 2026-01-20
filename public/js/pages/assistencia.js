@@ -23,66 +23,86 @@
  * @property {string} description Descrição do evento
  */
 
-// Dados dos slides do carrossel
-const slides = [
-  {
-    title: 'Doe sangue, salve vidas',
-    text: 'Campanhas regulares em diversas unidades — veja como participar.',
-    img: 'images/img1.jpg'
-  },
-  {
-    title: 'Junte sua equipe',
-    text: 'Empresas, escolas e clubes podem organizar coletas para doação.' ,
-    img: 'images/img3.jpg'
-  },
-  {
-    title: 'Voluntariado',
-    text: 'Participe como voluntário e aprenda a ajudar nos eventos locais.',
-    img: 'images/img2.jpg'
-  }
-];
+/** @type {Slide[]} */
+let slides = [];
 
-// Dados das campanhas
-const campaigns = [
-  {
-    id: 'camp-1',
-    title: 'Campanha Outubro Vermelho',
-    description: 'Aumentar os estoques regionais com doações programadas.',
-    icon: '🩸'
-  },
-  {
-    id: 'camp-2',
-    title: 'Unidades Móveis',
-    description: 'Agende uma visita da nossa unidade móvel à sua comunidade.',
-    icon: '🚐'
-  },
-  {
-    id: 'camp-3',
-    title: 'Campanha Universitária',
-    description: 'Parcerias com universidades para doações durante o semestre.',
-    icon: '🏫'
-  }
-];
+/** @type {Campaign[]} */
+let campaigns = [];
 
-// Dados dos eventos
-const events = [
-  {
-    id: 'evt-1',
-    date: '2025-06-12',
-    time: '09:00',
-    title: 'Coleta na Praça Central',
-    location: 'Praça Central, Centro',
-    description: 'Coleta aberta a toda população — venha doar e convidar amigos.'
-  },
-  {
-    id: 'evt-2',
-    date: '2025-07-02',
-    time: '14:00',
-    title: 'Campanha Empresarial',
-    location: 'Empresa ABC, Av. Brasil, 1234',
-    description: 'Coleta exclusiva para funcionários (inscrição prévia).'
+/** @type {Event[]} */
+let events = [];
+
+/**
+ * Busca os anúncios/slides da API
+ * @returns {Promise<void>}
+ */
+async function fetchAnnouncements() {
+  try {
+    const response = await fetch('/api/assistance/announcements');
+    if (!response.ok) throw new Error('Erro ao buscar anúncios');
+    const data = await response.json();
+    slides = data.map(item => ({
+      title: item.title,
+      text: item.text,
+      img: `/api/assistance/announcements/${item.id}/image`
+    }));
+  } catch (error) {
+    console.error('Erro ao carregar anúncios:', error);
+    slides = [];
   }
-];
+}
+
+/**
+ * Busca as campanhas da API
+ * @returns {Promise<void>}
+ */
+async function fetchCampaigns() {
+  try {
+    const response = await fetch('/api/assistance/campaigns');
+    if (!response.ok) throw new Error('Erro ao buscar campanhas');
+    const data = await response.json();
+    campaigns = data.map(item => ({
+      id: `camp-${item.id}`,
+      title: item.title,
+      description: item.description,
+      icon: item.icon
+    }));
+  } catch (error) {
+    console.error('Erro ao carregar campanhas:', error);
+    campaigns = [];
+  }
+}
+
+/**
+ * Busca os eventos da API
+ * @returns {Promise<void>}
+ */
+async function fetchEvents() {
+  try {
+    const response = await fetch('/api/assistance/events');
+    if (!response.ok) throw new Error('Erro ao buscar eventos');
+    const data = await response.json();
+    events = data.map(item => {
+      const datetime = new Date(item.datetime);
+      const date = datetime.toISOString().split('T')[0];
+      const time = datetime.toTimeString().slice(0, 5);
+      const location = item.number 
+        ? `${item.street}, ${item.number}, ${item.neighborhood}, ${item.city}`
+        : `${item.street}, ${item.neighborhood}, ${item.city}`;
+      return {
+        id: `evt-${item.id}`,
+        date,
+        time,
+        title: item.title,
+        location,
+        description: item.description
+      };
+    });
+  } catch (error) {
+    console.error('Erro ao carregar eventos:', error);
+    events = [];
+  }
+}
 
 // Controle do slideshow
 let currentSlide = 0;
@@ -302,9 +322,16 @@ function attachModalHandlers() {
 
 /**
  * Inicializa a página de assistência
- * Renderiza todos os componentes e configura event listeners
+ * Busca os dados da API e renderiza todos os componentes
  */
-function initAssistenciaPage() {
+async function initAssistenciaPage() {
+  // Busca os dados da API em paralelo
+  await Promise.all([
+    fetchAnnouncements(),
+    fetchCampaigns(),
+    fetchEvents()
+  ]);
+
   renderSlides();
   renderCampaigns();
   renderEvents();

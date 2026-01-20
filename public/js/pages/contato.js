@@ -87,17 +87,23 @@ contactForm.addEventListener('submit', (event) => {
         return;
     }
 
-    // Salvar mensagem em localStorage para gestão revisar
-    if (localStorage.getItem('messages') === null) {
-        localStorage.setItem('messages', JSON.stringify([messageData]));
-    } else {
-        let messages = JSON.parse(localStorage.getItem('messages'));
-        messages.push(messageData);
-        localStorage.setItem('messages', JSON.stringify(messages));
-    }
+    fetch('/api/messages/send', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(messageData)
+    }).then(async response => {
+        if (!response.ok) {
+            throw new Error('Erro ao enviar a mensagem. Tente novamente mais tarde.');
+        }
+        formAlert('Mensagem enviada com sucesso!', 'success');
+    }).catch(error => {
+        console.error('Error sending contact message:', error);
+        formAlert(error.message, 'error');
+    });
 
     contactForm.reset();
-    formAlert('Mensagem enviada com sucesso! A equipe de gestão responderá em breve.');
 });
 
 /**

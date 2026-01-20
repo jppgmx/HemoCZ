@@ -25,7 +25,10 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\app.js"
+            "program": "${workspaceFolder}\\app.js",
+            "runtimeArgs": [
+                "--trace-warnings"
+            ]
         },
         {
             "name": "Launch Edge",
