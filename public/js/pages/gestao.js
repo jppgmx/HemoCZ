@@ -49,21 +49,21 @@ function isValidEmoji(char) {
 }
 
 /* Modal de assistencia */
-const assistModal = document.getElementById('assistencia-modal');
-const assistForm = document.getElementById('assistencia-form');
-const assistCancelBtn = document.getElementById('assistencia-cancel');
-const assistCloseBtn = document.getElementById('assistencia-modal-close');
+const assistModal = document.getElementById('assistance-modal');
+const assistForm = document.getElementById('assistance-form');
+const assistCancelBtn = document.getElementById('assistance-cancel');
+const assistCloseBtn = document.getElementById('assistance-modal-close');
 const assistCreateBtn = document.getElementById('assist-create');
-const assistTipoSelect = document.getElementById('assistencia-tipo');
+const assistTypeSelect = document.getElementById('assistance-type');
 
 /**
  * Mostra/oculta campos do formulário baseado no tipo selecionado
  */
-function handleTipoChange() {
-    const tipo = assistTipoSelect?.value;
+function handleTypeChange() {
+    const type = assistTypeSelect?.value;
     
     // Oculta todos os grupos de campos
-    document.querySelectorAll('.tipo-fields').forEach(field => {
+    document.querySelectorAll('.type-fields').forEach(field => {
         field.style.display = 'none';
         // Limpa os valores dos campos
         field.querySelectorAll('input, textarea').forEach(input => {
@@ -76,29 +76,29 @@ function handleTipoChange() {
     });
 
     // Mostra apenas os campos do tipo selecionado
-    if (tipo === 'Campanha') {
-        document.getElementById('campanha-fields').style.display = 'block';
-    } else if (tipo === 'Evento') {
-        document.getElementById('evento-fields').style.display = 'block';
-    } else if (tipo === 'Anuncio') {
-        document.getElementById('anuncio-fields').style.display = 'block';
+    if (type === 'Campanha') {
+        document.getElementById('campaign-fields').style.display = 'block';
+    } else if (type === 'Evento') {
+        document.getElementById('event-fields').style.display = 'block';
+    } else if (type === 'Anuncio') {
+        document.getElementById('announcement-fields').style.display = 'block';
     }
 }
 
 /**
  * Busca os dados de uma assistência pelo ID e tipo
  * @param {string} id - ID da assistência
- * @param {string} tipo - Tipo: 'Campanha', 'Evento' ou 'Anuncio'
+ * @param {string} type - Tipo: 'Campanha', 'Evento' ou 'Anuncio'
  * @returns {Promise<Object|null>} Dados da assistência ou null se não encontrar
  */
-async function fetchAssistenciaData(id, tipo) {
+async function fetchAssistanceData(id, type) {
     try {
         let endpoint = '';
-        if (tipo === 'Campanha') {
+        if (type === 'Campanha') {
             endpoint = '/api/assistance/campaigns';
-        } else if (tipo === 'Evento') {
+        } else if (type === 'Evento') {
             endpoint = '/api/assistance/events';
-        } else if (tipo === 'Anuncio') {
+        } else if (type === 'Anuncio') {
             endpoint = '/api/assistance/announcements';
         }
 
@@ -115,35 +115,35 @@ async function fetchAssistenciaData(id, tipo) {
 
 /**
  * Preenche os campos do formulário com os dados existentes
- * @param {string} tipo - Tipo da assistência
+ * @param {string} type - Tipo da assistência
  * @param {Object} data - Dados da assistência
  */
-function preencherCamposEdicao(tipo, data) {
-    if (tipo === 'Campanha') {
-        const emojiInput = document.getElementById('campanha-emoji');
-        const nomeInput = document.getElementById('campanha-nome');
-        const descricaoInput = document.getElementById('campanha-descricao');
+function fillEditFields(type, data) {
+    if (type === 'Campanha') {
+        const emojiInput = document.getElementById('campaign-emoji');
+        const nameInput = document.getElementById('campaign-name');
+        const descriptionInput = document.getElementById('campaign-description');
         
         if (emojiInput) emojiInput.value = data.icon || '';
-        if (nomeInput) nomeInput.value = data.title || '';
-        if (descricaoInput) descricaoInput.value = data.description || '';
+        if (nameInput) nameInput.value = data.title || '';
+        if (descriptionInput) descriptionInput.value = data.description || '';
         
-    } else if (tipo === 'Evento') {
-        const tituloInput = document.getElementById('evento-titulo');
-        const ruaInput = document.getElementById('evento-rua');
-        const numeroInput = document.getElementById('evento-numero');
-        const bairroInput = document.getElementById('evento-bairro');
-        const cidadeInput = document.getElementById('evento-cidade');
-        const estadoInput = document.getElementById('evento-estado');
-        const datetimeInput = document.getElementById('evento-datetime');
-        const descricaoInput = document.getElementById('evento-descricao');
+    } else if (type === 'Evento') {
+        const titleInput = document.getElementById('event-title');
+        const streetInput = document.getElementById('event-street');
+        const numberInput = document.getElementById('event-number');
+        const neighborhoodInput = document.getElementById('event-neighborhood');
+        const cityInput = document.getElementById('event-city');
+        const stateInput = document.getElementById('event-state');
+        const datetimeInput = document.getElementById('event-datetime');
+        const descriptionInput = document.getElementById('event-description');
         
-        if (tituloInput) tituloInput.value = data.title || '';
-        if (ruaInput) ruaInput.value = data.street || '';
-        if (numeroInput) numeroInput.value = data.number || '';
-        if (bairroInput) bairroInput.value = data.neighborhood || '';
-        if (cidadeInput) cidadeInput.value = data.city || '';
-        if (estadoInput) estadoInput.value = data.state || '';
+        if (titleInput) titleInput.value = data.title || '';
+        if (streetInput) streetInput.value = data.street || '';
+        if (numberInput) numberInput.value = data.number || '';
+        if (neighborhoodInput) neighborhoodInput.value = data.neighborhood || '';
+        if (cityInput) cityInput.value = data.city || '';
+        if (stateInput) stateInput.value = data.state || '';
         if (datetimeInput) {
             // Formata a data para o formato esperado pelo input datetime-local
             const dt = new Date(data.datetime);
@@ -152,14 +152,14 @@ function preencherCamposEdicao(tipo, data) {
                 datetimeInput.value = formatted;
             }
         }
-        if (descricaoInput) descricaoInput.value = data.description || '';
+        if (descriptionInput) descriptionInput.value = data.description || '';
         
-    } else if (tipo === 'Anuncio') {
-        const tituloInput = document.getElementById('anuncio-titulo');
-        const descricaoInput = document.getElementById('anuncio-descricao');
+    } else if (type === 'Anuncio') {
+        const titleInput = document.getElementById('announcement-title');
+        const descriptionInput = document.getElementById('announcement-description');
         
-        if (tituloInput) tituloInput.value = data.title || '';
-        if (descricaoInput) descricaoInput.value = data.text || '';
+        if (titleInput) titleInput.value = data.title || '';
+        if (descriptionInput) descriptionInput.value = data.text || '';
         // Nota: O campo de imagem não pode ser preenchido programaticamente por segurança do navegador
     }
 }
@@ -168,29 +168,29 @@ async function openAssistModal(editData = null) {
     if (!assistModal) return;
     
     assistForm?.reset();
-    handleTipoChange(); // Reseta os campos
+    handleTypeChange(); // Reseta os campos
     
     if (editData) {
-        document.getElementById('assistencia-modal-title').innerText = 'Editar informação';
-        document.getElementById('assistencia-id').value = editData.id;
+        document.getElementById('assistance-modal-title').innerText = 'Editar informação';
+        document.getElementById('assistance-id').value = editData.id;
         // Bloqueia edição do tipo
-        if (assistTipoSelect) {
-            assistTipoSelect.disabled = true;
-            assistTipoSelect.value = editData.tipo;
-            handleTipoChange();
+        if (assistTypeSelect) {
+            assistTypeSelect.disabled = true;
+            assistTypeSelect.value = editData.type;
+            handleTypeChange();
         }
         
         // Busca e preenche os dados existentes
-        const dadosExistentes = await fetchAssistenciaData(editData.id, editData.tipo);
-        if (dadosExistentes) {
-            preencherCamposEdicao(editData.tipo, dadosExistentes);
+        const existingData = await fetchAssistanceData(editData.id, editData.type);
+        if (existingData) {
+            fillEditFields(editData.type, existingData);
         }
     } else {
-        document.getElementById('assistencia-modal-title').innerText = 'Nova informação';
-        document.getElementById('assistencia-id').value = '';
+        document.getElementById('assistance-modal-title').innerText = 'Nova informação';
+        document.getElementById('assistance-id').value = '';
         // Habilita edição do tipo
-        if (assistTipoSelect) {
-            assistTipoSelect.disabled = false;
+        if (assistTypeSelect) {
+            assistTypeSelect.disabled = false;
         }
     }
     
@@ -201,16 +201,16 @@ function closeAssistModal() {
     if (!assistModal) return;
     assistModal.style.display = 'none';
     assistForm?.reset();
-    handleTipoChange();
+    handleTypeChange();
 }
 
-function bindAssistenciaEvents() {
+function bindAssistanceEvents() {
     assistCreateBtn?.addEventListener('click', () => openAssistModal());
     assistCancelBtn?.addEventListener('click', closeAssistModal);
     assistCloseBtn?.addEventListener('click', closeAssistModal);
     
     // Event listener para mudança de tipo
-    assistTipoSelect?.addEventListener('change', handleTipoChange);
+    assistTypeSelect?.addEventListener('change', handleTypeChange);
 
     if (assistModal) {
         assistModal.addEventListener('click', (e) => {
@@ -221,146 +221,146 @@ function bindAssistenciaEvents() {
     assistForm?.addEventListener('submit', (e) => {
         e.preventDefault();
         
-        const tipo = assistTipoSelect?.value;
-        const id = document.getElementById('assistencia-id')?.value;
+        const type = assistTypeSelect?.value;
+        const id = document.getElementById('assistance-id')?.value;
 
         // Validações específicas por tipo
-        if (tipo === 'Campanha') {
-            const emoji = document.getElementById('campanha-emoji')?.value;
-            const nome = document.getElementById('campanha-nome')?.value;
-            const descricao = document.getElementById('campanha-descricao')?.value;
+        if (type === 'Campanha') {
+            const emoji = document.getElementById('campaign-emoji')?.value;
+            const name = document.getElementById('campaign-name')?.value;
+            const description = document.getElementById('campaign-description')?.value;
             
-            if (!emoji || !nome || !descricao) {
-                alert('Preencha todos os campos obrigatórios.');
+            if (!emoji || !name || !description) {
+                showAlert('Preencha todos os campos obrigatórios.', 'error');
                 return;
             }
             
             const emojiChars = Array.from(emoji);
             if (emojiChars.length !== 1) {
-                alert('O emoji deve conter exatamente 1 caractere.');
+                showAlert('O emoji deve conter exatamente 1 caractere.', 'error');
                 return;
             }
             
             if (!isValidEmoji(emoji)) {
-                alert('Por favor, insira um emoji válido.');
+                showAlert('Por favor, insira um emoji válido.', 'error');
                 return;
             }
             
-            if (nome.trim().length < 3) {
-                alert('O nome da campanha deve ter pelo menos 3 caracteres.');
+            if (name.trim().length < 3) {
+                showAlert('O nome da campanha deve ter pelo menos 3 caracteres.', 'error');
                 return;
             }
             
-            if (descricao.trim().length < 10) {
-                alert('As informações devem ter pelo menos 10 caracteres.');
+            if (description.trim().length < 10) {
+                showAlert('As informações devem ter pelo menos 10 caracteres.', 'error');
                 return;
             }
 
             if (id) {
-                editarAssistencia(id, { tipo, emoji, nome, descricao });
+                updateAssistance(id, { type, emoji, name, description });
             } else {
-                criarAssistencia({ tipo, emoji, nome, descricao });
+                createAssistance({ type, emoji, name, description });
             }
             
-        } else if (tipo === 'Evento') {
-            const titulo = document.getElementById('evento-titulo')?.value;
-            const rua = document.getElementById('evento-rua')?.value;
-            const numero = document.getElementById('evento-numero')?.value;
-            const bairro = document.getElementById('evento-bairro')?.value;
-            const cidade = document.getElementById('evento-cidade')?.value;
-            const estado = document.getElementById('evento-estado')?.value;
-            const datetime = document.getElementById('evento-datetime')?.value;
-            const descricao = document.getElementById('evento-descricao')?.value;
+        } else if (type === 'Evento') {
+            const title = document.getElementById('event-title')?.value;
+            const street = document.getElementById('event-street')?.value;
+            const number = document.getElementById('event-number')?.value;
+            const neighborhood = document.getElementById('event-neighborhood')?.value;
+            const city = document.getElementById('event-city')?.value;
+            const state = document.getElementById('event-state')?.value;
+            const datetime = document.getElementById('event-datetime')?.value;
+            const description = document.getElementById('event-description')?.value;
             
-            if (!titulo || !rua || !bairro || !cidade || !estado || !datetime || !descricao) {
-                alert('Preencha todos os campos obrigatórios.');
+            if (!title || !street || !neighborhood || !city || !state || !datetime || !description) {
+                showAlert('Preencha todos os campos obrigatórios.', 'error');
                 return;
             }
             
-            if (titulo.trim().length < 3) {
-                alert('O título deve ter pelo menos 3 caracteres.');
+            if (title.trim().length < 3) {
+                showAlert('O título deve ter pelo menos 3 caracteres.', 'error');
                 return;
             }
             
-            if (rua.trim().length < 3) {
-                alert('O nome da rua deve ter pelo menos 3 caracteres.');
+            if (street.trim().length < 3) {
+                showAlert('O nome da rua deve ter pelo menos 3 caracteres.', 'error');
                 return;
             }
             
             // Número é opcional, mas se preenchido deve conter apenas dígitos
-            if (numero && numero.trim().length > 0 && !/^\d+$/.test(numero.trim())) {
-                alert('O número deve conter apenas dígitos.');
+            if (number && number.trim().length > 0 && !/^\d+$/.test(number.trim())) {
+                showAlert('O número deve conter apenas dígitos.', 'error');
                 return;
             }
             
-            if (bairro.trim().length < 3) {
-                alert('O bairro deve ter pelo menos 3 caracteres.');
+            if (neighborhood.trim().length < 3) {
+                showAlert('O bairro deve ter pelo menos 3 caracteres.', 'error');
                 return;
             }
 
-            if (cidade.trim().length < 3) {
-                alert('A cidade deve ter pelo menos 3 caracteres.');
+            if (city.trim().length < 3) {
+                showAlert('A cidade deve ter pelo menos 3 caracteres.', 'error');
                 return;
             }
 
-            if (!estado) {
-                alert('Selecione um estado.');
+            if (!state) {
+                showAlert('Selecione um estado.', 'error');
                 return;
             }
             
-            if (descricao.trim().length < 10) {
-                alert('A descrição deve ter pelo menos 10 caracteres.');
+            if (description.trim().length < 10) {
+                showAlert('A descrição deve ter pelo menos 10 caracteres.', 'error');
                 return;
             }
 
             if (id) {
-                editarAssistencia(id, { tipo, titulo, rua, numero, bairro, cidade, estado, datetime, descricao });
+                updateAssistance(id, { type, title, street, number, neighborhood, city, state, datetime, description });
             } else {
-                criarAssistencia({ tipo, titulo, rua, numero, bairro, cidade, estado, datetime, descricao });
+                createAssistance({ type, title, street, number, neighborhood, city, state, datetime, description });
             }
             
-        } else if (tipo === 'Anuncio') {
-            const anuncioTitulo = document.getElementById('anuncio-titulo')?.value;
-            const anuncioDescricao = document.getElementById('anuncio-descricao')?.value;
-            const imagens = document.getElementById('anuncio-imagens')?.files;
+        } else if (type === 'Anuncio') {
+            const announcementTitle = document.getElementById('announcement-title')?.value;
+            const announcementDescription = document.getElementById('announcement-description')?.value;
+            const images = document.getElementById('announcement-images')?.files;
             
-            if (!anuncioTitulo || !anuncioDescricao) {
-                alert('Preencha o título e a descrição do anúncio.');
+            if (!announcementTitle || !announcementDescription) {
+                showAlert('Preencha o título e a descrição do anúncio.', 'error');
                 return;
             }
 
-            if (anuncioTitulo.trim().length < 3) {
-                alert('O título deve ter pelo menos 3 caracteres.');
+            if (announcementTitle.trim().length < 3) {
+                showAlert('O título deve ter pelo menos 3 caracteres.', 'error');
                 return;
             }
 
-            if (anuncioDescricao.trim().length < 10) {
-                alert('A descrição deve ter pelo menos 10 caracteres.');
+            if (announcementDescription.trim().length < 10) {
+                showAlert('A descrição deve ter pelo menos 10 caracteres.', 'error');
                 return;
             }
 
-            if (!imagens || imagens.length !== 1) {
-                alert('Selecione exatamente 1 imagem.');
+            if (!images || images.length !== 1) {
+                showAlert('Selecione exatamente 1 imagem.', 'error');
                 return;
             }
             
-            const img = imagens[0];
+            const img = images[0];
             const isValidType = ['image/png', 'image/jpeg'].includes(img.type);
             const isValidSize = img.size <= 5 * 1024 * 1024;
             
             if (!isValidType || !isValidSize) {
-                alert('A imagem deve ser PNG ou JPEG, até 5 MB.');
+                showAlert('A imagem deve ser PNG ou JPEG, até 5 MB.', 'error');
                 return;
             }
 
             if (id) {
-                editarAssistencia(id, { tipo, titulo: anuncioTitulo, descricao: anuncioDescricao, imagem: img });
+                updateAssistance(id, { type, title: announcementTitle, description: announcementDescription, image: img });
             } else {
-                criarAssistencia({ tipo, titulo: anuncioTitulo, descricao: anuncioDescricao, imagem: img });
+                createAssistance({ type, title: announcementTitle, description: announcementDescription, image: img });
             }
             
         } else {
-            alert('Selecione um tipo válido.');
+            showAlert('Selecione um tipo válido.', 'error');
             return;
         }
         
@@ -371,27 +371,27 @@ function bindAssistenciaEvents() {
 /**
  * Cria uma nova assistência (Campanha, Evento ou Anúncio)
  * @param {Object} data - Dados da assistência
- * @param {string} data.tipo - Tipo: 'Campanha', 'Evento' ou 'Anuncio'
+ * @param {string} data.type - Tipo: 'Campanha', 'Evento' ou 'Anuncio'
  * 
  * Para Campanha:
  * @param {string} data.emoji - Emoji/ícone da campanha
- * @param {string} data.nome - Nome da campanha
- * @param {string} data.descricao - Descrição da campanha
+ * @param {string} data.name - Nome da campanha
+ * @param {string} data.description - Descrição da campanha
  * 
  * Para Evento:
- * @param {string} data.titulo - Título do evento
- * @param {string} data.rua - Rua do evento
- * @param {string} data.numero - Número do endereço
- * @param {string} data.bairro - Bairro do evento
+ * @param {string} data.title - Título do evento
+ * @param {string} data.street - Rua do evento
+ * @param {string} data.number - Número do endereço
+ * @param {string} data.neighborhood - Bairro do evento
  * @param {string} data.datetime - Data e hora do evento
- * @param {string} data.descricao - Descrição do evento
+ * @param {string} data.description - Descrição do evento
  * 
  * Para Anuncio:
- * @param {File[]} data.imagens - Array com 3 imagens
+ * @param {File[]} data.images - Array com 3 imagens
  */
-async function criarAssistencia(data) {
+async function createAssistance(data) {
     try {
-        if (data.tipo === 'Campanha') {
+        if (data.type === 'Campanha') {
             // Busca o próximo ID disponível
             const campaignsRes = await fetch('/api/assistance/campaigns');
             const campaigns = await campaignsRes.json();
@@ -403,16 +403,16 @@ async function criarAssistencia(data) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     id: nextId,
-                    title: data.nome,
-                    description: data.descricao,
+                    title: data.name,
+                    description: data.description,
                     icon: data.emoji
                 })
             });
 
             if (!response.ok) throw new Error('Erro ao criar campanha');
-            alert('Campanha criada com sucesso!');
+            showAlert('Campanha criada com sucesso!', 'success');
 
-        } else if (data.tipo === 'Evento') {
+        } else if (data.type === 'Evento') {
             // Busca o próximo ID disponível
             const eventsRes = await fetch('/api/assistance/events');
             const events = await eventsRes.json();
@@ -424,21 +424,21 @@ async function criarAssistencia(data) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     id: nextId,
-                    title: data.titulo,
-                    description: data.descricao,
+                    title: data.title,
+                    description: data.description,
                     datetime: data.datetime,
-                    street: data.rua,
-                    number: data.numero,
-                    neighborhood: data.bairro,
-                    city: data.cidade,
-                    state: data.estado
+                    street: data.street,
+                    number: data.number,
+                    neighborhood: data.neighborhood,
+                    city: data.city,
+                    state: data.state
                 })
             });
 
             if (!response.ok) throw new Error('Erro ao criar evento');
-            alert('Evento criado com sucesso!');
+            showAlert('Evento criado com sucesso!', 'success');
 
-        } else if (data.tipo === 'Anuncio') {
+        } else if (data.type === 'Anuncio') {
             // Cria um anúncio com título e descrição do formulário
             const announcementsRes = await fetch('/api/assistance/announcements');
             const announcements = await announcementsRes.json();
@@ -446,10 +446,10 @@ async function criarAssistencia(data) {
 
             const fd = new FormData();
             fd.append('id', nextId);
-            fd.append('title', data.titulo);
-            fd.append('text', data.descricao);
-            fd.append('mime', data.imagem.type);
-            fd.append('image', data.imagem);
+            fd.append('title', data.title);
+            fd.append('text', data.description);
+            fd.append('mime', data.image.type);
+            fd.append('image', data.image);
             const response = await fetch('/api/assistance/announcements', {
                 method: 'POST',
                 credentials: 'include',
@@ -457,80 +457,66 @@ async function criarAssistencia(data) {
             });
 
             if (!response.ok) throw new Error('Erro ao criar anúncio');
-            alert('Anúncio criado com sucesso!');
+            showAlert('Anúncio criado com sucesso!', 'success');
         }
 
-        await renderAssistenciaTable();
+        await renderAssistanceTable();
     } catch (error) {
         console.error('Erro ao criar assistência:', error);
-        alert('Erro ao criar assistência. Verifique o console.');
+        showAlert('Erro ao criar assistência. Verifique o console.', 'error');
     }
-}
-
-/**
- * Converte um arquivo para Base64
- * @param {File} file - Arquivo a ser convertido
- * @returns {Promise<string>} String Base64 do arquivo
- */
-function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result.split(',')[1]);
-        reader.onerror = error => reject(error);
-    });
 }
 
 /**
  * Edita uma assistência existente
  * @param {string} id - ID da assistência a ser editada
- * @param {Object} data - Dados atualizados (mesma estrutura de criarAssistencia)
+ * @param {Object} data - Dados atualizados (mesma estrutura de createAssistance)
  */
-async function editarAssistencia(id, data) {
+async function updateAssistance(id, data) {
     try {
-        if (data.tipo === 'Campanha') {
+        if (data.type === 'Campanha') {
             const response = await fetch(`/api/assistance/campaigns/${id}`, {
                 method: 'PUT',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    title: data.nome,
-                    description: data.descricao,
+                    title: data.name,
+                    description: data.description,
                     icon: data.emoji
                 })
             });
 
             if (!response.ok) throw new Error('Erro ao atualizar campanha');
-            alert('Campanha atualizada com sucesso!');
+            showAlert('Campanha atualizada com sucesso!', 'success');
 
-        } else if (data.tipo === 'Evento') {
+        } else if (data.type === 'Evento') {
             const response = await fetch(`/api/assistance/events/${id}`, {
                 method: 'PUT',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    title: data.titulo,
-                    description: data.descricao,
+                    title: data.title,
+                    description: data.description,
                     datetime: data.datetime,
-                    street: data.rua,
-                    number: data.numero,
-                    neighborhood: data.bairro,
-                    city: data.cidade,
-                    state: data.estado
+                    street: data.street,
+                    number: data.number,
+                    neighborhood: data.neighborhood,
+                    city: data.city,
+                    state: data.state
                 })
             });
 
             if (!response.ok) throw new Error('Erro ao atualizar evento');
-            alert('Evento atualizado com sucesso!');
+            showAlert('Evento atualizado com sucesso!', 'success');
 
-        } else if (data.tipo === 'Anuncio') {
+        } else if (data.type === 'Anuncio') {
             // Atualiza o anúncio com os dados do formulário
             const fd = new FormData();
-            fd.append('image', data.imagem);
+            fd.append('image', data.image);
             fd.append('id', id);
-            fd.append('title', data.titulo);
-            fd.append('text', data.descricao);
-            fd.append('mime', data.imagem.type);
+            fd.append('title', data.title);
+            fd.append('text', data.description);
+            fd.append('mime', data.image.type);
             const response = await fetch(`/api/assistance/announcements/${id}`, {
                 method: 'PUT',
                 credentials: 'include',
@@ -538,31 +524,31 @@ async function editarAssistencia(id, data) {
             });
 
             if (!response.ok) throw new Error('Erro ao atualizar anúncio');
-            alert('Anúncio atualizado com sucesso!');
+            showAlert('Anúncio atualizado com sucesso!', 'success');
         }
 
-        await renderAssistenciaTable();
+        await renderAssistanceTable();
     } catch (error) {
         console.error('Erro ao editar assistência:', error);
-        alert('Erro ao editar assistência. Verifique o console.');
+        showAlert('Erro ao editar assistência. Verifique o console.', 'error');
     }
 }
 
 /**
  * Remove uma assistência
  * @param {string} id - ID da assistência a ser removida
- * @param {string} tipo - Tipo da assistência ('Campanha', 'Evento' ou 'Anuncio')
+ * @param {string} type - Tipo da assistência ('Campanha', 'Evento' ou 'Anuncio')
  */
-async function removerAssistencia(id, tipo) {
+async function deleteAssistance(id, type) {
     if (!confirm('Tem certeza que deseja remover esta assistência?')) return;
 
     try {
         let endpoint = '';
-        if (tipo === 'Campanha') {
+        if (type === 'Campanha') {
             endpoint = `/api/assistance/campaigns/${id}`;
-        } else if (tipo === 'Evento') {
+        } else if (type === 'Evento') {
             endpoint = `/api/assistance/events/${id}`;
-        } else if (tipo === 'Anuncio') {
+        } else if (type === 'Anuncio') {
             endpoint = `/api/assistance/announcements/${id}`;
         }
 
@@ -572,19 +558,19 @@ async function removerAssistencia(id, tipo) {
         });
 
         if (!response.ok) throw new Error('Erro ao remover assistência');
-        alert('Assistência removida com sucesso!');
-        await renderAssistenciaTable();
+        showAlert('Assistência removida com sucesso!', 'success');
+        await renderAssistanceTable();
     } catch (error) {
         console.error('Erro ao remover assistência:', error);
-        alert('Erro ao remover assistência. Verifique o console.');
+        showAlert('Erro ao remover assistência. Verifique o console.', 'error');
     }
 }
 
 /**
  * Renderiza a tabela de assistências (campanhas, eventos e anúncios)
  */
-async function renderAssistenciaTable() {
-    const tableBody = document.querySelector('#assistencia-table tbody');
+async function renderAssistanceTable() {
+    const tableBody = document.querySelector('#assistance-table tbody');
     if (!tableBody) return;
     tableBody.innerHTML = '';
 
@@ -657,16 +643,16 @@ async function renderAssistenciaTable() {
         tableBody.querySelectorAll('.btn-delete').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const id = e.currentTarget.dataset.id;
-                const tipo = e.currentTarget.dataset.tipo;
-                removerAssistencia(id, tipo);
+                const type = e.currentTarget.dataset.tipo;
+                deleteAssistance(id, type);
             });
         });
 
         tableBody.querySelectorAll('.btn-edit').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const id = e.currentTarget.dataset.id;
-                const tipo = e.currentTarget.dataset.tipo;
-                openAssistModal({ id, tipo });
+                const type = e.currentTarget.dataset.tipo;
+                openAssistModal({ id, type });
             });
         });
 
@@ -676,18 +662,18 @@ async function renderAssistenciaTable() {
     }
 }
 
-bindAssistenciaEvents();
+bindAssistanceEvents();
 
 // Inicializa a tabela de assistências e configura o botão de atualizar
-renderAssistenciaTable();
-document.getElementById('assist-refresh')?.addEventListener('click', renderAssistenciaTable);
+renderAssistanceTable();
+document.getElementById('assist-refresh')?.addEventListener('click', renderAssistanceTable);
 
 /**
  * Valida e limita o campo de emoji a apenas 1 caractere
  * Permite colar emojis corretamente
  */
 function setupEmojiInput() {
-    const emojiInput = document.getElementById('campanha-emoji');
+    const emojiInput = document.getElementById('campaign-emoji');
     if (!emojiInput) return;
     
     emojiInput.addEventListener('input', (e) => {
@@ -727,7 +713,7 @@ function deleteAppointment(id) {
         await renderAppointmentsTable();
     }).catch(error => {
         console.error('Error deleting appointment:', error);
-        alert('Erro ao deletar o agendamento.');
+        showAlert('Erro ao deletar o agendamento.', 'error');
     });
 }
 
@@ -751,7 +737,7 @@ function updateStatus(id, newStatus) {
         renderAppointmentsTable();
     }).catch(error => {
         console.error('Error updating appointment status:', error);
-        alert('Erro ao atualizar o status do agendamento.');
+        showAlert('Erro ao atualizar o status do agendamento.', 'error');
     });
 }
 
@@ -1006,7 +992,7 @@ async function renderMessagesTable() {
 function deleteSelectedMessages() {
     const checkboxes = document.querySelectorAll('.message-checkbox:checked');
     if (checkboxes.length === 0) {
-        alert('Nenhuma mensagem selecionada.');
+        showAlert('Nenhuma mensagem selecionada.', 'warning');
         return;
     }
     
@@ -1026,7 +1012,7 @@ function deleteSelectedMessages() {
             }
         } catch (error) {
             console.error('Error deleting message:', error);
-            alert('Erro ao deletar algumas mensagens.');
+            showAlert('Erro ao deletar algumas mensagens.', 'error');
         }
     });
 
@@ -1039,7 +1025,7 @@ function deleteSelectedMessages() {
 async function sendMessageReplies() {
     const checkboxes = document.querySelectorAll('.message-checkbox:checked');
     if (checkboxes.length === 0) {
-        alert('Nenhuma mensagem selecionada.');
+        showAlert('Nenhuma mensagem selecionada.', 'warning');
         return;
     }
     
@@ -1164,7 +1150,7 @@ function openReplyModal(message, order, total, onSend) {
         });
         
         if (!resp.ok) {
-            alert(`Falha ao enviar resposta para ${message.email}.`);
+            showAlert(`Falha ao enviar resposta para ${message.email}.`, 'error');
         } else {
             modal.dataset.hasSend = 'true';
         }

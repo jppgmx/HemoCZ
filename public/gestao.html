@@ -85,7 +85,7 @@
             </div>
 
             <div class="table-wrapper">
-                <table id="assistencia-table">
+                <table id="assistance-table">
                     <thead>
                         <tr>
                             <th>Nome</th>
@@ -154,21 +154,21 @@
     </main>
 
         <!-- Modal Assistência -->
-        <div id="assistencia-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="assistencia-modal-title" aria-describedby="assistencia-modal-desc">
+        <div id="assistance-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="assistance-modal-title" aria-describedby="assistance-modal-desc">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2 id="assistencia-modal-title">Nova informação</h2>
-                    <button class="modal-close" aria-label="Fechar" id="assistencia-modal-close">&times;</button>
+                    <h2 id="assistance-modal-title">Nova informação</h2>
+                    <button class="modal-close" aria-label="Fechar" id="assistance-modal-close">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <p id="assistencia-modal-desc" class="section-subtitle">Preencha os dados da ação de assistência.</p>
-                    <form id="assistencia-form">
-                        <input type="hidden" id="assistencia-id" name="id">
+                    <p id="assistance-modal-desc" class="section-subtitle">Preencha os dados da ação de assistência.</p>
+                    <form id="assistance-form">
+                        <input type="hidden" id="assistance-id" name="id">
                         
                         <!-- Seletor de Tipo -->
                         <div class="form-group">
-                            <label for="assistencia-tipo">Tipo</label>
-                            <select id="assistencia-tipo" name="tipo" required>
+                            <label for="assistance-type">Tipo</label>
+                            <select id="assistance-type" name="tipo" required>
                                 <option value="">Selecione</option>
                                 <option value="Campanha">Campanha</option>
                                 <option value="Evento">Evento</option>
@@ -177,46 +177,46 @@
                         </div>
 
                         <!-- Campos para Campanha -->
-                        <div id="campanha-fields" class="tipo-fields" style="display: none;">
+                        <div id="campaign-fields" class="type-fields" style="display: none;">
                             <div class="form-group">
-                                <label for="campanha-emoji">Emoji</label>
-                                <input id="campanha-emoji" name="emoji" type="text" placeholder="Ex: 🩸">
+                                <label for="campaign-emoji">Emoji</label>
+                                <input id="campaign-emoji" name="emoji" type="text" placeholder="Ex: 🩸">
                             </div>
                             <div class="form-group">
-                                <label for="campanha-nome">Nome da Campanha</label>
-                                <input id="campanha-nome" name="nome" type="text" placeholder="Ex: Campanha Doe Sangue">
+                                <label for="campaign-name">Nome da Campanha</label>
+                                <input id="campaign-name" name="nome" type="text" placeholder="Ex: Campanha Doe Sangue">
                             </div>
                             <div class="form-group">
-                                <label for="campanha-descricao">Informações</label>
-                                <textarea id="campanha-descricao" name="descricao" rows="5" placeholder="Descreva as informações da campanha..."></textarea>
+                                <label for="campaign-description">Informações</label>
+                                <textarea id="campaign-description" name="descricao" rows="5" placeholder="Descreva as informações da campanha..."></textarea>
                             </div>
                         </div>
 
                         <!-- Campos para Evento -->
-                        <div id="evento-fields" class="tipo-fields" style="display: none;">
+                        <div id="event-fields" class="type-fields" style="display: none;">
                             <div class="form-group">
-                                <label for="evento-titulo">Título</label>
-                                <input id="evento-titulo" name="nome" type="text" placeholder="Ex: Coleta na Praça Central">
+                                <label for="event-title">Título</label>
+                                <input id="event-title" name="nome" type="text" placeholder="Ex: Coleta na Praça Central">
                             </div>
                             <div class="form-group">
-                                <label for="evento-rua">Rua</label>
-                                <input id="evento-rua" name="rua" type="text" placeholder="Ex: Rua José Rodovalho">
+                                <label for="event-street">Rua</label>
+                                <input id="event-street" name="rua" type="text" placeholder="Ex: Rua José Rodovalho">
                             </div>
                             <div class="form-group">
-                                <label for="evento-numero">Número</label>
-                                <input id="evento-numero" name="numero" type="text" placeholder="Ex: 1234">
+                                <label for="event-number">Número</label>
+                                <input id="event-number" name="numero" type="text" placeholder="Ex: 1234">
                             </div>
                             <div class="form-group">
-                                <label for="evento-bairro">Bairro</label>
-                                <input id="evento-bairro" name="bairro" type="text" placeholder="Ex: Centro">
+                                <label for="event-neighborhood">Bairro</label>
+                                <input id="event-neighborhood" name="bairro" type="text" placeholder="Ex: Centro">
                             </div>
                             <div class="form-group">
-                                <label for="evento-cidade">Cidade</label>
-                                <input id="evento-cidade" name="cidade" type="text" placeholder="Ex: João Pessoa">
+                                <label for="event-city">Cidade</label>
+                                <input id="event-city" name="cidade" type="text" placeholder="Ex: João Pessoa">
                             </div>
                             <div class="form-group">
-                                <label for="evento-estado">Estado</label>
-                                <select id="evento-estado" name="estado">
+                                <label for="event-state">Estado</label>
+                                <select id="event-state" name="estado">
                                     <option value="">Selecione</option>
                                     <option value="AC">AC - Acre</option>
                                     <option value="AL">AL - Alagoas</option>
@@ -248,33 +248,33 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="evento-datetime">Data e Hora</label>
-                                <input id="evento-datetime" name="datetime" type="datetime-local">
+                                <label for="event-datetime">Data e Hora</label>
+                                <input id="event-datetime" name="datetime" type="datetime-local">
                             </div>
                             <div class="form-group">
-                                <label for="evento-descricao">Descrição</label>
-                                <textarea id="evento-descricao" name="descricao" rows="5" placeholder="Descreva o evento..."></textarea>
+                                <label for="event-description">Descrição</label>
+                                <textarea id="event-description" name="descricao" rows="5" placeholder="Descreva o evento..."></textarea>
                             </div>
                         </div>
 
                         <!-- Campos para Anúncio -->
-                        <div id="anuncio-fields" class="tipo-fields" style="display: none;">
+                        <div id="announcement-fields" class="type-fields" style="display: none;">
                             <div class="form-group">
-                                <label for="anuncio-titulo">Título do Anúncio</label>
-                                <input id="anuncio-titulo" name="anuncio-titulo" type="text" placeholder="Ex: Doe sangue, salve vidas">
+                                <label for="announcement-title">Título do Anúncio</label>
+                                <input id="announcement-title" name="anuncio-titulo" type="text" placeholder="Ex: Doe sangue, salve vidas">
                             </div>
                             <div class="form-group">
-                                <label for="anuncio-descricao">Descrição</label>
-                                <textarea id="anuncio-descricao" name="anuncio-descricao" rows="3" placeholder="Descreva o anúncio..."></textarea>
+                                <label for="announcement-description">Descrição</label>
+                                <textarea id="announcement-description" name="anuncio-descricao" rows="3" placeholder="Descreva o anúncio..."></textarea>
                             </div>
                             <div class="form-group">
-                                <label for="anuncio-imagens">Selecione 1 imagem (PNG ou JPEG, até 5 MB)</label>
-                                <input id="anuncio-imagens" name="imagens" type="file" accept="image/png, image/jpeg">
+                                <label for="announcement-images">Selecione 1 imagem (PNG ou JPEG, até 5 MB)</label>
+                                <input id="announcement-images" name="imagens" type="file" accept="image/png, image/jpeg">
                             </div>
                         </div>
 
                         <div class="modal-actions">
-                            <button type="button" class="btn" id="assistencia-cancel" style="background-color: #999;">Cancelar</button>
+                            <button type="button" class="btn" id="assistance-cancel" style="background-color: #999;">Cancelar</button>
                             <button type="submit" class="btn" style="background-color: var(--color-primary);">Salvar</button>
                         </div>
                     </form>

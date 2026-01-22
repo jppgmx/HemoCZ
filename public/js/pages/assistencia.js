@@ -86,8 +86,8 @@ async function fetchEvents() {
       const datetime = new Date(item.datetime);
       const date = datetime.toISOString().split('T')[0];
       const time = datetime.toTimeString().slice(0, 5);
-      const numero = item.number || 'S/N';
-      const location = `${item.street}, ${numero}, ${item.neighborhood}, ${item.city} - ${item.state}`;
+      const addressNumber = item.number || 'S/N';
+      const location = `${item.street}, ${addressNumber}, ${item.neighborhood}, ${item.city} - ${item.state}`;
       return {
         id: `evt-${item.id}`,
         date,
@@ -323,7 +323,7 @@ function attachModalHandlers() {
  * Inicializa a página de assistência
  * Busca os dados da API e renderiza todos os componentes
  */
-async function initAssistenciaPage() {
+async function initAssistancePage() {
   // Busca os dados da API em paralelo
   await Promise.all([
     fetchAnnouncements(),
@@ -346,7 +346,7 @@ async function initAssistenciaPage() {
 
 // Inicializa a página quando o DOM estiver pronto
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initAssistenciaPage);
+  document.addEventListener('DOMContentLoaded', initAssistancePage);
 } else {
-  initAssistenciaPage();
+  initAssistancePage();
 }
