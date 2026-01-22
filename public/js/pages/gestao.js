@@ -231,28 +231,28 @@ function bindAssistenciaEvents() {
             const descricao = document.getElementById('campanha-descricao')?.value;
             
             if (!emoji || !nome || !descricao) {
-                alert('Preencha todos os campos obrigatórios.');
+                showAlert('Preencha todos os campos obrigatórios.', 'error');
                 return;
             }
             
             const emojiChars = Array.from(emoji);
             if (emojiChars.length !== 1) {
-                alert('O emoji deve conter exatamente 1 caractere.');
+                showAlert('O emoji deve conter exatamente 1 caractere.', 'error');
                 return;
             }
             
             if (!isValidEmoji(emoji)) {
-                alert('Por favor, insira um emoji válido.');
+                showAlert('Por favor, insira um emoji válido.', 'error');
                 return;
             }
             
             if (nome.trim().length < 3) {
-                alert('O nome da campanha deve ter pelo menos 3 caracteres.');
+                showAlert('O nome da campanha deve ter pelo menos 3 caracteres.', 'error');
                 return;
             }
             
             if (descricao.trim().length < 10) {
-                alert('As informações devem ter pelo menos 10 caracteres.');
+                showAlert('As informações devem ter pelo menos 10 caracteres.', 'error');
                 return;
             }
 
@@ -273,43 +273,43 @@ function bindAssistenciaEvents() {
             const descricao = document.getElementById('evento-descricao')?.value;
             
             if (!titulo || !rua || !bairro || !cidade || !estado || !datetime || !descricao) {
-                alert('Preencha todos os campos obrigatórios.');
+                showAlert('Preencha todos os campos obrigatórios.', 'error');
                 return;
             }
             
             if (titulo.trim().length < 3) {
-                alert('O título deve ter pelo menos 3 caracteres.');
+                showAlert('O título deve ter pelo menos 3 caracteres.', 'error');
                 return;
             }
             
             if (rua.trim().length < 3) {
-                alert('O nome da rua deve ter pelo menos 3 caracteres.');
+                showAlert('O nome da rua deve ter pelo menos 3 caracteres.', 'error');
                 return;
             }
             
             // Número é opcional, mas se preenchido deve conter apenas dígitos
             if (numero && numero.trim().length > 0 && !/^\d+$/.test(numero.trim())) {
-                alert('O número deve conter apenas dígitos.');
+                showAlert('O número deve conter apenas dígitos.', 'error');
                 return;
             }
             
             if (bairro.trim().length < 3) {
-                alert('O bairro deve ter pelo menos 3 caracteres.');
+                showAlert('O bairro deve ter pelo menos 3 caracteres.', 'error');
                 return;
             }
 
             if (cidade.trim().length < 3) {
-                alert('A cidade deve ter pelo menos 3 caracteres.');
+                showAlert('A cidade deve ter pelo menos 3 caracteres.', 'error');
                 return;
             }
 
             if (!estado) {
-                alert('Selecione um estado.');
+                showAlert('Selecione um estado.', 'error');
                 return;
             }
             
             if (descricao.trim().length < 10) {
-                alert('A descrição deve ter pelo menos 10 caracteres.');
+                showAlert('A descrição deve ter pelo menos 10 caracteres.', 'error');
                 return;
             }
 
@@ -325,22 +325,22 @@ function bindAssistenciaEvents() {
             const imagens = document.getElementById('anuncio-imagens')?.files;
             
             if (!anuncioTitulo || !anuncioDescricao) {
-                alert('Preencha o título e a descrição do anúncio.');
+                showAlert('Preencha o título e a descrição do anúncio.', 'error');
                 return;
             }
 
             if (anuncioTitulo.trim().length < 3) {
-                alert('O título deve ter pelo menos 3 caracteres.');
+                showAlert('O título deve ter pelo menos 3 caracteres.', 'error');
                 return;
             }
 
             if (anuncioDescricao.trim().length < 10) {
-                alert('A descrição deve ter pelo menos 10 caracteres.');
+                showAlert('A descrição deve ter pelo menos 10 caracteres.', 'error');
                 return;
             }
 
             if (!imagens || imagens.length !== 1) {
-                alert('Selecione exatamente 1 imagem.');
+                showAlert('Selecione exatamente 1 imagem.', 'error');
                 return;
             }
             
@@ -349,7 +349,7 @@ function bindAssistenciaEvents() {
             const isValidSize = img.size <= 5 * 1024 * 1024;
             
             if (!isValidType || !isValidSize) {
-                alert('A imagem deve ser PNG ou JPEG, até 5 MB.');
+                showAlert('A imagem deve ser PNG ou JPEG, até 5 MB.', 'error');
                 return;
             }
 
@@ -360,7 +360,7 @@ function bindAssistenciaEvents() {
             }
             
         } else {
-            alert('Selecione um tipo válido.');
+            showAlert('Selecione um tipo válido.', 'error');
             return;
         }
         
@@ -410,7 +410,7 @@ async function criarAssistencia(data) {
             });
 
             if (!response.ok) throw new Error('Erro ao criar campanha');
-            alert('Campanha criada com sucesso!');
+            showAlert('Campanha criada com sucesso!', 'success');
 
         } else if (data.tipo === 'Evento') {
             // Busca o próximo ID disponível
@@ -436,7 +436,7 @@ async function criarAssistencia(data) {
             });
 
             if (!response.ok) throw new Error('Erro ao criar evento');
-            alert('Evento criado com sucesso!');
+            showAlert('Evento criado com sucesso!', 'success');
 
         } else if (data.tipo === 'Anuncio') {
             // Cria um anúncio com título e descrição do formulário
@@ -457,13 +457,13 @@ async function criarAssistencia(data) {
             });
 
             if (!response.ok) throw new Error('Erro ao criar anúncio');
-            alert('Anúncio criado com sucesso!');
+            showAlert('Anúncio criado com sucesso!', 'success');
         }
 
         await renderAssistenciaTable();
     } catch (error) {
         console.error('Erro ao criar assistência:', error);
-        alert('Erro ao criar assistência. Verifique o console.');
+        showAlert('Erro ao criar assistência. Verifique o console.', 'error');
     }
 }
 
@@ -501,7 +501,7 @@ async function editarAssistencia(id, data) {
             });
 
             if (!response.ok) throw new Error('Erro ao atualizar campanha');
-            alert('Campanha atualizada com sucesso!');
+            showAlert('Campanha atualizada com sucesso!', 'success');
 
         } else if (data.tipo === 'Evento') {
             const response = await fetch(`/api/assistance/events/${id}`, {
@@ -521,7 +521,7 @@ async function editarAssistencia(id, data) {
             });
 
             if (!response.ok) throw new Error('Erro ao atualizar evento');
-            alert('Evento atualizado com sucesso!');
+            showAlert('Evento atualizado com sucesso!', 'success');
 
         } else if (data.tipo === 'Anuncio') {
             // Atualiza o anúncio com os dados do formulário
@@ -538,13 +538,13 @@ async function editarAssistencia(id, data) {
             });
 
             if (!response.ok) throw new Error('Erro ao atualizar anúncio');
-            alert('Anúncio atualizado com sucesso!');
+            showAlert('Anúncio atualizado com sucesso!', 'success');
         }
 
         await renderAssistenciaTable();
     } catch (error) {
         console.error('Erro ao editar assistência:', error);
-        alert('Erro ao editar assistência. Verifique o console.');
+        showAlert('Erro ao editar assistência. Verifique o console.', 'error');
     }
 }
 
@@ -572,11 +572,11 @@ async function removerAssistencia(id, tipo) {
         });
 
         if (!response.ok) throw new Error('Erro ao remover assistência');
-        alert('Assistência removida com sucesso!');
+        showAlert('Assistência removida com sucesso!', 'success');
         await renderAssistenciaTable();
     } catch (error) {
         console.error('Erro ao remover assistência:', error);
-        alert('Erro ao remover assistência. Verifique o console.');
+        showAlert('Erro ao remover assistência. Verifique o console.', 'error');
     }
 }
 
@@ -727,7 +727,7 @@ function deleteAppointment(id) {
         await renderAppointmentsTable();
     }).catch(error => {
         console.error('Error deleting appointment:', error);
-        alert('Erro ao deletar o agendamento.');
+        showAlert('Erro ao deletar o agendamento.', 'error');
     });
 }
 
@@ -751,7 +751,7 @@ function updateStatus(id, newStatus) {
         renderAppointmentsTable();
     }).catch(error => {
         console.error('Error updating appointment status:', error);
-        alert('Erro ao atualizar o status do agendamento.');
+        showAlert('Erro ao atualizar o status do agendamento.', 'error');
     });
 }
 
@@ -1006,7 +1006,7 @@ async function renderMessagesTable() {
 function deleteSelectedMessages() {
     const checkboxes = document.querySelectorAll('.message-checkbox:checked');
     if (checkboxes.length === 0) {
-        alert('Nenhuma mensagem selecionada.');
+        showAlert('Nenhuma mensagem selecionada.', 'warning');
         return;
     }
     
@@ -1026,7 +1026,7 @@ function deleteSelectedMessages() {
             }
         } catch (error) {
             console.error('Error deleting message:', error);
-            alert('Erro ao deletar algumas mensagens.');
+            showAlert('Erro ao deletar algumas mensagens.', 'error');
         }
     });
 
@@ -1039,7 +1039,7 @@ function deleteSelectedMessages() {
 async function sendMessageReplies() {
     const checkboxes = document.querySelectorAll('.message-checkbox:checked');
     if (checkboxes.length === 0) {
-        alert('Nenhuma mensagem selecionada.');
+        showAlert('Nenhuma mensagem selecionada.', 'warning');
         return;
     }
     
@@ -1164,7 +1164,7 @@ function openReplyModal(message, order, total, onSend) {
         });
         
         if (!resp.ok) {
-            alert(`Falha ao enviar resposta para ${message.email}.`);
+            showAlert(`Falha ao enviar resposta para ${message.email}.`, 'error');
         } else {
             modal.dataset.hasSend = 'true';
         }
