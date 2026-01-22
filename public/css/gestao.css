@@ -319,44 +319,26 @@ table button:active {
     background-color: #555;
 }
 
-.status-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 10px;
+/* Status badges para tabela de assistência */
+.status-ativo {
+    display: inline-block;
+    padding: 4px 10px;
     border-radius: 999px;
     font-size: 0.85rem;
-    font-weight: 700;
-}
-
-.status-pill--ativo {
+    font-weight: 600;
     background: rgba(40, 167, 69, 0.12);
     color: #1c7c36;
 }
 
-.status-pill--embreve {
-    background: rgba(255, 193, 7, 0.16);
-    color: #ad7b00;
-}
-
-.status-pill--encerrado {
+.status-inativo {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
     background: rgba(196, 30, 58, 0.12);
     color: #8c1a2d;
 }
-
-.tag {
-    display: inline-block;
-    padding: 6px 10px;
-    border-radius: 6px;
-    background: #f2f2f2;
-    font-weight: 600;
-    font-size: 0.85rem;
-}
-
-.tag--campanha { background: rgba(139, 0, 0, 0.12); color: var(--color-primary); }
-.tag--evento { background: rgba(0, 112, 243, 0.14); color: #0058a3; }
-.tag--acao { background: rgba(76, 175, 80, 0.12); color: #2d7e35; }
-.tag--aviso { background: rgba(108, 117, 125, 0.12); color: #4a5056; }
 
 .table-actions {
     display: flex;

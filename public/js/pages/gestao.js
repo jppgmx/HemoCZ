@@ -468,20 +468,6 @@ async function createAssistance(data) {
 }
 
 /**
- * Converte um arquivo para Base64
- * @param {File} file - Arquivo a ser convertido
- * @returns {Promise<string>} String Base64 do arquivo
- */
-function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result.split(',')[1]);
-        reader.onerror = error => reject(error);
-    });
-}
-
-/**
  * Edita uma assistência existente
  * @param {string} id - ID da assistência a ser editada
  * @param {Object} data - Dados atualizados (mesma estrutura de createAssistance)
